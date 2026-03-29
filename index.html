@@ -108,13 +108,13 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 3rem 2rem;
+      padding: 2rem 1.5rem;
       z-index: 1;
     }
 
     .page-border {
       position: absolute;
-      inset: clamp(20px, 4vw, 50px);
+      inset: clamp(12px, 3vw, 40px);
       border: 1px solid rgba(80,40,10,0.25);
       pointer-events: none;
     }
@@ -123,33 +123,32 @@
 
     .page-ornament-top {
       font-family: 'IM Fell English', serif;
-      font-size: clamp(0.7rem, 1.5vw, 1rem);
-      color: rgba(80,40,10,0.45);
+      font-size: clamp(0.6rem, 1.3vw, 0.9rem);
+      color: rgba(80,40,10,0.4);
       letter-spacing: 0.6em;
-      margin-bottom: clamp(1rem, 3vh, 2rem);
+      margin-bottom: clamp(0.6rem, 2vh, 1.2rem);
     }
 
     .ink-inscription {
       font-family: 'IM Fell English', serif;
       font-style: italic;
-      font-size: clamp(1.6rem, 5vw, 3.2rem);
+      font-size: clamp(1.1rem, 3.5vw, 2rem);
       color: #2a1005;
       text-align: center;
       line-height: 1.45;
       letter-spacing: 0.02em;
-      margin-bottom: clamp(1.5rem, 4vh, 3rem);
+      margin-bottom: clamp(1rem, 3vh, 2rem);
       filter: url(#inkBleed);
       text-shadow:
         0 0 1px rgba(20,8,0,0.9),
-        1px 1px 3px rgba(20,8,0,0.3),
-        -1px 0 2px rgba(20,8,0,0.2);
+        1px 1px 3px rgba(20,8,0,0.3);
     }
 
     .ink-rule {
-      width: min(400px, 70vw);
+      width: min(340px, 70vw);
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(80,40,10,0.4), transparent);
-      margin-bottom: clamp(1.5rem, 4vh, 3rem);
+      margin-bottom: clamp(1rem, 3vh, 2rem);
       position: relative;
     }
     .ink-rule::before {
@@ -161,56 +160,57 @@
       font-size: 0.55rem;
     }
 
-    .pwd-wrap {
+    /* ── PUZZLE ─────────────────────────────────────────── */
+    #puzzleWrap {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1.2rem;
-      width: min(320px, 80vw);
+      gap: 0;
     }
 
-    .pwd-input {
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid rgba(60,30,5,0.5);
-      padding: 0.6rem 0.5rem;
-      font-family: 'IM Fell English', serif;
-      font-style: italic;
-      font-size: clamp(1.2rem, 3vw, 1.6rem);
-      color: #2a1005;
-      text-align: center;
-      width: 100%;
-      outline: none;
-      letter-spacing: 0.25em;
-      caret-color: #8b0000;
-      filter: url(#inkBleed);
+    .puzzle-tile {
+      display: block;
+      cursor: pointer;
+      border: 1px solid rgba(120,80,20,0.3);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      user-select: none;
+      -webkit-user-select: none;
     }
-    .pwd-input::placeholder { color: rgba(60,30,5,0.25); font-size: 1rem; letter-spacing: 0.4em; font-style: normal; }
-    .pwd-input:focus { border-bottom-color: rgba(100,0,0,0.65); }
 
-    .enter-btn {
-      background: rgba(42,16,5,0.85);
-      color: #f0ddb5;
-      border: none;
-      padding: 0.65rem 2.5rem;
+    .puzzle-tile:hover {
+      transform: scaleX(1.015);
+      box-shadow: 0 0 12px rgba(160,110,20,0.3);
+    }
+
+    .puzzle-tile.selected {
+      transform: scaleX(1.02);
+      box-shadow:
+        0 0 0 2px rgba(190,150,40,0.9),
+        0 0 24px rgba(190,150,40,0.45);
+      border-color: rgba(190,150,40,0.8);
+      z-index: 2;
+      position: relative;
+    }
+
+    .puzzle-tile.solved {
+      animation: tile-solved 0.8s ease forwards;
+    }
+
+    @keyframes tile-solved {
+      0%   { box-shadow: 0 0 0 2px rgba(190,150,40,0.8); }
+      40%  { box-shadow: 0 0 40px rgba(190,150,40,1), 0 0 80px rgba(190,150,40,0.4); }
+      100% { box-shadow: 0 0 8px rgba(190,150,40,0.4); }
+    }
+
+    .puzzle-hint {
       font-family: 'Share Tech Mono', monospace;
-      font-size: 0.7rem;
+      font-size: 0.55rem;
       letter-spacing: 0.3em;
       text-transform: uppercase;
-      cursor: pointer;
-      transition: background 0.25s;
+      color: rgba(80,40,10,0.35);
+      margin-top: 0.9rem;
+      text-align: center;
     }
-    .enter-btn:hover { background: rgba(139,0,0,0.9); }
-
-    .pwd-error {
-      font-family: 'IM Fell English', serif;
-      font-style: italic;
-      font-size: 0.9rem;
-      color: #8b0000;
-      opacity: 0;
-      transition: opacity 0.35s;
-    }
-    .pwd-error.visible { opacity: 1; }
 
     /* ── COMING SOON ────────────────────────────────────── */
     #comingSoon {
@@ -303,19 +303,18 @@
     <div id="pageContent">
       <div class="page-border"></div>
       <div class="page-ornament-top">— ✦ ✦ ✦ —</div>
-      <div class="ink-inscription">Speak, Friend,<br>and Enter</div>
+      <div class="ink-inscription">Restore that which<br>was scattered</div>
       <div class="ink-rule"></div>
-      <div class="pwd-wrap">
-        <input class="pwd-input" type="password" id="pwd" placeholder="· · · · · ·" onkeydown="handleKey(event)" autocomplete="off"/>
-        <button class="enter-btn" onclick="checkPwd()">Enter</button>
-        <div class="pwd-error" id="pwdError">The door remains closed.</div>
+      <div id="puzzleWrap">
+        <!-- tiles injected by JS -->
       </div>
+      <div class="puzzle-hint">Select a piece · select another to swap</div>
     </div>
   </div>
 
   <!-- COMING SOON -->
   <div id="comingSoon">
-    <p class="cs-eyebrow">You may pass</p>
+    <p class="cs-eyebrow">The seal is whole</p>
     <h1 class="cs-title">Magus Jane Solutions</h1>
     <div class="cs-rule"></div>
     <p class="cs-sub">Coming Soon</p>
@@ -438,9 +437,8 @@
     drawMatrix();
 
     // ── SPRITE SHEET ─────────────────────────────────────────────
-    // 1536×1024 sheet, 4 cols × 2 rows, each frame 384×512
     const FRAME_W = 384, FRAME_H = 512, COLS = 4, FRAME_COUNT = 8;
-    const FRAME_MS = 160; // ms per frame — slow and cinematic
+    const FRAME_MS = 160;
 
     const spriteSheet = new Image();
     spriteSheet.src = 'images/book-spritesheet.png';
@@ -466,8 +464,8 @@
       actx.imageSmoothingEnabled = true;
       actx.imageSmoothingQuality = 'high';
 
-      aCanvas.style.display  = 'block';
-      aCanvas.style.opacity  = '0';
+      aCanvas.style.display    = 'block';
+      aCanvas.style.opacity    = '0';
       aCanvas.style.transition = 'opacity 0.4s ease';
 
       function drawFrame(idx) {
@@ -479,7 +477,6 @@
         actx.fillStyle = '#030303';
         actx.fillRect(0, 0, aCanvas.width, aCanvas.height);
 
-        // Cover-fill: fill canvas, maintain aspect, crop if needed
         const fa = FRAME_W / FRAME_H;
         const ca = aCanvas.width / aCanvas.height;
         let dw, dh, dx, dy;
@@ -507,10 +504,9 @@
           if (f < FRAME_COUNT) {
             setTimeout(tick, FRAME_MS);
           } else {
-            // Last frame is holding — fade in the password
             setTimeout(() => {
+              buildPuzzle();
               document.getElementById('pageReveal').classList.add('open');
-              setTimeout(() => document.getElementById('pwd').focus(), 900);
             }, 400);
           }
         }
@@ -518,31 +514,94 @@
       }
 
       setTimeout(() => {
-        if (spriteSheet.complete) {
-          startAnim();
-        } else {
-          spriteSheet.onload = startAnim;
-        }
+        if (spriteSheet.complete) startAnim();
+        else spriteSheet.onload = startAnim;
       }, 450);
     }
 
-    function handleKey(e) { if (e.key === 'Enter') checkPwd(); }
+    // ── PUZZLE ───────────────────────────────────────────────────
+    const TILE_COUNT = 4;
+    let selectedTile = null;
+    let solved = false;
 
-    function checkPwd() {
-      const val = document.getElementById('pwd').value.toLowerCase().trim();
-      if (val === 'mellon' || val === 'melon') {
-        document.getElementById('pwd').disabled = true;
-        setTimeout(() => document.getElementById('comingSoon').classList.add('visible'), 500);
-      } else {
-        const err   = document.getElementById('pwdError');
-        const input = document.getElementById('pwd');
-        input.value = '';
-        err.classList.add('visible');
-        input.style.transition = 'transform 0.07s';
-        ['-7px','7px','-4px','4px','0px'].forEach((x,i) =>
-          setTimeout(() => input.style.transform = `translateX(${x})`, i*70)
+    function buildPuzzle() {
+      const coverEl = document.getElementById('bookCover');
+      const DISPLAY_W = Math.min(300, window.innerWidth - 80);
+      // Cover is square (1024×1024) — each strip is DISPLAY_W × (DISPLAY_W/4)
+      const TILE_DISPLAY_H = Math.round(DISPLAY_W / TILE_COUNT);
+      const SRC_SIZE = 1024;
+      const SRC_STRIP = SRC_SIZE / TILE_COUNT; // 256px per strip
+
+      // Build shuffled order (guaranteed not in-order)
+      let order = [0, 1, 2, 3];
+      do {
+        for (let i = order.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [order[i], order[j]] = [order[j], order[i]];
+        }
+      } while (order.every((v, i) => v === i));
+
+      const wrap = document.getElementById('puzzleWrap');
+      wrap.innerHTML = '';
+
+      order.forEach(srcRow => {
+        const tile = document.createElement('canvas');
+        tile.width  = DISPLAY_W;
+        tile.height = TILE_DISPLAY_H;
+        tile.className = 'puzzle-tile';
+        tile.dataset.srcRow = srcRow;
+
+        const tc = tile.getContext('2d');
+        tc.imageSmoothingEnabled = true;
+        tc.imageSmoothingQuality = 'high';
+        tc.drawImage(
+          coverEl,
+          0, srcRow * SRC_STRIP, SRC_SIZE, SRC_STRIP,
+          0, 0, DISPLAY_W, TILE_DISPLAY_H
         );
-        setTimeout(() => err.classList.remove('visible'), 2800);
+
+        tile.addEventListener('click', () => handleTileClick(tile));
+        wrap.appendChild(tile);
+      });
+    }
+
+    function handleTileClick(tile) {
+      if (solved) return;
+
+      if (!selectedTile) {
+        selectedTile = tile;
+        tile.classList.add('selected');
+        return;
+      }
+
+      if (selectedTile === tile) {
+        tile.classList.remove('selected');
+        selectedTile = null;
+        return;
+      }
+
+      // Swap the two tiles in the DOM
+      const wrap = document.getElementById('puzzleWrap');
+      const placeholder = document.createElement('div');
+      wrap.insertBefore(placeholder, selectedTile);
+      wrap.insertBefore(selectedTile, tile);
+      wrap.insertBefore(tile, placeholder);
+      wrap.removeChild(placeholder);
+
+      selectedTile.classList.remove('selected');
+      selectedTile = null;
+
+      checkSolution();
+    }
+
+    function checkSolution() {
+      const tiles = [...document.getElementById('puzzleWrap').children];
+      if (tiles.every((t, i) => parseInt(t.dataset.srcRow) === i)) {
+        solved = true;
+        tiles.forEach((t, i) =>
+          setTimeout(() => t.classList.add('solved'), i * 120)
+        );
+        setTimeout(() => document.getElementById('comingSoon').classList.add('visible'), 1600);
       }
     }
   </script>
