@@ -3,621 +3,525 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Magus Jane — Digital Solutions</title>
+  <title>Magus Jane</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Share+Tech+Mono&family=IM+Fell+English:ital@0;1&display=swap');
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --blood: #8b0000;
-      --bone: #c8b89a;
-      --bg: #0a0a0a;
-      --surface: #111111;
-      --surface2: #161616;
-      --border: rgba(200,184,154,0.08);
-      --text: #c8c8c8;
-      --dim: #666;
-    }
-
-    html { scroll-behavior: smooth; }
-
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      font-weight: 300;
-      overflow-x: hidden;
+      background: #050505;
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    /* Grain */
-    body::before {
-      content: '';
+    /* MATRIX CANVAS */
+    #matrix {
       position: fixed;
       inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 1000;
-      opacity: 0.35;
-      mix-blend-mode: overlay;
+      z-index: 0;
     }
 
-    /* NAV */
-    nav {
+    /* Vignette */
+    .vignette {
       position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.2rem 3rem;
-      background: rgba(10,10,10,0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
+      inset: 0;
+      background: radial-gradient(ellipse at center,
+        transparent 20%,
+        rgba(5,5,5,0.5) 60%,
+        rgba(5,5,5,0.92) 100%);
+      pointer-events: none;
+      z-index: 1;
     }
 
-    .nav-logo {
-      font-family: 'UnifrakturMaguntia', cursive;
-      font-size: 1.5rem;
-      color: var(--bone);
-      text-decoration: none;
-      text-shadow: 0 0 12px rgba(139,0,0,0.4);
-      letter-spacing: 0.03em;
+    /* BOOK SCENE */
+    .scene {
+      perspective: 1400px;
+      z-index: 10;
+      position: relative;
     }
 
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 2.5rem;
-      list-style: none;
+    /* Floating wrapper — keeps flip and float separate */
+    .book-float {
+      animation: float 5s ease-in-out infinite;
     }
 
-    .nav-links a {
-      color: var(--dim);
-      text-decoration: none;
-      font-size: 0.75rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      transition: color 0.2s;
+    .book {
+      width: 260px;
+      height: 360px;
+      transform-style: preserve-3d;
+      transition: transform 1.5s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+      cursor: pointer;
+      position: relative;
     }
 
-    .nav-links a:hover { color: var(--bone); }
-
-    .nav-cta {
-      background: transparent;
-      border: 1px solid var(--blood);
-      color: var(--bone) !important;
-      padding: 0.5rem 1.2rem !important;
-      letter-spacing: 0.1em !important;
-      transition: background 0.2s, color 0.2s !important;
+    .book.open {
+      transform: rotateY(-180deg);
+      cursor: default;
     }
 
-    .nav-cta:hover {
-      background: var(--blood) !important;
-      color: #fff !important;
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px) rotateX(6deg) rotateY(-10deg);
+        filter: drop-shadow(0 40px 30px rgba(0,0,0,0.9)) drop-shadow(0 0 30px rgba(139,0,0,0.15));
+      }
+      50% {
+        transform: translateY(-22px) rotateX(3deg) rotateY(-6deg);
+        filter: drop-shadow(0 60px 40px rgba(0,0,0,0.8)) drop-shadow(0 0 40px rgba(139,0,0,0.25));
+      }
     }
 
-    /* HERO */
-    .hero {
-      min-height: 100vh;
+    .book-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    /* FRONT COVER */
+    .book-front {
+      background:
+        linear-gradient(160deg, #1c0e07 0%, #2a1408 35%, #1a0c06 60%, #120804 100%);
+      border-radius: 2px 6px 6px 2px;
+      border: 1px solid rgba(180,140,70,0.25);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      text-align: center;
-      padding: 6rem 2rem 4rem;
+      padding: 2rem 2.2rem 2rem 2.8rem;
       position: relative;
+      overflow: hidden;
+      box-shadow:
+        -12px 4px 25px rgba(0,0,0,0.9),
+        inset -4px 0 12px rgba(0,0,0,0.6),
+        inset 0 0 60px rgba(0,0,0,0.4);
     }
 
-    canvas#bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      opacity: 0.5;
+    /* Spine */
+    .book-front::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 22px;
+      background: linear-gradient(90deg, #0a0503, #1c0e07, #150a05);
+      border-right: 1px solid rgba(180,140,70,0.12);
     }
 
-    .hero-inner {
-      position: relative;
-      z-index: 2;
+    /* Inner border frame */
+    .cover-frame {
+      position: absolute;
+      inset: 14px 14px 14px 26px;
+      border: 1px solid rgba(180,140,70,0.15);
+      pointer-events: none;
     }
 
-    .hero-eyebrow {
-      font-size: 0.7rem;
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      color: var(--blood);
-      margin-bottom: 1.5rem;
-      opacity: 0;
-      animation: rise 1s ease forwards 0.3s;
+    /* Corner ornaments */
+    .cover-frame::before, .cover-frame::after {
+      content: '✦';
+      position: absolute;
+      color: rgba(180,140,70,0.3);
+      font-size: 0.5rem;
     }
+    .cover-frame::before { top: -5px; left: -5px; }
+    .cover-frame::after  { bottom: -5px; right: -5px; }
 
-    h1.hero-title {
+    .cover-title {
       font-family: 'UnifrakturMaguntia', cursive;
-      font-size: clamp(3.5rem, 11vw, 8rem);
-      color: var(--bone);
-      line-height: 1;
-      text-shadow: 0 0 30px rgba(139,0,0,0.25), 2px 2px 0 #000;
-      opacity: 0;
-      animation: rise 1.2s ease forwards 0.6s, flicker 10s infinite 6s;
-      margin-bottom: 0.3rem;
-    }
-
-    .hero-sub {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: clamp(0.75rem, 2vw, 1rem);
-      color: var(--dim);
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      opacity: 0;
-      animation: rise 1s ease forwards 1s;
-      margin-bottom: 3rem;
-    }
-
-    .hero-rule {
-      width: 1px;
-      height: 60px;
-      background: linear-gradient(to bottom, var(--blood), transparent);
-      margin: 0 auto 3rem;
-      opacity: 0;
-      animation: rise 1s ease forwards 1.2s;
-    }
-
-    .hero-tagline {
-      font-size: clamp(1.1rem, 3vw, 1.6rem);
-      font-weight: 300;
-      color: #e0e0e0;
-      max-width: 680px;
-      line-height: 1.6;
-      opacity: 0;
-      animation: rise 1s ease forwards 1.4s;
-      margin-bottom: 1.5rem;
-    }
-
-    .hero-tagline strong {
-      color: #fff;
-      font-weight: 500;
-    }
-
-    .hero-tagline em {
-      color: var(--bone);
-      font-style: normal;
-      border-bottom: 1px solid rgba(200,184,154,0.3);
-    }
-
-    .hero-sub2 {
-      font-size: 0.9rem;
-      color: var(--dim);
-      max-width: 500px;
-      line-height: 1.7;
-      opacity: 0;
-      animation: rise 1s ease forwards 1.7s;
-      margin-bottom: 3rem;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      opacity: 0;
-      animation: rise 1s ease forwards 2s;
-    }
-
-    .btn-primary {
-      background: var(--blood);
-      color: #fff;
-      border: none;
-      padding: 0.9rem 2rem;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      text-decoration: none;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-    }
-
-    .btn-primary:hover { background: #a00000; transform: translateY(-1px); }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--bone);
-      border: 1px solid var(--border);
-      padding: 0.9rem 2rem;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      text-decoration: none;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
-    }
-
-    .btn-secondary:hover { border-color: var(--bone); color: #fff; }
-
-    /* DIVIDER */
-    .section-divider {
-      width: 100%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--border), transparent);
-      margin: 0;
-    }
-
-    /* SECTIONS */
-    section {
+      font-size: 1.6rem;
+      color: rgba(200,170,100,0.85);
+      text-shadow: 0 0 12px rgba(200,170,100,0.2), 0 2px 4px rgba(0,0,0,0.8);
+      letter-spacing: 0.04em;
+      margin-bottom: 1.8rem;
       position: relative;
-      z-index: 2;
-      padding: 6rem 3rem;
-      max-width: 1100px;
-      margin: 0 auto;
+      z-index: 1;
     }
 
-    .section-label {
+    .cover-logo {
+      width: 110px;
+      height: 130px;
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 0 8px rgba(139,0,0,0.4));
+    }
+
+    .cover-hint {
       font-family: 'Share Tech Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.4em;
+      font-size: 0.45rem;
+      color: rgba(180,140,70,0.3);
+      letter-spacing: 0.35em;
       text-transform: uppercase;
-      color: var(--blood);
-      margin-bottom: 1rem;
+      margin-top: 1.8rem;
+      position: relative;
+      z-index: 1;
+      animation: pulse-hint 3s ease-in-out infinite;
     }
 
-    .section-title {
-      font-size: clamp(1.6rem, 4vw, 2.4rem);
-      font-weight: 300;
-      color: #e8e8e8;
-      line-height: 1.3;
-      margin-bottom: 1.2rem;
+    @keyframes pulse-hint {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.9; }
     }
 
-    .section-title strong { font-weight: 600; }
-
-    .section-body {
-      font-size: 1rem;
-      color: var(--dim);
-      line-height: 1.8;
-      max-width: 580px;
-    }
-
-    /* SERVICE CARDS */
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      margin-top: 4rem;
-    }
-
-    .card {
-      background: var(--surface);
-      padding: 2.5rem;
-      transition: background 0.2s;
+    /* INNER PAGE */
+    .book-back {
+      transform: rotateY(180deg);
+      border-radius: 2px 6px 6px 2px;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 28px,
+          rgba(150,100,50,0.06) 28px,
+          rgba(150,100,50,0.06) 29px
+        ),
+        linear-gradient(160deg, #f0ddb5, #e8d09a, #dfc48a, #e8d09a);
+      box-shadow:
+        inset 0 0 60px rgba(100,60,10,0.25),
+        inset -4px 0 12px rgba(100,60,10,0.15),
+        -8px 4px 20px rgba(0,0,0,0.7);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 2rem;
+      cursor: default;
       position: relative;
       overflow: hidden;
     }
 
-    .card:hover { background: var(--surface2); }
-
-    .card::before {
+    .book-back::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: var(--blood);
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.3s ease;
-    }
-
-    .card:hover::before { transform: scaleX(1); }
-
-    .card-number {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.6rem;
-      letter-spacing: 0.3em;
-      color: var(--blood);
-      margin-bottom: 1.5rem;
-    }
-
-    .card-title {
-      font-size: 1.1rem;
-      font-weight: 500;
-      color: #e0e0e0;
-      margin-bottom: 1rem;
-      line-height: 1.3;
-    }
-
-    .card-body {
-      font-size: 0.875rem;
-      color: var(--dim);
-      line-height: 1.8;
-    }
-
-    /* TWO COL */
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6rem;
-      align-items: center;
-    }
-
-    @media (max-width: 768px) {
-      .two-col { grid-template-columns: 1fr; gap: 3rem; }
-      nav { padding: 1rem 1.5rem; }
-      .nav-links { gap: 1.2rem; }
-      section { padding: 4rem 1.5rem; }
-    }
-
-    /* STAT BLOCK */
-    .stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      margin-top: 2rem;
-    }
-
-    .stat-number {
-      font-family: 'UnifrakturMaguntia', cursive;
-      font-size: 2.5rem;
-      color: var(--bone);
-      text-shadow: 0 0 15px rgba(139,0,0,0.3);
-      line-height: 1;
-      margin-bottom: 0.3rem;
-    }
-
-    .stat-label {
-      font-size: 0.75rem;
-      color: var(--dim);
-      letter-spacing: 0.1em;
-    }
-
-    /* CTA SECTION */
-    .cta-section {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--blood);
-      padding: 4rem;
-      text-align: center;
-      max-width: 1100px;
-      margin: 0 auto 6rem;
-    }
-
-    .cta-section .section-title {
-      margin-bottom: 1rem;
-    }
-
-    .cta-section .section-body {
-      margin: 0 auto 2.5rem;
-      text-align: center;
-      max-width: 500px;
-    }
-
-    /* FOOTER */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 2.5rem 3rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: relative;
-      z-index: 2;
-    }
-
-    .footer-logo {
-      font-family: 'UnifrakturMaguntia', cursive;
-      font-size: 1.2rem;
-      color: var(--bone);
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
       opacity: 0.6;
-      text-shadow: none;
+      pointer-events: none;
     }
 
-    .footer-copy {
-      font-size: 0.7rem;
-      color: #333;
-      letter-spacing: 0.1em;
+    .page-ornament {
+      font-size: 1.2rem;
+      color: rgba(80,40,10,0.4);
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.5em;
     }
 
-    .footer-contact {
+    .inner-title {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 1.25rem;
+      color: #3d1f0a;
+      text-align: center;
+      line-height: 1.5;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .inner-rule {
+      width: 80%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(100,60,10,0.4), transparent);
+      margin-bottom: 2rem;
+    }
+
+    .pwd-input {
+      background: rgba(100,60,10,0.08);
+      border: none;
+      border-bottom: 1px solid rgba(80,40,10,0.4);
+      padding: 0.5rem 1rem;
+      font-family: 'UnifrakturMaguntia', cursive;
+      font-size: 1.4rem;
+      color: #3d1f0a;
+      text-align: center;
+      width: 100%;
+      margin-bottom: 1.4rem;
+      outline: none;
+      background: transparent;
+      letter-spacing: 0.2em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pwd-input::placeholder { color: rgba(80,40,10,0.25); font-size: 1rem; }
+    .pwd-input:focus { border-bottom-color: #8b0000; }
+
+    .enter-btn {
+      background: #3d1f0a;
+      color: #f0ddb5;
+      border: none;
+      padding: 0.55rem 2.2rem;
       font-family: 'Share Tech Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--dim);
-      text-decoration: none;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .enter-btn:hover { background: #8b0000; }
+
+    .pwd-error {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 0.8rem;
+      color: #8b0000;
+      margin-top: 1rem;
       letter-spacing: 0.05em;
-      transition: color 0.2s;
+      opacity: 0;
+      transition: opacity 0.3s;
+      position: relative;
+      z-index: 1;
     }
 
-    .footer-contact:hover { color: var(--bone); }
+    .pwd-error.visible { opacity: 1; }
 
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
+    /* COMING SOON OVERLAY */
+    #coming-soon {
+      position: fixed;
+      inset: 0;
+      background: #050505;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 2s ease;
     }
 
-    @keyframes flicker {
-      0%, 94%, 100% { opacity: 1; }
-      95% { opacity: 0.5; }
-      97% { opacity: 0.15; }
-      98% { opacity: 0.9; }
+    #coming-soon.visible {
+      opacity: 1;
+      pointer-events: all;
     }
+
+    .cs-eyebrow {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: #8b0000;
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      transition: opacity 1s ease 1s;
+    }
+
+    #coming-soon.visible .cs-eyebrow { opacity: 1; }
+
+    .cs-title {
+      font-family: 'UnifrakturMaguntia', cursive;
+      font-size: clamp(2.5rem, 9vw, 6rem);
+      color: #c8b89a;
+      text-shadow:
+        0 0 30px rgba(139,0,0,0.3),
+        0 0 80px rgba(139,0,0,0.1),
+        2px 2px 0 #000;
+      line-height: 1;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 1.2s ease 0.5s, transform 1.2s ease 0.5s;
+    }
+
+    #coming-soon.visible .cs-title {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cs-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: rgba(200,184,154,0.4);
+      margin-top: 1rem;
+      opacity: 0;
+      transition: opacity 1s ease 1.5s;
+    }
+
+    #coming-soon.visible .cs-sub { opacity: 1; }
+
+    .cs-rule {
+      width: 200px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #8b0000, transparent);
+      margin: 1.2rem auto;
+      opacity: 0;
+      transition: opacity 1s ease 1.2s;
+    }
+
+    #coming-soon.visible .cs-rule { opacity: 1; }
   </style>
 </head>
 <body>
 
-  <canvas id="bg"></canvas>
+  <canvas id="matrix"></canvas>
+  <div class="vignette"></div>
 
-  <!-- NAV -->
-  <nav>
-    <a href="#" class="nav-logo">Magus Jane</a>
-    <ul class="nav-links">
-      <li><a href="#services">Services</a></li>
-      <li><a href="#approach">Approach</a></li>
-      <li><a href="#contact" class="nav-cta">Work With Us</a></li>
-    </ul>
-  </nav>
+  <!-- BOOK -->
+  <div class="scene">
+    <div class="book-float">
+      <div class="book" id="book">
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-inner">
-      <p class="hero-eyebrow">Digital Solutions</p>
-      <h1 class="hero-title">Magus Jane</h1>
-      <p class="hero-sub">Est. 2026 &nbsp;·&nbsp; Independent &nbsp;·&nbsp; Built Different</p>
-      <div class="hero-rule"></div>
-      <p class="hero-tagline">
-        The new tools are <strong>extraordinary.</strong><br>
-        Most businesses are using <em>none of them.</em>
-      </p>
-      <p class="hero-sub2">
-        We get your people from zero to operational —
-        or we handle the whole thing ourselves.
-        Either way, you move forward.
-      </p>
-      <div class="hero-actions">
-        <a href="#contact" class="btn-primary">Start the Conversation</a>
-        <a href="#services" class="btn-secondary">See What We Do</a>
+        <!-- FRONT COVER -->
+        <div class="book-face book-front" onclick="openBook()">
+          <div class="cover-frame"></div>
+          <div class="cover-title">Magus Jane</div>
+
+          <!-- Hand logo -->
+          <svg class="cover-logo" viewBox="0 0 110 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <mask id="handMask">
+                <rect width="110" height="130" fill="white"/>
+                <polygon points="55,54 64,59 64,70 55,75 46,70 46,59" fill="black"/>
+              </mask>
+            </defs>
+            <rect x="28" y="62" width="54" height="44" rx="8" fill="rgba(200,180,150,0.9)" mask="url(#handMask)"/>
+            <rect x="15" y="70" width="19" height="27" rx="9" fill="rgba(200,180,150,0.9)"/>
+            <rect x="30" y="22" width="14" height="48" rx="7" fill="rgba(200,180,150,0.9)" mask="url(#handMask)"/>
+            <rect x="47" y="16" width="14" height="52" rx="7" fill="rgba(200,180,150,0.9)" mask="url(#handMask)"/>
+            <rect x="64" y="23" width="13" height="47" rx="7" fill="rgba(200,180,150,0.9)" mask="url(#handMask)"/>
+            <rect x="79" y="33" width="11" height="39" rx="6" fill="rgba(200,180,150,0.9)" mask="url(#handMask)"/>
+            <polygon points="55,54 64,59 64,70 55,75 46,70 46,59"
+              fill="none" stroke="rgba(200,180,150,0.25)" stroke-width="0.8"/>
+            <text x="55" y="71"
+              font-family="Georgia, serif"
+              font-size="13"
+              font-style="italic"
+              fill="#8b0000"
+              text-anchor="middle">j</text>
+          </svg>
+
+          <div class="cover-hint">Open the Book</div>
+        </div>
+
+        <!-- INNER PAGE -->
+        <div class="book-face book-back">
+          <div class="page-ornament">— ✦ —</div>
+          <div class="inner-title">
+            Speak, Friend,<br>and Enter
+          </div>
+          <div class="inner-rule"></div>
+          <input
+            class="pwd-input"
+            type="password"
+            id="pwd"
+            placeholder="· · · · · ·"
+            onkeydown="handleKey(event)"
+            autocomplete="off"
+          />
+          <button class="enter-btn" onclick="checkPwd()">Enter</button>
+          <div class="pwd-error" id="pwd-error">The door remains closed.</div>
+        </div>
+
       </div>
     </div>
   </div>
 
-  <div class="section-divider"></div>
-
-  <!-- SERVICES -->
-  <section id="services">
-    <p class="section-label">What We Do</p>
-    <h2 class="section-title">Two ways to work with us.<br><strong>One outcome.</strong></h2>
-    <p class="section-body">
-      Some clients want to understand the tools and own the process.
-      Others want results without the learning curve.
-      We built Magus Jane to serve both.
-    </p>
-
-    <div class="cards">
-      <div class="card">
-        <p class="card-number">01 — Train</p>
-        <h3 class="card-title">AI Onboarding & Team Enablement</h3>
-        <p class="card-body">
-          We take your contractors and staff from zero to confident — hands-on, practical, and built around the tools that matter to your business. No theory. No wasted time.
-        </p>
-      </div>
-      <div class="card">
-        <p class="card-number">02 — Build</p>
-        <h3 class="card-title">Done-For-You Digital</h3>
-        <p class="card-body">
-          Don't want to learn the tools — you want the output. We design, build, and deploy your digital presence, workflows, and AI integrations. You show up to the result.
-        </p>
-      </div>
-      <div class="card">
-        <p class="card-number">03 — Advise</p>
-        <h3 class="card-title">Strategy & Integration</h3>
-        <p class="card-body">
-          Already moving but not sure what's next? We map the tools, systems, and workflows that fit your operation — and cut everything that doesn't.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <div class="section-divider"></div>
-
-  <!-- APPROACH -->
-  <section id="approach">
-    <div class="two-col">
-      <div>
-        <p class="section-label">Our Approach</p>
-        <h2 class="section-title">The other <strong>20%.</strong></h2>
-        <p class="section-body">
-          New tools have made the first 80% of digital work fast and cheap.
-          Anyone can spin up a website. Anyone can run a basic chatbot.
-          <br><br>
-          The gap between that and something that actually works — that's where we live.
-          Precision, craft, and the judgment to know the difference.
-        </p>
-      </div>
-      <div class="stats">
-        <div>
-          <div class="stat-number">AI</div>
-          <div class="stat-label">Native workflows, not retrofitted</div>
-        </div>
-        <div>
-          <div class="stat-number">0→1</div>
-          <div class="stat-label">Full onboarding, start to finish</div>
-        </div>
-        <div>
-          <div class="stat-number">No</div>
-          <div class="stat-label">Templates. Everything is built for you.</div>
-        </div>
-        <div>
-          <div class="stat-number">Yes</div>
-          <div class="stat-label">We can just handle it. No questions asked.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="section-divider"></div>
-
-  <!-- CTA -->
-  <div class="cta-section" id="contact">
-    <p class="section-label">Get In Touch</p>
-    <h2 class="section-title">Ready to stop leaving<br><strong>capability on the table?</strong></h2>
-    <p class="section-body">
-      Whether you need a full team trained, a system built,
-      or just a straight answer about where to start —
-      we're worth a conversation.
-    </p>
-    <a href="mailto:hello@magusjane.com" class="btn-primary">hello@magusjane.com</a>
+  <!-- COMING SOON -->
+  <div id="coming-soon">
+    <p class="cs-eyebrow">You may pass</p>
+    <h1 class="cs-title">Magus Jane Solutions</h1>
+    <div class="cs-rule"></div>
+    <p class="cs-sub">Coming Soon</p>
   </div>
-
-  <!-- FOOTER -->
-  <footer>
-    <span class="footer-logo">Magus Jane</span>
-    <span class="footer-copy">© 2026 Magus Jane Digital Solutions</span>
-    <a href="mailto:hello@magusjane.com" class="footer-contact">hello@magusjane.com</a>
-  </footer>
 
   <script>
-    // Subtle particle background
-    const canvas = document.getElementById('bg');
+    // ── MATRIX RAIN ─────────────────────────────────────────────
+    const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
-    let W, H, particles = [];
 
-    function resize() {
+    // Tolkien-language characters: Runic (Cirth) + Elder Futhark
+    const tolkienChars =
+      'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟᚫᚩᚪᛝᛡᛥᚴᛔᛕᚵᚶᚳᚻᚼᚽᚿᛀᛂᛄᛅᛆᛋᛌᛍᛎᛐᛑᛓᚡᚣᚤᚥᚧᚭᚮᚯᚰᛤᛦᛧᛨᛩᛪ';
+
+    let W, H, drops, fontSize = 18;
+
+    function initMatrix() {
       W = canvas.width = window.innerWidth;
       H = canvas.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    class Particle {
-      constructor() { this.reset(); }
-      reset() {
-        this.x = Math.random() * W;
-        this.y = Math.random() * H;
-        this.size = Math.random() * 1.5 + 0.3;
-        this.speedY = -(Math.random() * 0.3 + 0.05);
-        this.opacity = Math.random() * 0.25 + 0.02;
-        this.life = 1;
-        this.decay = Math.random() * 0.001 + 0.0003;
-      }
-      update() {
-        this.y += this.speedY;
-        this.life -= this.decay;
-        if (this.life <= 0 || this.y < -10) this.reset();
-      }
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(139,0,0,${this.opacity * this.life})`;
-        ctx.fill();
-      }
+      const cols = Math.floor(W / fontSize);
+      drops = Array.from({ length: cols }, () => Math.random() * -(H / fontSize));
     }
 
-    for (let i = 0; i < 120; i++) particles.push(new Particle());
+    initMatrix();
+    window.addEventListener('resize', initMatrix);
 
-    function animate() {
-      ctx.clearRect(0, 0, W, H);
-      particles.forEach(p => { p.update(); p.draw(); });
-      requestAnimationFrame(animate);
+    function drawMatrix() {
+      // Fade trail
+      ctx.fillStyle = 'rgba(5,5,5,0.045)';
+      ctx.fillRect(0, 0, W, H);
+
+      drops.forEach((y, i) => {
+        const char = tolkienChars[Math.floor(Math.random() * tolkienChars.length)];
+        const x = i * fontSize;
+        const yPx = y * fontSize;
+
+        // Occasional bright amber "head" character
+        const isHead = Math.random() > 0.96;
+        if (isHead) {
+          ctx.fillStyle = 'rgba(210,175,90,0.7)';
+        } else {
+          const fade = Math.random() * 0.18 + 0.02;
+          ctx.fillStyle = `rgba(120,0,0,${fade})`;
+        }
+
+        ctx.font = `${fontSize}px serif`;
+        ctx.fillText(char, x, yPx);
+
+        // Reset drop
+        if (yPx > H && Math.random() > 0.978) drops[i] = 0;
+        drops[i] += Math.random() * 0.4 + 0.3;
+      });
     }
-    animate();
+
+    const matrixInterval = setInterval(drawMatrix, 45);
+
+    // ── BOOK INTERACTION ────────────────────────────────────────
+    let isOpen = false;
+
+    function openBook() {
+      if (isOpen) return;
+      isOpen = true;
+      const book = document.getElementById('book');
+      book.classList.add('open');
+      // Focus password field after flip completes
+      setTimeout(() => {
+        document.getElementById('pwd').focus();
+      }, 1600);
+    }
+
+    function handleKey(e) {
+      if (e.key === 'Enter') checkPwd();
+    }
+
+    function checkPwd() {
+      const val = document.getElementById('pwd').value.toLowerCase().trim();
+      if (val === 'mellon' || val === 'melon') {
+        // Correct — dissolve to coming soon
+        document.getElementById('pwd').disabled = true;
+        clearInterval(matrixInterval);
+        setTimeout(() => {
+          document.getElementById('coming-soon').classList.add('visible');
+        }, 400);
+      } else {
+        // Wrong
+        const err = document.getElementById('pwd-error');
+        document.getElementById('pwd').value = '';
+        err.classList.add('visible');
+        // Shake input
+        const input = document.getElementById('pwd');
+        input.style.transition = 'transform 0.08s';
+        input.style.transform = 'translateX(-6px)';
+        setTimeout(() => { input.style.transform = 'translateX(6px)'; }, 80);
+        setTimeout(() => { input.style.transform = 'translateX(0)'; }, 160);
+        setTimeout(() => err.classList.remove('visible'), 2500);
+      }
+    }
   </script>
 
 </body>
