@@ -22,246 +22,198 @@
       position: fixed;
       inset: 0;
       z-index: 0;
+      transition: opacity 2s ease;
     }
 
     .vignette {
       position: fixed;
       inset: 0;
       background: radial-gradient(ellipse at center,
-        transparent 15%,
-        rgba(3,3,3,0.4) 55%,
-        rgba(3,3,3,0.88) 100%);
+        transparent 15%, rgba(3,3,3,0.45) 55%, rgba(3,3,3,0.9) 100%);
       pointer-events: none;
       z-index: 1;
+      transition: opacity 2s ease;
     }
 
-    /* SCENE */
+    /* ── BOOK ───────────────────────────────────────────── */
     .scene {
-      perspective: 1400px;
       z-index: 10;
       position: relative;
+      perspective: 1200px;
     }
 
-    /* Book — stationary, slight static tilt for dimension */
-    .book {
-      width: 260px;
-      height: 360px;
-      transform-style: preserve-3d;
-      transform: rotateX(4deg) rotateY(-6deg);
-      transition: transform 1.5s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+    #bookCover {
+      width: 300px;
+      height: 300px;
+      object-fit: cover;
       cursor: pointer;
-      position: relative;
+      display: block;
+      border-radius: 4px;
+      transform: rotateX(5deg) rotateY(-8deg);
+      transition: transform 0.4s ease, filter 0.4s ease, opacity 0.35s ease;
       filter:
-        drop-shadow(0 60px 50px rgba(0,0,0,0.95))
-        drop-shadow(0 0 50px rgba(100,0,0,0.15));
+        drop-shadow(-14px 8px 30px rgba(0,0,0,0.95))
+        drop-shadow(0 50px 55px rgba(0,0,0,0.85))
+        drop-shadow(0 0 50px rgba(80,0,0,0.18));
     }
 
-    .book.open {
-      transform: rotateX(4deg) rotateY(-186deg);
-      cursor: default;
+    #bookCover:hover {
+      transform: rotateX(4deg) rotateY(-6deg);
+      filter:
+        drop-shadow(-14px 8px 30px rgba(0,0,0,0.95))
+        drop-shadow(0 50px 55px rgba(0,0,0,0.85))
+        drop-shadow(0 0 80px rgba(120,0,0,0.35));
     }
 
-    .book-face {
-      position: absolute;
+    /* ── DARK OVERLAY ───────────────────────────────────── */
+    #darkOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0);
+      z-index: 20;
+      pointer-events: none;
+      transition: background 1.4s ease;
+    }
+    #darkOverlay.active { background: rgba(0,0,0,0.82); }
+
+    /* ── ANIMATION CANVAS ───────────────────────────────── */
+    #animCanvas {
+      position: fixed;
+      inset: 0;
       width: 100%;
       height: 100%;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
+      z-index: 30;
+      display: none;
     }
 
-    /* FRONT COVER */
-    .book-front {
-      background: linear-gradient(160deg, #1c0e07 0%, #2a1408 35%, #1a0c06 60%, #120804 100%);
-      border-radius: 2px 6px 6px 2px;
-      border: 1px solid rgba(180,140,70,0.2);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 2.2rem 2rem 2.8rem;
-      position: relative;
-      overflow: hidden;
-      box-shadow:
-        -14px 6px 28px rgba(0,0,0,0.95),
-        inset -4px 0 14px rgba(0,0,0,0.7),
-        inset 0 0 80px rgba(0,0,0,0.5);
-    }
-
-    /* Spine */
-    .book-front::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 22px;
-      background: linear-gradient(90deg, #080402, #1c0e07, #150a05);
-      border-right: 1px solid rgba(180,140,70,0.1);
-    }
-
-    .cover-frame {
-      position: absolute;
-      inset: 14px 14px 14px 26px;
-      border: 1px solid rgba(180,140,70,0.12);
+    /* ── PAGE REVEAL ────────────────────────────────────── */
+    #pageReveal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      opacity: 0;
       pointer-events: none;
+      transition: opacity 1s ease;
+    }
+    #pageReveal.open {
+      opacity: 1;
+      pointer-events: all;
     }
 
-    .cover-frame::before, .cover-frame::after {
-      content: '✦';
-      position: absolute;
-      color: rgba(180,140,70,0.25);
-      font-size: 0.5rem;
-    }
-    .cover-frame::before { top: -5px; left: -5px; }
-    .cover-frame::after  { bottom: -5px; right: -5px; }
-
-    .cover-title {
-      font-family: 'UnifrakturMaguntia', cursive;
-      font-size: 1.5rem;
-      color: rgba(200,170,100,0.8);
-      text-shadow: 0 0 12px rgba(200,170,100,0.15), 0 2px 4px rgba(0,0,0,0.9);
-      letter-spacing: 0.04em;
-      margin-bottom: 1.6rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    .cover-logo {
-      width: 110px;
-      height: 130px;
-      position: relative;
-      z-index: 1;
-      filter: drop-shadow(0 0 10px rgba(100,0,0,0.5));
-    }
-
-    .cover-hint {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.42rem;
-      color: rgba(180,140,70,0.28);
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      margin-top: 1.6rem;
-      position: relative;
-      z-index: 1;
-      animation: pulse-hint 3s ease-in-out infinite;
-    }
-
-    @keyframes pulse-hint {
-      0%, 100% { opacity: 0.3; }
-      50%       { opacity: 1;   }
-    }
-
-    /* INNER PAGE */
-    .book-back {
-      transform: rotateY(180deg);
-      border-radius: 2px 6px 6px 2px;
-      background:
-        repeating-linear-gradient(
-          0deg,
-          transparent, transparent 27px,
-          rgba(130,80,30,0.07) 27px, rgba(130,80,30,0.07) 28px
-        ),
-        linear-gradient(160deg, #f0ddb5, #e8d09a, #dfc48a, #e8d09a);
-      box-shadow:
-        inset 0 0 60px rgba(100,60,10,0.2),
-        inset -4px 0 12px rgba(100,60,10,0.12),
-        -8px 4px 20px rgba(0,0,0,0.7);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2.5rem 2rem;
-      cursor: default;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .book-back::before {
-      content: '';
+    /* ── PAGE CONTENT ───────────────────────────────────── */
+    #pageContent {
       position: absolute;
       inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
-      opacity: 0.7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      z-index: 1;
+    }
+
+    .page-border {
+      position: absolute;
+      inset: clamp(20px, 4vw, 50px);
+      border: 1px solid rgba(80,40,10,0.25);
       pointer-events: none;
     }
+    .page-border::before { content:'✦'; position:absolute; top:-7px; left:-7px; color:rgba(80,40,10,0.4); font-size:0.7rem; }
+    .page-border::after  { content:'✦'; position:absolute; bottom:-7px; right:-7px; color:rgba(80,40,10,0.4); font-size:0.7rem; }
 
-    .page-ornament {
-      font-size: 1.1rem;
-      color: rgba(80,40,10,0.35);
-      margin-bottom: 0.8rem;
-      letter-spacing: 0.4em;
-      position: relative;
-      z-index: 1;
+    .page-ornament-top {
+      font-family: 'IM Fell English', serif;
+      font-size: clamp(0.7rem, 1.5vw, 1rem);
+      color: rgba(80,40,10,0.45);
+      letter-spacing: 0.6em;
+      margin-bottom: clamp(1rem, 3vh, 2rem);
     }
 
-    .inner-title {
+    .ink-inscription {
       font-family: 'IM Fell English', serif;
       font-style: italic;
-      font-size: 1.2rem;
-      color: #3d1f0a;
+      font-size: clamp(1.6rem, 5vw, 3.2rem);
+      color: #2a1005;
       text-align: center;
-      line-height: 1.55;
-      margin-bottom: 1.8rem;
-      position: relative;
-      z-index: 1;
+      line-height: 1.45;
+      letter-spacing: 0.02em;
+      margin-bottom: clamp(1.5rem, 4vh, 3rem);
+      filter: url(#inkBleed);
+      text-shadow:
+        0 0 1px rgba(20,8,0,0.9),
+        1px 1px 3px rgba(20,8,0,0.3),
+        -1px 0 2px rgba(20,8,0,0.2);
     }
 
-    .inner-rule {
-      width: 75%;
+    .ink-rule {
+      width: min(400px, 70vw);
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(100,60,10,0.35), transparent);
-      margin-bottom: 1.8rem;
+      background: linear-gradient(90deg, transparent, rgba(80,40,10,0.4), transparent);
+      margin-bottom: clamp(1.5rem, 4vh, 3rem);
+      position: relative;
+    }
+    .ink-rule::before {
+      content: '⬥';
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      color: rgba(80,40,10,0.3);
+      font-size: 0.55rem;
+    }
+
+    .pwd-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.2rem;
+      width: min(320px, 80vw);
     }
 
     .pwd-input {
       background: transparent;
       border: none;
-      border-bottom: 1px solid rgba(80,40,10,0.35);
-      padding: 0.5rem 1rem;
-      font-family: 'UnifrakturMaguntia', cursive;
-      font-size: 1.4rem;
-      color: #3d1f0a;
+      border-bottom: 1px solid rgba(60,30,5,0.5);
+      padding: 0.6rem 0.5rem;
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: clamp(1.2rem, 3vw, 1.6rem);
+      color: #2a1005;
       text-align: center;
       width: 100%;
-      margin-bottom: 1.4rem;
       outline: none;
-      letter-spacing: 0.2em;
-      position: relative;
-      z-index: 1;
+      letter-spacing: 0.25em;
+      caret-color: #8b0000;
+      filter: url(#inkBleed);
     }
-
-    .pwd-input::placeholder { color: rgba(80,40,10,0.22); font-size: 1rem; }
-    .pwd-input:focus { border-bottom-color: #8b0000; }
+    .pwd-input::placeholder { color: rgba(60,30,5,0.25); font-size: 1rem; letter-spacing: 0.4em; font-style: normal; }
+    .pwd-input:focus { border-bottom-color: rgba(100,0,0,0.65); }
 
     .enter-btn {
-      background: #3d1f0a;
+      background: rgba(42,16,5,0.85);
       color: #f0ddb5;
       border: none;
-      padding: 0.55rem 2.2rem;
+      padding: 0.65rem 2.5rem;
       font-family: 'Share Tech Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.25em;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
       cursor: pointer;
-      transition: background 0.2s;
-      position: relative;
-      z-index: 1;
+      transition: background 0.25s;
     }
-    .enter-btn:hover { background: #8b0000; }
+    .enter-btn:hover { background: rgba(139,0,0,0.9); }
 
     .pwd-error {
       font-family: 'IM Fell English', serif;
       font-style: italic;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       color: #8b0000;
-      margin-top: 1rem;
       opacity: 0;
-      transition: opacity 0.3s;
-      position: relative;
-      z-index: 1;
+      transition: opacity 0.35s;
     }
     .pwd-error.visible { opacity: 1; }
 
-    /* COMING SOON */
-    #coming-soon {
+    /* ── COMING SOON ────────────────────────────────────── */
+    #comingSoon {
       position: fixed;
       inset: 0;
       background: #030303;
@@ -272,9 +224,9 @@
       z-index: 200;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 2s ease;
+      transition: opacity 2.5s ease;
     }
-    #coming-soon.visible { opacity: 1; pointer-events: all; }
+    #comingSoon.visible { opacity: 1; pointer-events: all; }
 
     .cs-eyebrow {
       font-family: 'Share Tech Mono', monospace;
@@ -286,7 +238,7 @@
       opacity: 0;
       transition: opacity 1s ease 1s;
     }
-    #coming-soon.visible .cs-eyebrow { opacity: 1; }
+    #comingSoon.visible .cs-eyebrow { opacity: 1; }
 
     .cs-title {
       font-family: 'UnifrakturMaguntia', cursive;
@@ -298,17 +250,16 @@
       transform: translateY(10px);
       transition: opacity 1.2s ease 0.5s, transform 1.2s ease 0.5s;
     }
-    #coming-soon.visible .cs-title { opacity: 1; transform: translateY(0); }
+    #comingSoon.visible .cs-title { opacity: 1; transform: translateY(0); }
 
     .cs-rule {
-      width: 200px;
-      height: 1px;
+      width: 200px; height: 1px;
       background: linear-gradient(90deg, transparent, #8b0000, transparent);
       margin: 1.2rem auto;
       opacity: 0;
       transition: opacity 1s ease 1.2s;
     }
-    #coming-soon.visible .cs-rule { opacity: 1; }
+    #comingSoon.visible .cs-rule { opacity: 1; }
 
     .cs-sub {
       font-family: 'Share Tech Mono', monospace;
@@ -319,52 +270,51 @@
       opacity: 0;
       transition: opacity 1s ease 1.5s;
     }
-    #coming-soon.visible .cs-sub { opacity: 1; }
+    #comingSoon.visible .cs-sub { opacity: 1; }
   </style>
 </head>
 <body>
 
+  <!-- Ink bleed SVG filter -->
+  <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="inkBleed" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.04 0.04" numOctaves="3" result="noise" seed="7"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.8" xChannelSelector="R" yChannelSelector="G" result="d"/>
+        <feGaussianBlur in="d" stdDeviation="0.25"/>
+      </filter>
+    </defs>
+  </svg>
+
   <canvas id="matrix"></canvas>
-  <div class="vignette"></div>
+  <div class="vignette" id="vignette"></div>
+  <div id="darkOverlay"></div>
 
+  <!-- BOOK -->
   <div class="scene">
-    <div class="book" id="book">
+    <img id="bookCover" src="images/cover.png" alt="Magus Jane" onclick="openBook()" />
+  </div>
 
-      <div class="book-face book-front" onclick="openBook()">
-        <div class="cover-frame"></div>
-        <div class="cover-title">Magus Jane</div>
-        <svg class="cover-logo" viewBox="0 0 110 130" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <mask id="hm">
-              <rect width="110" height="130" fill="white"/>
-              <polygon points="55,54 64,59 64,70 55,75 46,70 46,59" fill="black"/>
-            </mask>
-          </defs>
-          <rect x="28" y="62" width="54" height="44" rx="8" fill="rgba(200,180,150,0.9)" mask="url(#hm)"/>
-          <rect x="15" y="70" width="19" height="27" rx="9" fill="rgba(200,180,150,0.9)"/>
-          <rect x="30" y="22" width="14" height="48" rx="7" fill="rgba(200,180,150,0.9)" mask="url(#hm)"/>
-          <rect x="47" y="16" width="14" height="52" rx="7" fill="rgba(200,180,150,0.9)" mask="url(#hm)"/>
-          <rect x="64" y="23" width="13" height="47" rx="7" fill="rgba(200,180,150,0.9)" mask="url(#hm)"/>
-          <rect x="79" y="33" width="11" height="39" rx="6" fill="rgba(200,180,150,0.9)" mask="url(#hm)"/>
-          <polygon points="55,54 64,59 64,70 55,75 46,70 46,59" fill="none" stroke="rgba(200,180,150,0.2)" stroke-width="0.8"/>
-          <text x="55" y="71" font-family="Georgia,serif" font-size="13" font-style="italic" fill="#8b0000" text-anchor="middle">j</text>
-        </svg>
-        <div class="cover-hint">Open the Book</div>
-      </div>
+  <!-- ANIMATION CANVAS -->
+  <canvas id="animCanvas"></canvas>
 
-      <div class="book-face book-back">
-        <div class="page-ornament">— ✦ —</div>
-        <div class="inner-title">Speak, Friend,<br>and Enter</div>
-        <div class="inner-rule"></div>
+  <!-- PAGE REVEAL -->
+  <div id="pageReveal">
+    <div id="pageContent">
+      <div class="page-border"></div>
+      <div class="page-ornament-top">— ✦ ✦ ✦ —</div>
+      <div class="ink-inscription">Speak, Friend,<br>and Enter</div>
+      <div class="ink-rule"></div>
+      <div class="pwd-wrap">
         <input class="pwd-input" type="password" id="pwd" placeholder="· · · · · ·" onkeydown="handleKey(event)" autocomplete="off"/>
         <button class="enter-btn" onclick="checkPwd()">Enter</button>
-        <div class="pwd-error" id="pwd-error">The door remains closed.</div>
+        <div class="pwd-error" id="pwdError">The door remains closed.</div>
       </div>
-
     </div>
   </div>
 
-  <div id="coming-soon">
+  <!-- COMING SOON -->
+  <div id="comingSoon">
     <p class="cs-eyebrow">You may pass</p>
     <h1 class="cs-title">Magus Jane Solutions</h1>
     <div class="cs-rule"></div>
@@ -372,208 +322,208 @@
   </div>
 
   <script>
-    const canvas = document.getElementById('matrix');
-    const ctx    = canvas.getContext('2d');
+    // ── MATRIX RAIN ──────────────────────────────────────────────
+    const CIRTH     = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟᚫᚩᚪᛝᛡᛥᚴᛔᛕ';
+    const TENGWAR   = 'කඛගඝඤජඣනටඨදධපඵබභමයරලවශෂසහළඅආඇඈඉඊඋඌඑඒඓ';
+    const BS_TOKENS = ['ash','nazg','durb','ulûk','gimb','atul','thraka','agh','burzum','ishi','krimp','û','k'];
+    const RING_TEXT = '  ash nazg durbatulûk · ash nazg gimbatul · ash nazg thrakatulûk agh burzum-ishi krimpatul  ';
+    const TYPE_CIRTH = 0, TYPE_TENGWAR = 1, TYPE_BS = 2;
 
-    // ── CHARACTER SETS ───────────────────────────────────────────
-    // Cirth (Tolkien's runic script — actual Runic Unicode block)
-    const CIRTH = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟᚫᚩᚪᛝᛡᛥᚴᛔᛕ';
+    const matrixCanvas = document.getElementById('matrix');
+    const ctx = matrixCanvas.getContext('2d');
+    let W, H, columns = [], frame = 0;
 
-    // Tengwar approximation — Sinhala script has near-identical bow+stem structure
-    const TENGWAR = 'කඛගඝඤජඣญटठडढෆලවශෂසහළඅආඇඈඉඊඋඌඑඒඓඔඕ';
-
-    // Black Speech — the One Ring inscription broken into tokens
-    const BLACK_SPEECH_TOKENS = [
-      'ash','nazg','durb','ulûk','gimb','atul',
-      'thraka','agh','burzum','ishi','krimp','û','k'
-    ];
-
-    // One Ring inscription for the horizontal band
-    const RING_INSCRIPTION =
-      '  ash nazg durbatulûk · ash nazg gimbatul · ash nazg thrakatulûk agh burzum-ishi krimpatul  ';
-
-    // ── COLUMN TYPES ─────────────────────────────────────────────
-    const TYPE_CIRTH      = 0; // crimson,     fast
-    const TYPE_TENGWAR    = 1; // amber,        slow
-    const TYPE_BLACKSPEECH= 2; // sickly green, erratic
-
-    // ── STATE ────────────────────────────────────────────────────
-    let W, H, cols, columns = [], frame = 0;
-    let ringX = 0; // scrolling inscription offset
-
-    function randInt(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+    function rand(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
 
     function initCols() {
-      W = canvas.width  = window.innerWidth;
-      H = canvas.height = window.innerHeight;
-
-      const baseFontSize = 16;
-      const colCount     = Math.floor(W / baseFontSize);
+      W = matrixCanvas.width  = window.innerWidth;
+      H = matrixCanvas.height = window.innerHeight;
+      const base = 16, count = Math.floor(W / base);
       columns = [];
-
-      for (let i = 0; i < colCount; i++) {
-        // Assign type: 50% Cirth, 30% Tengwar, 20% Black Speech
-        const r = Math.random();
-        const type = r < 0.50 ? TYPE_CIRTH
-                   : r < 0.80 ? TYPE_TENGWAR
-                   :             TYPE_BLACKSPEECH;
-
-        // Depth layer: 0=far(small/dim), 1=mid, 2=near(large/bright)
-        const dr = Math.random();
+      for (let i = 0; i < count; i++) {
+        const r    = Math.random();
+        const type = r < 0.50 ? TYPE_CIRTH : r < 0.80 ? TYPE_TENGWAR : TYPE_BS;
+        const dr   = Math.random();
         const depth = dr < 0.40 ? 0 : dr < 0.80 ? 1 : 2;
-
-        const sizeMultiplier = [0.55, 1.0, 1.55][depth];
-        const fontSize       = Math.round(baseFontSize * sizeMultiplier);
-
-        // Speed: Cirth fast, Tengwar slow, Black Speech erratic
+        const size  = Math.round(base * [0.55, 1.0, 1.5][depth]);
         let speed;
-        if (type === TYPE_CIRTH)       speed = Math.random() * 0.5 + 0.55;
-        else if (type === TYPE_TENGWAR) speed = Math.random() * 0.2 + 0.15;
-        else                           speed = Math.random() * 1.2 + 0.1; // erratic base
-
+        if      (type === TYPE_CIRTH)   speed = Math.random() * 0.5  + 0.55;
+        else if (type === TYPE_TENGWAR) speed = Math.random() * 0.2  + 0.15;
+        else                            speed = Math.random() * 0.8  + 0.1;
         columns.push({
-          x: i * baseFontSize,
-          y: Math.random() * -(H / fontSize) * 2, // stagger start
-          type,
-          depth,
-          fontSize,
-          speed,
-          bsIndex: 0, // for black speech token cycling
-          bsCharIdx: 0,
-          bsCurrentWord: BLACK_SPEECH_TOKENS[0],
+          x: i * base, y: Math.random() * -(H / size) * 2,
+          type, depth, size, speed,
+          bsIdx: 0, bsCharIdx: 0, bsWord: BS_TOKENS[0],
         });
       }
-
-      ringX = W; // inscription starts off right edge
     }
 
     initCols();
     window.addEventListener('resize', initCols);
 
-    // ── DRAW FRAME ───────────────────────────────────────────────
-    function draw() {
-      // Fade trail — heavier fade = shorter tail
-      ctx.fillStyle = 'rgba(3,3,3,0.055)';
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(3,3,3,0.052)';
       ctx.fillRect(0, 0, W, H);
 
-      // ── Book glow ──────────────────────────────────────────────
-      const cx     = W / 2;
-      const cy     = H / 2;
-      const pulse  = 180 + Math.sin(frame * 0.018) * 40;
-      const glow   = ctx.createRadialGradient(cx, cy, 0, cx, cy, pulse);
-      glow.addColorStop(0,   'rgba(100,0,0,0.13)');
-      glow.addColorStop(0.5, 'rgba(60,0,0,0.06)');
-      glow.addColorStop(1,   'rgba(0,0,0,0)');
-      ctx.fillStyle = glow;
+      const cx = W/2, cy = H/2;
+      const gr = ctx.createRadialGradient(cx, cy, 0, cx, cy, 190 + Math.sin(frame*0.018)*40);
+      gr.addColorStop(0,   'rgba(100,0,0,0.12)');
+      gr.addColorStop(0.5, 'rgba(50,0,0,0.05)');
+      gr.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.fillStyle = gr;
       ctx.fillRect(0, 0, W, H);
 
-      // ── Columns ───────────────────────────────────────────────
       columns.forEach(col => {
         let char;
+        if      (col.type === TYPE_CIRTH)   char = CIRTH[rand(0, CIRTH.length-1)];
+        else if (col.type === TYPE_TENGWAR) char = TENGWAR[rand(0, TENGWAR.length-1)];
+        else                                char = col.bsWord[col.bsCharIdx % col.bsWord.length];
 
-        if (col.type === TYPE_CIRTH) {
-          char = CIRTH[randInt(0, CIRTH.length - 1)];
-        } else if (col.type === TYPE_TENGWAR) {
-          char = TENGWAR[randInt(0, TENGWAR.length - 1)];
-        } else {
-          // Black Speech: cycle through word characters
-          const word = col.bsCurrentWord;
-          char = word[col.bsCharIdx % word.length];
-        }
-
-        const yPx = col.y * col.fontSize;
-
-        // Base opacity scales with depth
-        const baseOpacity = [0.07, 0.14, 0.28][col.depth];
-
-        // Color per type
-        let r, g, b, headColor;
-        if (col.type === TYPE_CIRTH) {
-          r = 139; g = 0;   b = 0;
-          headColor = `rgba(220,160,80,0.8)`;
-        } else if (col.type === TYPE_TENGWAR) {
-          r = 170; g = 120; b = 20;
-          headColor = `rgba(240,210,100,0.85)`;
-        } else {
-          r = 55;  g = 90;  b = 20;
-          headColor = `rgba(120,180,40,0.7)`;
-        }
-
+        const yPx    = col.y * col.size;
+        const base   = [0.07, 0.14, 0.27][col.depth];
         const isHead = Math.random() > 0.94;
-        if (isHead) {
-          ctx.fillStyle = headColor;
-        } else {
-          const o = baseOpacity + Math.random() * baseOpacity;
-          ctx.fillStyle = `rgba(${r},${g},${b},${o})`;
-        }
 
-        ctx.font = `${col.fontSize}px serif`;
+        if      (col.type === TYPE_CIRTH   && isHead) ctx.fillStyle = 'rgba(220,160,80,0.8)';
+        else if (col.type === TYPE_TENGWAR && isHead) ctx.fillStyle = 'rgba(240,210,100,0.85)';
+        else if (col.type === TYPE_BS      && isHead) ctx.fillStyle = 'rgba(130,190,50,0.7)';
+        else if (col.type === TYPE_CIRTH)              ctx.fillStyle = `rgba(139,0,0,${base+Math.random()*base})`;
+        else if (col.type === TYPE_TENGWAR)            ctx.fillStyle = `rgba(170,120,20,${base+Math.random()*base})`;
+        else                                           ctx.fillStyle = `rgba(55,90,20,${base+Math.random()*base})`;
+
+        ctx.font = `${col.size}px serif`;
         ctx.fillText(char, col.x, yPx);
 
-        // Advance position
         let step = col.speed;
-        if (col.type === TYPE_BLACKSPEECH) {
-          // Erratic — occasionally jump or pause
-          if (Math.random() > 0.92) step *= (Math.random() * 3 + 0.1);
-          if (Math.random() > 0.97) step = 0;
+        if (col.type === TYPE_BS) {
+          if (Math.random() > 0.92) step *= (Math.random()*3+0.1);
+          if (Math.random() > 0.97) step  = 0;
         }
         col.y += step;
 
-        // Advance black speech character
-        if (col.type === TYPE_BLACKSPEECH && frame % 8 === 0) {
+        if (col.type === TYPE_BS && frame % 8 === 0) {
           col.bsCharIdx++;
-          if (col.bsCharIdx >= col.bsCurrentWord.length) {
+          if (col.bsCharIdx >= col.bsWord.length) {
             col.bsCharIdx = 0;
-            col.bsIndex   = (col.bsIndex + 1) % BLACK_SPEECH_TOKENS.length;
-            col.bsCurrentWord = BLACK_SPEECH_TOKENS[col.bsIndex];
+            col.bsIdx     = (col.bsIdx+1) % BS_TOKENS.length;
+            col.bsWord    = BS_TOKENS[col.bsIdx];
           }
         }
 
-        // Reset column when off screen
-        if (yPx > H + 20 && Math.random() > 0.97) {
-          col.y = -randInt(5, 30);
-        }
+        if (yPx > H+20 && Math.random() > 0.97) col.y = -rand(5,30);
       });
 
-      // ── One Ring inscription horizontal band ──────────────────
-      // Pulses into visibility every ~600 frames, fades out slowly
-      const inscriptionCycle = frame % 600;
-      let inscOpacity = 0;
-      if (inscriptionCycle < 60)        inscOpacity = inscriptionCycle / 60 * 0.18;
-      else if (inscriptionCycle < 300)  inscOpacity = 0.18;
-      else if (inscriptionCycle < 420)  inscOpacity = (1 - (inscriptionCycle - 300) / 120) * 0.18;
+      // Ring inscription band
+      const cyc = frame % 600;
+      let iOp = 0;
+      if      (cyc < 60)  iOp = cyc/60*0.18;
+      else if (cyc < 300) iOp = 0.18;
+      else if (cyc < 420) iOp = (1-(cyc-300)/120)*0.18;
 
-      if (inscOpacity > 0.005) {
+      if (iOp > 0.005) {
         ctx.save();
-        ctx.globalAlpha = inscOpacity;
-        ctx.font        = '13px "Share Tech Mono", monospace';
+        ctx.globalAlpha = iOp;
+        ctx.font        = '13px "Share Tech Mono",monospace';
         ctx.fillStyle   = 'rgba(180,130,40,1)';
-
-        // Repeat inscription to fill width
-        const textWidth = ctx.measureText(RING_INSCRIPTION).width;
-        const y = cy + 230;
-
-        // Scroll slowly leftward
-        const offset = (frame * 0.4) % textWidth;
-        ctx.fillText(RING_INSCRIPTION, -offset, y);
-        ctx.fillText(RING_INSCRIPTION, -offset + textWidth, y);
+        const tw     = ctx.measureText(RING_TEXT).width;
+        const offset = (frame*0.4) % tw;
+        ctx.fillText(RING_TEXT, -offset, cy+230);
+        ctx.fillText(RING_TEXT, -offset+tw, cy+230);
         ctx.restore();
       }
 
       frame++;
-      requestAnimationFrame(draw);
+      requestAnimationFrame(drawMatrix);
     }
 
-    draw();
+    drawMatrix();
 
-    // ── BOOK ─────────────────────────────────────────────────────
-    let isOpen = false;
+    // ── SPRITE SHEET ─────────────────────────────────────────────
+    // 1536×1024 sheet, 4 cols × 2 rows, each frame 384×512
+    const FRAME_W = 384, FRAME_H = 512, COLS = 4, FRAME_COUNT = 8;
+    const FRAME_MS = 160; // ms per frame — slow and cinematic
+
+    const spriteSheet = new Image();
+    spriteSheet.src = 'images/book-spritesheet.png';
+
+    // ── BOOK OPEN ────────────────────────────────────────────────
+    let opened = false;
 
     function openBook() {
-      if (isOpen) return;
-      isOpen = true;
-      document.getElementById('book').classList.add('open');
-      setTimeout(() => document.getElementById('pwd').focus(), 1600);
+      if (opened) return;
+      opened = true;
+
+      const bookEl = document.getElementById('bookCover');
+      bookEl.style.opacity = '0';
+
+      document.getElementById('matrix').style.opacity   = '0.12';
+      document.getElementById('vignette').style.opacity = '0.15';
+      document.getElementById('darkOverlay').classList.add('active');
+
+      const aCanvas = document.getElementById('animCanvas');
+      aCanvas.width  = window.innerWidth;
+      aCanvas.height = window.innerHeight;
+      const actx = aCanvas.getContext('2d');
+      actx.imageSmoothingEnabled = true;
+      actx.imageSmoothingQuality = 'high';
+
+      aCanvas.style.display  = 'block';
+      aCanvas.style.opacity  = '0';
+      aCanvas.style.transition = 'opacity 0.4s ease';
+
+      function drawFrame(idx) {
+        const col = idx % COLS;
+        const row = Math.floor(idx / COLS);
+        const sx = col * FRAME_W;
+        const sy = row * FRAME_H;
+
+        actx.fillStyle = '#030303';
+        actx.fillRect(0, 0, aCanvas.width, aCanvas.height);
+
+        // Cover-fill: fill canvas, maintain aspect, crop if needed
+        const fa = FRAME_W / FRAME_H;
+        const ca = aCanvas.width / aCanvas.height;
+        let dw, dh, dx, dy;
+        if (ca > fa) {
+          dw = aCanvas.width;
+          dh = dw / fa;
+          dx = 0;
+          dy = (aCanvas.height - dh) / 2;
+        } else {
+          dh = aCanvas.height;
+          dw = dh * fa;
+          dx = (aCanvas.width - dw) / 2;
+          dy = 0;
+        }
+        actx.drawImage(spriteSheet, sx, sy, FRAME_W, FRAME_H, dx, dy, dw, dh);
+      }
+
+      function startAnim() {
+        let f = 0;
+        aCanvas.style.opacity = '1';
+
+        function tick() {
+          drawFrame(f);
+          f++;
+          if (f < FRAME_COUNT) {
+            setTimeout(tick, FRAME_MS);
+          } else {
+            // Last frame is holding — fade in the password
+            setTimeout(() => {
+              document.getElementById('pageReveal').classList.add('open');
+              setTimeout(() => document.getElementById('pwd').focus(), 900);
+            }, 400);
+          }
+        }
+        tick();
+      }
+
+      setTimeout(() => {
+        if (spriteSheet.complete) {
+          startAnim();
+        } else {
+          spriteSheet.onload = startAnim;
+        }
+      }, 450);
     }
 
     function handleKey(e) { if (e.key === 'Enter') checkPwd(); }
@@ -582,17 +532,16 @@
       const val = document.getElementById('pwd').value.toLowerCase().trim();
       if (val === 'mellon' || val === 'melon') {
         document.getElementById('pwd').disabled = true;
-        setTimeout(() => document.getElementById('coming-soon').classList.add('visible'), 400);
+        setTimeout(() => document.getElementById('comingSoon').classList.add('visible'), 500);
       } else {
-        const err   = document.getElementById('pwd-error');
+        const err   = document.getElementById('pwdError');
         const input = document.getElementById('pwd');
         input.value = '';
         err.classList.add('visible');
-        // Shake
         input.style.transition = 'transform 0.07s';
-        ['-7px','7px','-4px','4px','0px'].forEach((x, i) => {
-          setTimeout(() => input.style.transform = `translateX(${x})`, i * 70);
-        });
+        ['-7px','7px','-4px','4px','0px'].forEach((x,i) =>
+          setTimeout(() => input.style.transform = `translateX(${x})`, i*70)
+        );
         setTimeout(() => err.classList.remove('visible'), 2800);
       }
     }
