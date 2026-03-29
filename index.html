@@ -631,11 +631,16 @@
 
   <script>
     // ── MATRIX RAIN ──────────────────────────────────────
-    const CIRTH     = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟᚫᚩᚪᛝᛡᛥᚴᛔᛕ';
-    const TENGWAR   = 'කඛගඝඤජඣනටඨදධපඵබභමයරලවශෂසහළඅආඇඈඉඊඋඌඑඒඓ';
+    // CIRTH: Tolkien's Dwarvish runes, Unicode Runic block (Elder Futhark +
+    //   Anglo-Saxon Futhorc) — the same historical tradition Tolkien drew from.
+    const CIRTH = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟᚫᚩᚪᛝᛡᛥᚴᛔᛕᚳᚻᛦᛤᛣᛢᛠ';
+    // SARATI: Tolkien's first Elvish script (predates Tengwar) — visually derived
+    //   from Ogham, the Celtic strokes he studied at Oxford. Unicode Ogham block.
+    const SARATI = 'ᚁᚂᚃᚄᚅᚆᚇᚈᚉᚊᚋᚌᚍᚎᚏᚐᚑᚒᚓᚔᚕᚖᚗᚘᚙᚚ';
+    // BLACK SPEECH: Direct transcription of the One Ring inscription.
     const BS_TOKENS = ['ash','nazg','durb','ulûk','gimb','atul','thraka','agh','burzum','ishi','krimp','û','k'];
     const RING_TEXT = '  ash nazg durbatulûk · ash nazg gimbatul · ash nazg thrakatulûk agh burzum-ishi krimpatul  ';
-    const TYPE_CIRTH = 0, TYPE_TENGWAR = 1, TYPE_BS = 2;
+    const TYPE_CIRTH = 0, TYPE_SARATI = 1, TYPE_BS = 2;
 
     const mc = document.getElementById('matrix');
     const ctx = mc.getContext('2d');
@@ -648,36 +653,38 @@
       const base=16, n=Math.floor(W/base); cols=[];
       for(let i=0;i<n;i++){
         const r=Math.random();
-        const type=r<.5?TYPE_CIRTH:r<.8?TYPE_TENGWAR:TYPE_BS;
+        const type=r<.5?TYPE_CIRTH:r<.8?TYPE_SARATI:TYPE_BS;
         const dr=Math.random(), depth=dr<.4?0:dr<.8?1:2;
         const size=Math.round(base*[.55,1,1.5][depth]);
-        let speed=type===TYPE_CIRTH?Math.random()*.5+.55:type===TYPE_TENGWAR?Math.random()*.2+.15:Math.random()*.8+.1;
+        // Slowed: Cirth drifts, Sarati barely moves, Black Speech creeps
+        let speed=type===TYPE_CIRTH?Math.random()*.18+.18:type===TYPE_SARATI?Math.random()*.09+.07:Math.random()*.18+.05;
         cols.push({x:i*base,y:Math.random()*(-(H/size)*2),type,depth,size,speed,bsIdx:0,bsCharIdx:0,bsWord:BS_TOKENS[0]});
       }
     }
     initCols(); window.addEventListener('resize',initCols);
 
     function drawMatrix(){
-      ctx.fillStyle='rgba(3,3,3,0.052)'; ctx.fillRect(0,0,W,H);
+      // Lower fade opacity = longer, slower-feeling trails
+      ctx.fillStyle='rgba(3,3,3,0.030)'; ctx.fillRect(0,0,W,H);
       const cx=W/2,cy=H/2,gr=ctx.createRadialGradient(cx,cy,0,cx,cy,190+Math.sin(fr*.018)*40);
       gr.addColorStop(0,'rgba(100,0,0,0.12)'); gr.addColorStop(.5,'rgba(50,0,0,0.05)'); gr.addColorStop(1,'rgba(0,0,0,0)');
       ctx.fillStyle=gr; ctx.fillRect(0,0,W,H);
       cols.forEach(c=>{
-        let ch=c.type===TYPE_CIRTH?CIRTH[rand(0,CIRTH.length-1)]:c.type===TYPE_TENGWAR?TENGWAR[rand(0,TENGWAR.length-1)]:c.bsWord[c.bsCharIdx%c.bsWord.length];
+        let ch=c.type===TYPE_CIRTH?CIRTH[rand(0,CIRTH.length-1)]:c.type===TYPE_SARATI?SARATI[rand(0,SARATI.length-1)]:c.bsWord[c.bsCharIdx%c.bsWord.length];
         const yp=c.y*c.size,b=[.07,.14,.27][c.depth],h=Math.random()>.94;
-        ctx.fillStyle=c.type===TYPE_CIRTH&&h?'rgba(220,160,80,0.8)':c.type===TYPE_TENGWAR&&h?'rgba(240,210,100,0.85)':c.type===TYPE_BS&&h?'rgba(130,190,50,0.7)':c.type===TYPE_CIRTH?`rgba(139,0,0,${b+Math.random()*b})`:c.type===TYPE_TENGWAR?`rgba(170,120,20,${b+Math.random()*b})`:`rgba(55,90,20,${b+Math.random()*b})`;
+        ctx.fillStyle=c.type===TYPE_CIRTH&&h?'rgba(220,160,80,0.8)':c.type===TYPE_SARATI&&h?'rgba(240,210,100,0.85)':c.type===TYPE_BS&&h?'rgba(130,190,50,0.7)':c.type===TYPE_CIRTH?`rgba(139,0,0,${b+Math.random()*b})`:c.type===TYPE_SARATI?`rgba(170,120,20,${b+Math.random()*b})`:`rgba(55,90,20,${b+Math.random()*b})`;
         ctx.font=`${c.size}px serif`; ctx.fillText(ch,c.x,yp);
         let s=c.speed;
-        if(c.type===TYPE_BS){if(Math.random()>.92)s*=(Math.random()*3+.1);if(Math.random()>.97)s=0;}
+        if(c.type===TYPE_BS){if(Math.random()>.95)s*=(Math.random()*1.4+.1);if(Math.random()>.98)s=0;}
         c.y+=s;
-        if(c.type===TYPE_BS&&fr%8===0){c.bsCharIdx++;if(c.bsCharIdx>=c.bsWord.length){c.bsCharIdx=0;c.bsIdx=(c.bsIdx+1)%BS_TOKENS.length;c.bsWord=BS_TOKENS[c.bsIdx];}}
+        if(c.type===TYPE_BS&&fr%14===0){c.bsCharIdx++;if(c.bsCharIdx>=c.bsWord.length){c.bsCharIdx=0;c.bsIdx=(c.bsIdx+1)%BS_TOKENS.length;c.bsWord=BS_TOKENS[c.bsIdx];}}
         if(yp>H+20&&Math.random()>.97)c.y=-rand(5,30);
       });
       const cyc=fr%600; let iOp=0;
       if(cyc<60)iOp=cyc/60*.18; else if(cyc<300)iOp=.18; else if(cyc<420)iOp=(1-(cyc-300)/120)*.18;
       if(iOp>.005){
         ctx.save(); ctx.globalAlpha=iOp; ctx.font='13px "Share Tech Mono",monospace'; ctx.fillStyle='rgba(180,130,40,1)';
-        const tw=ctx.measureText(RING_TEXT).width,off=(fr*.4)%tw;
+        const tw=ctx.measureText(RING_TEXT).width,off=(fr*.15)%tw;
         ctx.fillText(RING_TEXT,-off,cy+230); ctx.fillText(RING_TEXT,-off+tw,cy+230); ctx.restore();
       }
       fr++; requestAnimationFrame(drawMatrix);
