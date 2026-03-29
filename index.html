@@ -204,24 +204,118 @@
     #mainSite {
       position: fixed; inset: 0; z-index: 100;
       background: #060606;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: clamp(2rem, 6vh, 5rem);
       opacity: 0; pointer-events: none; transition: opacity 1.8s ease;
     }
     #mainSite.visible { opacity: 1; pointer-events: all; }
 
+    /* Wordmark — faint, top center */
     .site-wordmark {
+      position: absolute; top: clamp(1.2rem, 3vh, 2.5rem);
+      left: 50%; transform: translateX(-50%);
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1.4rem, 4vw, 3rem);
-      color: rgba(200,178,138,0.7);
-      letter-spacing: 0.12em;
-      text-shadow: 0 0 40px rgba(139,0,0,0.25), 0 0 80px rgba(139,0,0,0.08);
+      font-size: clamp(0.8rem, 2vw, 1.4rem);
+      color: rgba(200,178,138,0.28);
+      letter-spacing: 0.2em; white-space: nowrap;
+      pointer-events: none;
     }
 
-    .site-menu {
-      display: flex; gap: clamp(2rem, 6vw, 5rem);
-      align-items: center; justify-content: center;
+    /* Full-screen constellation SVG */
+    #constellationSvg {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+
+    /* Each floating icon node */
+    .menu-node {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      display: flex; flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .menu-node .node-img {
+      width: clamp(80px, 12vw, 140px);
+      height: clamp(80px, 12vw, 140px);
+      object-fit: contain;
+      transition: transform 0.35s ease, filter 0.35s ease;
+      filter: drop-shadow(0 0 8px rgba(0,0,0,0.6));
+    }
+
+    /* Running man is black — invert to pale gold on dark bg */
+    .node-free-marion .node-img {
+      filter: brightness(0) invert(0.88) sepia(0.25)
+              drop-shadow(0 0 8px rgba(0,0,0,0.6));
+    }
+
+    .menu-node .node-label {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.48rem, 1vw, 0.62rem);
+      letter-spacing: 0.35em; text-transform: uppercase;
+      color: rgba(200,178,138,0.55);
+      margin-top: 0.9rem;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      white-space: nowrap;
+    }
+
+    /* Hover state */
+    .menu-node:hover .node-img {
+      transform: scale(1.1);
+    }
+    .menu-node:hover .node-label { opacity: 1; }
+
+    /* Each node dims when a sibling is hovered */
+    #siteMenu:hover .menu-node:not(:hover) .node-img {
+      filter: brightness(0.4) drop-shadow(0 0 4px rgba(0,0,0,0.4));
+    }
+    #siteMenu:hover .node-free-marion:not(:hover) .node-img {
+      filter: brightness(0) invert(0.5) sepia(0.1)
+              drop-shadow(0 0 4px rgba(0,0,0,0.4));
+    }
+
+    /* Individual float animations — offset phases so they never sync */
+    @keyframes float-a {
+      0%,100% { transform: translate(-50%,-50%) translateY(0px); }
+      50%      { transform: translate(-50%,-50%) translateY(-14px); }
+    }
+    @keyframes float-b {
+      0%,100% { transform: translate(-50%,-50%) translateY(-6px); }
+      50%      { transform: translate(-50%,-50%) translateY(10px); }
+    }
+    @keyframes float-c {
+      0%,100% { transform: translate(-50%,-50%) translateY(-10px); }
+      50%      { transform: translate(-50%,-50%) translateY(6px); }
+    }
+    .float-a { animation: float-a 5.2s ease-in-out infinite; }
+    .float-b { animation: float-b 6.8s ease-in-out infinite 1.4s; }
+    .float-c { animation: float-c 4.9s ease-in-out infinite 2.9s; }
+
+    /* Constellation line pulse */
+    @keyframes line-pulse {
+      0%,100% { opacity: 0.07; }
+      50%      { opacity: 0.14; }
+    }
+    .const-line { animation: line-pulse 8s ease-in-out infinite; }
+
+    /* Glow on hover — per node colour */
+    .node-the-lost:hover .node-img {
+      filter: drop-shadow(0 0 22px rgba(80,160,80,0.55))
+              drop-shadow(0 0 50px rgba(40,100,40,0.3));
+    }
+    .node-cherrywood:hover .node-img {
+      filter: drop-shadow(0 0 22px rgba(180,150,40,0.6))
+              drop-shadow(0 0 50px rgba(30,100,50,0.3));
+    }
+    .node-free-marion:hover .node-img {
+      filter: brightness(0) invert(0.95) sepia(0.3)
+              drop-shadow(0 0 22px rgba(200,180,130,0.65))
+              drop-shadow(0 0 50px rgba(200,160,80,0.3));
+    }
+
+    #siteMenu {
+      position: absolute; inset: 0;
     }
   </style>
 </head>
@@ -272,8 +366,14 @@
   <!-- ── MAIN SITE ──────────────────────────────────────── -->
   <div id="mainSite">
     <div class="site-wordmark">Magus Jane</div>
-    <div class="site-menu" id="siteMenu">
-      <!-- icon menu injected here -->
+
+    <!-- Constellation lines SVG -->
+    <svg id="constellationSvg" xmlns="http://www.w3.org/2000/svg">
+      <!-- lines drawn by JS once layout is known -->
+    </svg>
+
+    <div id="siteMenu">
+      <!-- nodes injected by JS -->
     </div>
   </div>
 
@@ -413,8 +513,74 @@
     }
 
     // ── MAIN SITE ─────────────────────────────────────────
+    // Scattered positions as % of viewport [left, top]
+    const NODES = [
+      { id: 'the-lost',    src: 'images/icon-the-lost.png',     label: 'The Lost',    pos: [22, 30], float: 'float-a' },
+      { id: 'cherrywood',  src: 'images/icon-cherrywood.png',   label: 'Cherrywood',  pos: [70, 26], float: 'float-b' },
+      { id: 'free-marion', src: 'images/icon-free-marion.png',  label: 'Free Marion', pos: [46, 65], float: 'float-c' },
+    ];
+
     function showMainSite() {
       document.getElementById('mainSite').classList.add('visible');
+      buildMenu();
+    }
+
+    function buildMenu() {
+      const menu = document.getElementById('siteMenu');
+      menu.innerHTML = '';
+
+      NODES.forEach(n => {
+        const node = document.createElement('div');
+        node.className = `menu-node node-${n.id} ${n.float}`;
+        node.style.left = n.pos[0] + '%';
+        node.style.top  = n.pos[1] + '%';
+
+        const img = document.createElement('img');
+        img.src = n.src; img.alt = n.label; img.className = 'node-img';
+        node.appendChild(img);
+
+        const lbl = document.createElement('div');
+        lbl.className = 'node-label'; lbl.textContent = n.label;
+        node.appendChild(lbl);
+
+        menu.appendChild(node);
+      });
+
+      // Draw constellation lines after layout
+      requestAnimationFrame(drawConstellation);
+    }
+
+    function drawConstellation() {
+      const svg = document.getElementById('constellationSvg');
+      svg.innerHTML = '';
+
+      const centers = NODES.map(n => ({
+        x: (n.pos[0] / 100) * window.innerWidth,
+        y: (n.pos[1] / 100) * window.innerHeight,
+      }));
+
+      // Connect all 3 pairs
+      [[0,1],[1,2],[0,2]].forEach(([a, b]) => {
+        const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+        line.setAttribute('x1', centers[a].x);
+        line.setAttribute('y1', centers[a].y);
+        line.setAttribute('x2', centers[b].x);
+        line.setAttribute('y2', centers[b].y);
+        line.setAttribute('stroke', 'rgba(200,178,138,0.5)');
+        line.setAttribute('stroke-width', '0.6');
+        line.classList.add('const-line');
+        // Stagger pulse phase per line
+        line.style.animationDelay = `${([0,2.5,5][[0,1,2].indexOf(a)])}s`;
+        svg.appendChild(line);
+      });
+
+      // Dot at each center
+      centers.forEach(c => {
+        const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        dot.setAttribute('cx', c.x); dot.setAttribute('cy', c.y); dot.setAttribute('r', '1.5');
+        dot.setAttribute('fill', 'rgba(200,178,138,0.25)');
+        svg.appendChild(dot);
+      });
     }
   </script>
 
