@@ -317,6 +317,69 @@
     #siteMenu {
       position: absolute; inset: 0;
     }
+
+    /* ── FREE MARION OVERLAY ────────────────────────────── */
+    #fmOverlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: #060606;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 2.5rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 1.4s ease;
+    }
+    #fmOverlay.visible { opacity: 1; pointer-events: all; }
+
+    .fm-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1rem, 3vw, 2rem);
+      color: rgba(200,178,138,0.55);
+      letter-spacing: 0.25em;
+    }
+
+    .fm-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: clamp(0.55rem, 1.2vw, 0.72rem);
+      letter-spacing: 0.45em; text-transform: uppercase;
+      color: rgba(200,178,138,0.2);
+    }
+
+    .fm-form {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 1rem;
+      width: min(320px, 80vw);
+    }
+
+    .fm-input {
+      background: transparent; border: none;
+      border-bottom: 1px solid rgba(200,178,138,0.15);
+      padding: 0.6rem 0.4rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem; letter-spacing: 0.2em;
+      color: rgba(200,178,138,0.55); width: 100%;
+      outline: none; text-align: center;
+    }
+    .fm-input::placeholder { color: rgba(200,178,138,0.18); }
+    .fm-input:focus { border-bottom-color: rgba(200,178,138,0.35); }
+
+    .fm-btn {
+      background: transparent;
+      border: 1px solid rgba(200,178,138,0.15);
+      padding: 0.55rem 2.2rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.58rem; letter-spacing: 0.4em; text-transform: uppercase;
+      color: rgba(200,178,138,0.25); cursor: pointer;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .fm-btn:hover { border-color: rgba(200,178,138,0.35); color: rgba(200,178,138,0.55); }
+
+    .fm-back {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.52rem; letter-spacing: 0.4em; text-transform: uppercase;
+      color: rgba(200,178,138,0.15); background: none; border: none;
+      cursor: pointer; transition: color 0.3s;
+    }
+    .fm-back:hover { color: rgba(200,178,138,0.45); }
   </style>
 </head>
 <body>
@@ -361,6 +424,17 @@
   <div id="wrongScreen">
     <div class="wrong-text" id="wrongText"></div>
     <button class="return-link" id="returnBtn" onclick="dismissWrong()">← return</button>
+  </div>
+
+  <!-- ── FREE MARION OVERLAY ─────────────────────────────── -->
+  <div id="fmOverlay">
+    <div class="fm-title">Free Marion</div>
+    <div class="fm-sub">By Invitation Only</div>
+    <div class="fm-form">
+      <input class="fm-input" type="email" placeholder="enter your email" autocomplete="off" />
+      <button class="fm-btn">Request Access</button>
+    </div>
+    <button class="fm-back" onclick="closeFm()">← back</button>
   </div>
 
   <!-- ── MAIN SITE ──────────────────────────────────────── -->
@@ -515,10 +589,18 @@
     // ── MAIN SITE ─────────────────────────────────────────
     // Scattered positions as % of viewport [left, top]
     const NODES = [
-      { id: 'the-lost',    src: 'images/icon-the-lost.png',     label: 'The Lost',    pos: [22, 30], float: 'float-a' },
-      { id: 'cherrywood',  src: 'images/icon-cherrywood.png',   label: 'Cherrywood',  pos: [70, 26], float: 'float-b' },
-      { id: 'free-marion', src: 'images/icon-free-marion.png',  label: 'Free Marion', pos: [46, 65], float: 'float-c' },
+      { id: 'the-lost',    src: 'images/icon-the-lost.png',     label: 'The Lost',    pos: [22, 30], float: 'float-a', action: () => window.location.href = 'the-lost/' },
+      { id: 'cherrywood',  src: 'images/icon-cherrywood.png',   label: 'Cherrywood',  pos: [70, 26], float: 'float-b', action: () => window.open('https://cherrywoodgolf.com/', '_blank') },
+      { id: 'free-marion', src: 'images/icon-free-marion.png',  label: 'Free Marion', pos: [46, 65], float: 'float-c', action: () => openFm() },
     ];
+
+    // ── FREE MARION ───────────────────────────────────────
+    function openFm() {
+      document.getElementById('fmOverlay').classList.add('visible');
+    }
+    function closeFm() {
+      document.getElementById('fmOverlay').classList.remove('visible');
+    }
 
     function showMainSite() {
       document.getElementById('mainSite').classList.add('visible');
@@ -543,6 +625,7 @@
         lbl.className = 'node-label'; lbl.textContent = n.label;
         node.appendChild(lbl);
 
+        node.addEventListener('click', n.action);
         menu.appendChild(node);
       });
 

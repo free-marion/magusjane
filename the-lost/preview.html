@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE LOST — Art Direction Preview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #050810;
+    color: #c4b896;
+    font-family: Georgia, serif;
+    line-height: 1.6;
+  }
+  header {
+    padding: 40px 32px 24px;
+    border-bottom: 1px solid #1a2a1a;
+    text-align: center;
+  }
+  header h1 { font-size: 36px; letter-spacing: 10px; color: #d4b896; }
+  header p  { font-size: 12px; color: #4a5a4a; letter-spacing: 4px; margin-top: 8px; }
+
+  .section {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    border-bottom: 1px solid #0e1a0e;
+  }
+  .section h2 {
+    font-size: 11px;
+    letter-spacing: 5px;
+    color: #4a6a4a;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  /* ── COMPARISON ── */
+  .comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .comp-card {
+    position: relative;
+    border: 1px solid #1a2a1a;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .comp-label {
+    position: absolute;
+    top: 10px; left: 10px;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #4a6a4a;
+    background: rgba(0,0,0,0.7);
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+  canvas { display: block; width: 100%; }
+
+  /* ── STYLE OPTIONS ── */
+  .style-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .style-card {
+    border: 1px solid #1a2a1a;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .style-card.recommended { border-color: #3a6a3a; }
+  .style-canvas { display: block; width: 100%; }
+  .style-info { padding: 14px; }
+  .style-info h3 { font-size: 13px; color: #c4a870; margin-bottom: 4px; }
+  .style-info .badge {
+    display: inline-block;
+    font-size: 8px;
+    letter-spacing: 2px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .badge-rec  { background: #1a3a1a; color: #6a9a6a; border: 1px solid #2a5a2a; }
+  .badge-alt  { background: #1a1a2a; color: #5a6a9a; border: 1px solid #2a2a4a; }
+  .style-info p { font-size: 11px; color: #4a5a4a; line-height: 1.5; }
+
+  /* ── ASSETS ── */
+  .asset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .asset-item {
+    background: #0a0f0a;
+    border: 1px solid #141e14;
+    border-radius: 4px;
+    padding: 14px 16px;
+  }
+  .asset-item h4 { font-size: 12px; color: #c4a870; margin-bottom: 4px; }
+  .asset-item .asset-meta { font-size: 9px; color: #3a5a3a; letter-spacing: 2px; margin-bottom: 6px; }
+  .asset-item p { font-size: 11px; color: #3a4a3a; }
+  .asset-item a { color: #6a9a6a; text-decoration: none; font-size: 10px; }
+  .asset-item a:hover { color: #88cc88; }
+  .asset-item .price { color: #ccaa66; font-size: 10px; float: right; }
+
+  /* ── PALETTE ── */
+  .palette { display: flex; gap: 8px; flex-wrap: wrap; }
+  .swatch {
+    width: 48px; height: 48px;
+    border-radius: 3px;
+    position: relative;
+  }
+  .swatch span {
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
+    color: #3a4a3a;
+    white-space: nowrap;
+  }
+  .palette-row { display: flex; gap: 8px; margin-bottom: 32px; flex-wrap: wrap; }
+  .palette-label { font-size: 9px; letter-spacing: 3px; color: #2a3a2a; margin-bottom: 10px; text-transform: uppercase; }
+
+  /* ── REFERENCE ── */
+  .ref-note {
+    background: #080e08;
+    border-left: 2px solid #2a4a2a;
+    padding: 16px 20px;
+    margin-top: 16px;
+    font-size: 12px;
+    color: #445544;
+    font-style: italic;
+  }
+
+  @media (max-width: 600px) {
+    .comparison, .style-grid, .asset-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>THE LOST</h1>
+  <p>ART DIRECTION PREVIEW — CHER AMI CHAPTER</p>
+</header>
+
+<!-- ── SECTION 1: CURRENT VS WITH ART ── -->
+<div class="section">
+  <h2>Current Build vs. With Real Art</h2>
+  <div class="comparison">
+    <div class="comp-card">
+      <div class="comp-label">NOW — PROGRAMMATIC</div>
+      <canvas id="nowCanvas" width="390" height="520"></canvas>
+    </div>
+    <div class="comp-card">
+      <div class="comp-label">WITH ART — TARGET LOOK</div>
+      <canvas id="artCanvas" width="390" height="520"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 2: STYLE OPTIONS ── -->
+<div class="section">
+  <h2>Art Style Options</h2>
+  <div class="style-grid">
+
+    <div class="style-card recommended">
+      <canvas class="style-canvas" id="styleA" width="280" height="200"></canvas>
+      <div class="style-info">
+        <h3>Dark Pixel Art</h3>
+        <span class="badge badge-rec">RECOMMENDED</span>
+        <p>16×16 or 32×32 sprites with a restricted palette. Gritty, readable, very mobile-friendly. Closest to the current aesthetic. Assets are available now.</p>
+      </div>
+    </div>
+
+    <div class="style-card">
+      <canvas class="style-canvas" id="styleB" width="280" height="200"></canvas>
+      <div class="style-info">
+        <h3>Hand-Drawn / Valiant Hearts</h3>
+        <span class="badge badge-alt">ASPIRATIONAL</span>
+        <p>Illustrated, painterly. Warmer and more emotional — the Valiant Hearts approach. Would require custom illustration or a very specific artist hire.</p>
+      </div>
+    </div>
+
+    <div class="style-card">
+      <canvas class="style-canvas" id="styleC" width="280" height="200"></canvas>
+      <div class="style-info">
+        <h3>Silhouette / Limbo Style</h3>
+        <span class="badge badge-alt">ALTERNATIVE</span>
+        <p>Pure black silhouettes, single fog colour, minimal palette. Extremely atmospheric. Would need almost zero external art — mostly achievable with improved programmatic drawing.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 3: COLOUR PALETTE ── -->
+<div class="section">
+  <h2>Colour Palette — Recommended</h2>
+
+  <div class="palette-label">Sky / Atmosphere</div>
+  <div class="palette-row">
+    <div style="position:relative; margin-right:16px">
+      <div class="swatch" style="background:#101828"></div><span style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:#3a4a3a;white-space:nowrap">#101828</span>
+    </div>
+    <div style="position:relative; margin-right:16px">
+      <div class="swatch" style="background:#1e3040"></div><span style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:#3a4a3a;white-space:nowrap">#1e3040</span>
+    </div>
+    <div style="position:relative; margin-right:16px">
+      <div class="swatch" style="background:#2a4a5a"></div><span style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:#3a4a3a;white-space:nowrap">#2a4a5a</span>
+    </div>
+    <div style="position:relative; margin-right:16px">
+      <div class="swatch" style="background:#4a7a65"></div><span style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:#3a4a3a;white-space:nowrap">#4a7a65</span>
+    </div>
+    <div style="position:relative; margin-right:16px">
+      <div class="swatch" style="background:#6a9a7a"></div><span style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:#3a4a3a;white-space:nowrap">#6a9a7a</span>
+    </div>
+  </div>
+  <br><br>
+  <div class="palette-label">Ground / Earth</div>
+  <div class="palette-row">
+    <div style="position:relative; margin-right:16px">
+      <div class="swatch" style="background:#050c03"></div><span style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:#3a4a3a;white-space:nowrap">#050c03</span>
+    </div>
+    <div style="position:relative; margin-right:16px">
+      <div class="swatch" style="background:#0e1808"></div><span style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:#3a4a3a;white-space:nowrap">#0e1808</span>
+    </div>
+    <div style="position:relative; margin-right:16px">
+      <div class="swatch" style="background:#1a2818"></div><span style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:#3a4a3a;white-space:nowrap">#1a2818</span>
+    </div>
+    <div style="position:relative; margin-right:16px">
+      <div class="swatch" style="background:#3a3020"></div><span style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:#3a4a3a;white-space:nowrap">#3a3020</span>
+    </div>
+    <div style="position:relative; margin-right:16px">
+      <div class="swatch" style="background:#5a4a30"></div><span style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:#3a4a3a;white-space:nowrap">#5a4a30</span>
+    </div>
+  </div>
+  <br><br>
+  <div class="palette-label">Accent / Hazards</div>
+  <div class="palette-row">
+    <div style="position:relative; margin-right:16px">
+      <div class="swatch" style="background:#cc4400"></div><span style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:#3a4a3a;white-space:nowrap">Shell burst</span>
+    </div>
+    <div style="position:relative; margin-right:16px">
+      <div class="swatch" style="background:#88cc22"></div><span style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:#3a4a3a;white-space:nowrap">Gas</span>
+    </div>
+    <div style="position:relative; margin-right:16px">
+      <div class="swatch" style="background:#ccaa44"></div><span style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:#3a4a3a;white-space:nowrap">UI / Gold</span>
+    </div>
+    <div style="position:relative; margin-right:16px">
+      <div class="swatch" style="background:#cc2222"></div><span style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:#3a4a3a;white-space:nowrap">Damage</span>
+    </div>
+    <div style="position:relative; margin-right:16px">
+      <div class="swatch" style="background:#ddd0b0"></div><span style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:#3a4a3a;white-space:nowrap">Pigeon</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 4: ASSET SHOPPING LIST ── -->
+<div class="section">
+  <h2>Asset Shopping List — What To Buy</h2>
+  <div class="asset-grid">
+
+    <div class="asset-item">
+      <span class="price">$2.39</span>
+      <h4>WWI Trench Warfare Tileset</h4>
+      <div class="asset-meta">ITCH.IO · CUTE SCKR · PIXEL ART</div>
+      <p>Dead trees, barbed wire, craters, mud, bombed buildings, sandbags. Covers almost all background needs for the Argonne Forest level.</p>
+      <br>
+      <a href="https://comshadow.itch.io/world-war-i-trench-warfare-tileset-pixel-art-asset-pack" target="_blank">→ View on itch.io</a>
+    </div>
+
+    <div class="asset-item">
+      <span class="price">FREE</span>
+      <h4>LPC Birds Sprite Sheet</h4>
+      <div class="asset-meta">OPENGAMEART.ORG · CC-BY-SA</div>
+      <p>15 bird types with flying and walking animations. Pigeon variant included — can be recoloured to match Cher Ami's dark check colouring (grey-brown with white patches).</p>
+      <br>
+      <a href="https://opengameart.org/content/lpc-birds" target="_blank">→ View on OpenGameArt</a>
+    </div>
+
+    <div class="asset-item">
+      <span class="price">FREE</span>
+      <h4>Grimdark WWI Asset Pack</h4>
+      <div class="asset-meta">ITCH.IO · STUDIOCHRISTOF · GAMEBOY STYLE</div>
+      <p>Dark, gritty, desaturated WWI resources. Gameboy-inspired — extremely close to the tone The Lost is going for. Check for soldier, terrain, and obstacle sprites.</p>
+      <br>
+      <a href="https://itch.io/game-assets/tag-world-war-i" target="_blank">→ Browse WWI assets</a>
+    </div>
+
+    <div class="asset-item">
+      <span class="price">$1.00 each</span>
+      <h4>WW1 Soldier Pixel Packs</h4>
+      <div class="asset-meta">ITCH.IO · CAMKOALATIXD</div>
+      <p>British/German, French, Russian variants. Needed for the hawk handler, soldiers firing, and background figures on later missions. Clean pixel art silhouettes.</p>
+      <br>
+      <a href="https://itch.io/game-assets/tag-world-war-i" target="_blank">→ Browse WWI assets</a>
+    </div>
+
+    <div class="asset-item">
+      <span class="price">FREE</span>
+      <h4>Animated Birds (32×32)</h4>
+      <div class="asset-meta">OPENGAMEART.ORG · FALCON INCLUDED</div>
+      <p>Falcon sprite with animated wing frames — perfect for the hawk obstacle. Already has the right silhouette and wing-spread pose. Just needs palette adjustment.</p>
+      <br>
+      <a href="https://opengameart.org/content/animated-birds-32x32" target="_blank">→ View on OpenGameArt</a>
+    </div>
+
+    <div class="asset-item">
+      <span class="price">COMMISSION</span>
+      <h4>Custom Pigeon Sprite Sheet</h4>
+      <div class="asset-meta">FIVERR / ITCH.IO COMMISSIONS</div>
+      <p>Cher Ami specifically — dark check cock pigeon, missing leg, message canister. 3-frame wing cycle (glide / up / down), ~48×32px. Budget £30–80 from a pixel artist. This is the most important custom asset.</p>
+      <br>
+      <a href="https://www.fiverr.com/search/gigs?query=pixel+art+sprite+game" target="_blank">→ Search Fiverr for pixel artists</a>
+    </div>
+
+  </div>
+
+  <div class="ref-note">
+    The most impactful single purchase is the Trench Warfare Tileset ($2.39) — it would replace all the programmatic tree and ground layers with real pixel art instantly. The custom Cher Ami pigeon is the highest priority commission, since the player looks at it the entire game.
+  </div>
+</div>
+
+<!-- ── SECTION 5: VISUAL REFERENCE ── -->
+<div class="section">
+  <h2>Visual Reference — Target Feel</h2>
+  <canvas id="referenceCanvas" width="860" height="300" style="width:100%;border:1px solid #1a2a1a;border-radius:4px"></canvas>
+  <div class="ref-note" style="margin-top:12px">
+    The closest game reference is <strong>Valiant Hearts: The Great War</strong> (Ubisoft, 2014) — hand-drawn, emotionally rich WWI art. We're going darker and more gritty (less cartoon) but the tone and palette approach is similar. The silhouette style of <strong>Limbo</strong> is also relevant for the forest sections.
+  </div>
+</div>
+
+<div style="height:60px"></div>
+
+<script>
+// ── Helper ──
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arcTo(x + w, y, x + w, y + r, r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+  ctx.lineTo(x + r, y + h);
+  ctx.arcTo(x, y + h, x, y + h - r, r);
+  ctx.lineTo(x, y + r);
+  ctx.arcTo(x, y, x + r, y, r);
+  ctx.closePath();
+}
+
+// ─────────────────────────────────────────
+// CANVAS: NOW (programmatic look)
+// ─────────────────────────────────────────
+(function() {
+  const c = document.getElementById('nowCanvas');
+  const ctx = c.getContext('2d');
+  const W = 390, H = 520;
+
+  // Sky gradient
+  const skyG = ctx.createLinearGradient(0, 0, 0, H * 0.65);
+  skyG.addColorStop(0, '#050a18');
+  skyG.addColorStop(1, '#1a3a55');
+  ctx.fillStyle = skyG;
+  ctx.fillRect(0, 0, W, H * 0.65);
+
+  // Ground
+  const gndG = ctx.createLinearGradient(0, H * 0.60, 0, H);
+  gndG.addColorStop(0, '#050c03');
+  gndG.addColorStop(1, '#020503');
+  ctx.fillStyle = gndG;
+  ctx.beginPath();
+  ctx.moveTo(0, H); ctx.lineTo(W, H); ctx.lineTo(W/2, H * 0.60);
+  ctx.closePath(); ctx.fill();
+
+  // Trees — programmatic (simple)
+  ctx.fillStyle = '#0a0a08';
+  for (let x = 5; x < W; x += 22) {
+    const h = 20 + Math.sin(x * 0.3) * 12;
+    ctx.fillRect(x + 9, H * 0.56 - h, 4, h);
+    // branch
+    ctx.beginPath();
+    ctx.moveTo(x + 11, H * 0.56 - h * 0.6);
+    ctx.lineTo(x + 11 + (x % 3 === 0 ? -10 : 10), H * 0.56 - h * 0.8);
+    ctx.strokeStyle = '#0a0a08';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  // Ground line
+  ctx.strokeStyle = '#2a3a2a';
+  ctx.lineWidth = 0.5;
+  ctx.beginPath(); ctx.moveTo(0, H * 0.60); ctx.lineTo(W, H * 0.60); ctx.stroke();
+
+  // Rain streaks
+  ctx.strokeStyle = 'rgba(136,153,187,0.2)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 40; i++) {
+    const rx = (i * 47) % W;
+    const ry = (i * 83) % H;
+    ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(rx + 2, ry + 10); ctx.stroke();
+  }
+
+  // Pigeon — rough programmatic shape
+  ctx.fillStyle = '#c8b896';
+  ctx.beginPath(); ctx.ellipse(195, 310, 22, 10, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#ddd0b8';
+  ctx.beginPath(); ctx.ellipse(180, 308, 10, 8, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#ff8800';
+  ctx.beginPath(); ctx.arc(170, 306, 3, 0, Math.PI * 2); ctx.fill();
+  // Wings (rough triangles)
+  ctx.fillStyle = '#b0a080';
+  ctx.beginPath();
+  ctx.moveTo(186, 306); ctx.lineTo(205, 295); ctx.lineTo(210, 306);
+  ctx.moveTo(186, 314); ctx.lineTo(205, 325); ctx.lineTo(210, 314);
+  ctx.fill();
+
+  // HUD
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  ctx.fillRect(0, 0, W, 44);
+  // HP bar bg
+  ctx.fillStyle = '#0a0a08';
+  ctx.fillRect(9, 19, 82, 9);
+  ctx.fillStyle = '#66aa44';
+  ctx.fillRect(10, 20, 55, 7);
+  // text labels
+  ctx.fillStyle = '#333333';
+  ctx.font = '7px Georgia';
+  ctx.fillText('CONDITION', 10, 15);
+  ctx.fillStyle = '#ccccaa';
+  ctx.font = '14px Georgia';
+  ctx.textAlign = 'center';
+  ctx.fillText('248 m', W/2, 22);
+  ctx.font = '8px Georgia';
+  ctx.fillStyle = '#3a4a3a';
+  ctx.fillText('MISSION 4: GAS', W/2, 34);
+  ctx.textAlign = 'left';
+
+  // Progress bar
+  ctx.fillStyle = 'rgba(0,0,0,0.45)';
+  ctx.fillRect(84, H - 24, 222, 7);
+  ctx.fillStyle = '#88aa66';
+  ctx.fillRect(84, H - 24, 90, 3);
+
+  // "programmatic" label overlay
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillRect(0, H - 34, W, 34);
+  ctx.fillStyle = '#2a3a2a';
+  ctx.font = '9px Georgia';
+  ctx.textAlign = 'center';
+  ctx.fillText('Procedurally generated graphics — no external art files', W/2, H - 16);
+})();
+
+// ─────────────────────────────────────────
+// CANVAS: WITH ART (simulated pixel art look)
+// ─────────────────────────────────────────
+(function() {
+  const c = document.getElementById('artCanvas');
+  const ctx = c.getContext('2d');
+  const W = 390, H = 520;
+
+  // Richer sky
+  const skyG = ctx.createLinearGradient(0, 0, 0, H * 0.65);
+  skyG.addColorStop(0, '#060a16');
+  skyG.addColorStop(0.4, '#0e1e30');
+  skyG.addColorStop(1, '#183040');
+  ctx.fillStyle = skyG;
+  ctx.fillRect(0, 0, W, H * 0.65);
+
+  // Cloud masses — more detailed
+  ctx.fillStyle = 'rgba(20,35,55,0.7)';
+  [[50,55,140,55],[210,40,100,40],[330,65,120,50],[130,100,80,35],[280,110,95,40]].forEach(([x,y,w,h]) => {
+    ctx.beginPath(); ctx.ellipse(x, y, w/2, h/2, 0, 0, Math.PI*2); ctx.fill();
+  });
+
+  // Far ridge
+  ctx.fillStyle = 'rgba(10,20,15,0.85)';
+  ctx.beginPath(); ctx.moveTo(0, H * 0.56);
+  for (let x = 0; x <= W; x += 8) {
+    ctx.lineTo(x, H * 0.56 - Math.abs(Math.sin(x * 0.08) * 18 + Math.sin(x * 0.03) * 14));
+  }
+  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
+
+  // Ground
+  const gndG = ctx.createLinearGradient(0, H * 0.58, 0, H);
+  gndG.addColorStop(0, '#0e1808');
+  gndG.addColorStop(0.5, '#0a1208');
+  gndG.addColorStop(1, '#050c03');
+  ctx.fillStyle = gndG;
+  ctx.beginPath();
+  ctx.moveTo(0, H); ctx.lineTo(W, H); ctx.lineTo(W/2, H * 0.585);
+  ctx.closePath(); ctx.fill();
+
+  // Pixel art trees — simulated (chunky, clear silhouettes)
+  ctx.fillStyle = '#0a0e08';
+  for (let x = 0; x < W; x += 20) {
+    const h = 25 + ((x * 17) % 30);
+    const tw = Math.max(3, Math.floor(h * 0.08));
+    // Trunk
+    ctx.fillRect(Math.round(x + 8), Math.round(H * 0.595 - h), tw, h);
+    // Branches (chunky, pixel-art style)
+    const dir = x % 40 < 20 ? -1 : 1;
+    ctx.fillRect(Math.round(x + 8 + dir * 2), Math.round(H * 0.595 - h * 0.65), Math.round(h * 0.25), 2);
+    if (h > 35) {
+      ctx.fillRect(Math.round(x + 8 - dir * 2), Math.round(H * 0.595 - h * 0.42), Math.round(h * 0.18), 2);
+    }
+  }
+
+  // Barbed wire
+  ctx.strokeStyle = '#1a1a14';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, H * 0.594);
+  for (let x = 0; x <= W; x += 12) {
+    ctx.lineTo(x, H * 0.594 + (x % 24 < 12 ? 1 : -1));
+  }
+  ctx.stroke();
+
+  // Craters (painted texture suggestion)
+  ctx.fillStyle = 'rgba(0,0,0,0.3)';
+  [[80,460,35,15],[200,490,50,20],[310,470,28,11],[140,510,40,16]].forEach(([x,y,w,h]) => {
+    ctx.beginPath(); ctx.ellipse(x, y, w/2, h/2, 0, 0, Math.PI*2); ctx.fill();
+  });
+
+  // PIGEON — more polished pixel art simulation
+  // Body
+  ctx.fillStyle = '#c4b890';
+  ctx.beginPath(); ctx.ellipse(196, 310, 24, 11, -0.1, 0, Math.PI*2); ctx.fill();
+  // Breast (lighter)
+  ctx.fillStyle = '#ddd0b0';
+  ctx.beginPath(); ctx.ellipse(183, 313, 13, 9, 0.2, 0, Math.PI*2); ctx.fill();
+  // Tail
+  ctx.fillStyle = '#a89878';
+  ctx.beginPath(); ctx.moveTo(215,310); ctx.lineTo(230,305); ctx.lineTo(230,316); ctx.closePath(); ctx.fill();
+  // Head
+  ctx.fillStyle = '#ddd0b8';
+  ctx.beginPath(); ctx.ellipse(174, 307, 9, 8, 0, 0, Math.PI*2); ctx.fill();
+  // Neck iridescence
+  ctx.fillStyle = 'rgba(100,140,180,0.4)';
+  ctx.beginPath(); ctx.ellipse(182, 309, 7, 5, 0, 0, Math.PI*2); ctx.fill();
+  // Eye — orange with pupil
+  ctx.fillStyle = '#ff8800'; ctx.beginPath(); ctx.arc(169,305,3,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#1a0800'; ctx.beginPath(); ctx.arc(169,305,1.5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(168,304,0.8,0,Math.PI*2); ctx.fill();
+  // Wings (spread, glide position)
+  ctx.fillStyle = '#a09070';
+  ctx.beginPath(); ctx.moveTo(188,306); ctx.lineTo(208,295); ctx.lineTo(212,306); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(188,315); ctx.lineTo(208,325); ctx.lineTo(212,315); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#c4b080';
+  ctx.beginPath(); ctx.moveTo(190,307); ctx.lineTo(205,298); ctx.lineTo(208,306); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(190,313); ctx.lineTo(205,322); ctx.lineTo(208,314); ctx.closePath(); ctx.fill();
+  // Message canister
+  ctx.fillStyle = '#aaaaaa'; ctx.fillRect(189,320,5,4);
+
+  // Motion blur / trail (simulated)
+  ctx.fillStyle = 'rgba(196,184,144,0.06)';
+  ctx.beginPath(); ctx.ellipse(182, 310, 24, 11, -0.1, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = 'rgba(196,184,144,0.03)';
+  ctx.beginPath(); ctx.ellipse(170, 310, 24, 11, -0.1, 0, Math.PI*2); ctx.fill();
+
+  // Rain (more visible)
+  for (let i = 0; i < 50; i++) {
+    const alpha = 0.1 + ((i * 7) % 20) / 100;
+    ctx.strokeStyle = `rgba(140,160,200,${alpha})`;
+    ctx.lineWidth = 1;
+    const rx = (i * 53 + 10) % W;
+    const ry = (i * 71) % H;
+    ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(rx + 2, ry + 12); ctx.stroke();
+  }
+
+  // Gas cloud (low, spreading) — tinted green
+  const gasG = ctx.createRadialGradient(195, H*0.82, 10, 195, H*0.82, 180);
+  gasG.addColorStop(0, 'rgba(100,180,30,0.22)');
+  gasG.addColorStop(0.5, 'rgba(80,140,20,0.12)');
+  gasG.addColorStop(1, 'rgba(60,120,10,0)');
+  ctx.fillStyle = gasG;
+  ctx.beginPath(); ctx.ellipse(195, H*0.85, 200, 70, 0, 0, Math.PI*2); ctx.fill();
+
+  // HUD — cleaner version
+  ctx.fillStyle = 'rgba(0,0,0,0.65)';
+  ctx.fillRect(0, 0, W, 44);
+  ctx.strokeStyle = '#1a2a1a';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0,44); ctx.lineTo(W,44); ctx.stroke();
+  // HP bar
+  ctx.fillStyle = '#0a0a08'; ctx.fillRect(9,19,82,9);
+  ctx.fillStyle = '#44aa44'; ctx.fillRect(10,20,55,7);
+  // Subtle pixel texture on HP bar
+  for (let px = 10; px < 65; px += 4) {
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.fillRect(px, 20, 2, 7);
+  }
+  ctx.fillStyle = '#333333'; ctx.font = '7px Georgia'; ctx.fillText('CONDITION', 10, 15);
+  ctx.fillStyle = '#ccccaa'; ctx.font = '14px Georgia'; ctx.textAlign = 'center';
+  ctx.fillText('248 m', W/2, 22);
+  ctx.font = '8px Georgia'; ctx.fillStyle = '#3a4a3a';
+  ctx.fillText('MISSION 4: GAS', W/2, 34);
+  ctx.textAlign = 'left';
+  // Progress bar
+  ctx.fillStyle = 'rgba(0,0,0,0.45)'; ctx.fillRect(84, H-24, 222, 7);
+  ctx.fillStyle = '#667744'; ctx.fillRect(84, H-24, 90, 3);
+
+  // Label
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillRect(0, H-34, W, 34);
+  ctx.fillStyle = '#3a5a3a'; ctx.font = '9px Georgia'; ctx.textAlign = 'center';
+  ctx.fillText('With pixel art assets + custom Cher Ami sprite', W/2, H-16);
+})();
+
+// ─────────────────────────────────────────
+// STYLE THUMBNAILS
+// ─────────────────────────────────────────
+function drawStyleBase(id, skyCol1, skyCol2, gndCol, treeCol, label) {
+  const c = document.getElementById(id);
+  const ctx = c.getContext('2d');
+  const W = 280, H = 200;
+  const skyG = ctx.createLinearGradient(0, 0, 0, H * 0.65);
+  skyG.addColorStop(0, skyCol1); skyG.addColorStop(1, skyCol2);
+  ctx.fillStyle = skyG; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = gndCol;
+  ctx.beginPath(); ctx.moveTo(0,H); ctx.lineTo(W,H); ctx.lineTo(W/2,H*0.6); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = treeCol;
+  for (let x = 0; x < W; x += 16) {
+    const h = 18 + ((x*13)%22);
+    ctx.fillRect(x+6, H*0.6-h, 3, h);
+    ctx.fillRect(x+2, H*0.6-h*0.6, 11, 2);
+  }
+  return { ctx, W, H };
+}
+
+// Style A: Dark pixel art
+(function() {
+  const { ctx, W, H } = drawStyleBase('styleA', '#060a14', '#1a3050', '#0a1408', '#0c0e0a', '');
+  // chunky pixel pigeon
+  ctx.fillStyle = '#c4b890';
+  ctx.fillRect(120, 115, 28, 12);
+  ctx.fillStyle = '#ddd0b0'; ctx.fillRect(108, 118, 16, 10);
+  ctx.fillStyle = '#a09070';
+  ctx.beginPath(); ctx.moveTo(122,114); ctx.lineTo(138,107); ctx.lineTo(142,114); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(122,128); ctx.lineTo(138,135); ctx.lineTo(142,128); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#ff8800'; ctx.beginPath(); ctx.arc(104,116,3,0,Math.PI*2); ctx.fill();
+  // pixel grid effect
+  ctx.fillStyle = 'rgba(0,0,0,0.04)';
+  for (let py = 0; py < H; py += 4) {
+    ctx.fillRect(0, py, W, 1);
+  }
+  ctx.fillStyle = 'rgba(136,170,102,0.6)';
+  ctx.font = 'bold 10px monospace'; ctx.textAlign = 'center';
+  ctx.fillText('PIXEL ART', W/2, H-10);
+})();
+
+// Style B: Hand-drawn / warm
+(function() {
+  const c = document.getElementById('styleB');
+  const ctx = c.getContext('2d');
+  const W = 280, H = 200;
+  // Warmer sky - more illustrated
+  const skyG = ctx.createLinearGradient(0, 0, 0, H);
+  skyG.addColorStop(0, '#1a1428'); skyG.addColorStop(0.6, '#3a3050'); skyG.addColorStop(1, '#5a5060');
+  ctx.fillStyle = skyG; ctx.fillRect(0, 0, W, H);
+  // Textured ground (warmer browns)
+  const gG = ctx.createLinearGradient(0, H*0.6, 0, H);
+  gG.addColorStop(0, '#2a1e10'); gG.addColorStop(1, '#150e06');
+  ctx.fillStyle = gG;
+  ctx.beginPath(); ctx.moveTo(0,H); ctx.lineTo(W,H); ctx.lineTo(W/2,H*0.6); ctx.closePath(); ctx.fill();
+  // More organic tree shapes
+  ctx.fillStyle = '#1a1210';
+  for (let x = 0; x < W; x += 18) {
+    const h = 22 + Math.sin(x*0.4)*14;
+    ctx.beginPath();
+    ctx.moveTo(x+9, H*0.6);
+    ctx.bezierCurveTo(x+7, H*0.6-h*0.4, x+4+Math.sin(x)*6, H*0.6-h*0.7, x+8, H*0.6-h);
+    ctx.bezierCurveTo(x+12, H*0.6-h, x+14-Math.sin(x)*4, H*0.6-h*0.7, x+11, H*0.6-h*0.4);
+    ctx.lineTo(x+9, H*0.6); ctx.fill();
+  }
+  // Illustrated pigeon
+  ctx.save();
+  ctx.translate(140, 115);
+  // Body with brush stroke feel
+  ctx.fillStyle = '#b4a070';
+  ctx.beginPath(); ctx.ellipse(0,0,26,13,-0.15,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#d4c098';
+  ctx.beginPath(); ctx.ellipse(-14,3,14,9,0.2,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#e8d4a8';
+  ctx.beginPath(); ctx.ellipse(-22,-3,9,8,0,0,Math.PI*2); ctx.fill();
+  // Warm orange eye
+  ctx.fillStyle = '#ff9900'; ctx.beginPath(); ctx.arc(-28,-4,4,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#330000'; ctx.beginPath(); ctx.arc(-28,-4,2,0,Math.PI*2); ctx.fill();
+  // Wings — organic shapes
+  ctx.fillStyle = 'rgba(90,80,55,0.85)';
+  ctx.beginPath(); ctx.moveTo(-8,-10); ctx.quadraticCurveTo(8,-22,18,-10); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(-8,10); ctx.quadraticCurveTo(8,22,18,10); ctx.closePath(); ctx.fill();
+  ctx.restore();
+  ctx.fillStyle = 'rgba(210,165,90,0.65)';
+  ctx.font = 'bold 10px Georgia'; ctx.textAlign = 'center';
+  ctx.fillText('ILLUSTRATED / HAND-DRAWN', W/2, H-10);
+})();
+
+// Style C: Silhouette / Limbo
+(function() {
+  const c = document.getElementById('styleC');
+  const ctx = c.getContext('2d');
+  const W = 280, H = 200;
+  // Near-black with single mist color
+  ctx.fillStyle = '#0a0c0e'; ctx.fillRect(0, 0, W, H);
+  // Mist band
+  const mistG = ctx.createLinearGradient(0, H*0.45, 0, H*0.7);
+  mistG.addColorStop(0, 'rgba(40,55,60,0)');
+  mistG.addColorStop(0.5, 'rgba(40,55,60,0.35)');
+  mistG.addColorStop(1, 'rgba(40,55,60,0)');
+  ctx.fillStyle = mistG; ctx.fillRect(0, H*0.45, W, H*0.25);
+  // Pure black ground
+  ctx.fillStyle = '#050608';
+  ctx.beginPath(); ctx.moveTo(0,H); ctx.lineTo(W,H); ctx.lineTo(W/2,H*0.55); ctx.closePath(); ctx.fill();
+  // Pure silhouette trees
+  ctx.fillStyle = '#000000';
+  for (let x = 0; x < W; x += 14) {
+    const h = 28 + ((x*11)%24);
+    ctx.fillRect(x+6, H*0.55-h, 3, h);
+    // Horizontal stubs
+    const blen = h * 0.3;
+    ctx.fillRect(x+6-blen/2, H*0.55-h*0.55, blen, 2);
+  }
+  // Pure black pigeon silhouette
+  ctx.fillStyle = '#000000';
+  ctx.beginPath(); ctx.ellipse(140,118,26,11,-0.1,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(120,114,9,8,0,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(152,118); ctx.lineTo(166,112); ctx.lineTo(166,124); ctx.closePath(); ctx.fill();
+  // Wings
+  ctx.beginPath(); ctx.moveTo(132,112); ctx.lineTo(150,103); ctx.lineTo(154,112); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(132,125); ctx.lineTo(150,134); ctx.lineTo(154,125); ctx.closePath(); ctx.fill();
+  // Single highlight eye
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath(); ctx.arc(113,112,2,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = 'rgba(60,80,70,0.5)';
+  ctx.font = 'bold 10px Georgia'; ctx.textAlign = 'center';
+  ctx.fillText('SILHOUETTE / LIMBO STYLE', W/2, H-10);
+})();
+
+// ─────────────────────────────────────────
+// REFERENCE CANVAS — tone board
+// ─────────────────────────────────────────
+(function() {
+  const c = document.getElementById('referenceCanvas');
+  const ctx = c.getContext('2d');
+  const W = 860, H = 300;
+  ctx.fillStyle = '#050810'; ctx.fillRect(0,0,W,H);
+
+  const panels = [
+    { x:0,   w:215, label:'MISSION SELECT\nChapter cards', bg1:'#060a0e', bg2:'#0e1620' },
+    { x:215, w:215, label:'FLYING LOW\nForest canopy', bg1:'#060e06', bg2:'#0c1808' },
+    { x:430, w:215, label:'FLYING HIGH\nOpen sky / gunfire', bg1:'#050a18', bg2:'#1a3050' },
+    { x:645, w:215, label:'DEATH CARD\nHistorical fact', bg1:'#020304', bg2:'#080808' },
+  ];
+
+  panels.forEach(p => {
+    const g = ctx.createLinearGradient(p.x, 0, p.x, H);
+    g.addColorStop(0, p.bg1); g.addColorStop(1, p.bg2);
+    ctx.fillStyle = g; ctx.fillRect(p.x, 0, p.w, H);
+    // Panel border
+    ctx.strokeStyle = '#1a2a1a'; ctx.lineWidth = 1;
+    ctx.strokeRect(p.x+0.5, 0.5, p.w-1, H-1);
+    // Label
+    ctx.fillStyle = '#3a5a3a'; ctx.font = '9px Georgia'; ctx.textAlign = 'center';
+    const lines = p.label.split('\n');
+    lines.forEach((l, i) => ctx.fillText(l, p.x + p.w/2, H - 28 + i * 14));
+  });
+
+  // Panel 0: Chapter select mockup
+  (function() {
+    const px = 10;
+    ctx.fillStyle = '#162216';
+    roundRect(ctx, px+8, 20, 198, 70, 3); ctx.fill();
+    ctx.strokeStyle = '#3a6a3a'; ctx.lineWidth = 1;
+    roundRect(ctx, px+8, 20, 198, 70, 3); ctx.stroke();
+    ctx.fillStyle = '#4a7a4a'; ctx.font = '8px Georgia'; ctx.textAlign = 'left';
+    ctx.fillText('CHAPTER I', px+18, 38);
+    ctx.fillStyle = '#c4a870'; ctx.font = '12px Georgia';
+    ctx.fillText('CHER AMI AND THE', px+18, 55);
+    ctx.fillText('LOST BATTALION', px+18, 69);
+    ctx.fillStyle = '#3a6a3a'; ctx.font = '8px Georgia';
+    ctx.fillText('Endless Runner · 12 Missions', px+18, 82);
+
+    ctx.fillStyle = '#0a0c0a';
+    roundRect(ctx, px+8, 102, 198, 65, 3); ctx.fill();
+    ctx.strokeStyle = '#141614'; ctx.lineWidth = 1;
+    roundRect(ctx, px+8, 102, 198, 65, 3); ctx.stroke();
+    ctx.fillStyle = '#1e261e'; ctx.font = '8px Georgia';
+    ctx.fillText('CHAPTER II', px+18, 120);
+    ctx.fillStyle = '#2a322a'; ctx.font = '12px Georgia';
+    ctx.fillText('SILENT NIGHT', px+18, 137);
+    ctx.fillStyle = '#1e261e'; ctx.font = '8px Georgia';
+    ctx.fillText('Trust & Suspicion · Coming Soon', px+18, 155);
+
+    ctx.fillStyle = '#0a0c0a';
+    roundRect(ctx, px+8, 178, 198, 65, 3); ctx.fill();
+    ctx.strokeStyle = '#141614';
+    roundRect(ctx, px+8, 178, 198, 65, 3); ctx.stroke();
+    ctx.fillStyle = '#1e261e'; ctx.font = '8px Georgia';
+    ctx.fillText('CHAPTER III', px+18, 196);
+    ctx.fillStyle = '#2a322a'; ctx.font = '12px Georgia';
+    ctx.fillText('FIRE FOR EFFECT', px+18, 213);
+    ctx.fillStyle = '#1e261e'; ctx.font = '8px Georgia';
+    ctx.fillText('Accuracy & Ranging · Coming Soon', px+18, 231);
+  })();
+
+  // Panel 1: Flying low (forest) mockup
+  (function() {
+    const ox = 215;
+    // Dense trees
+    ctx.fillStyle = '#060e06';
+    for (let x = ox; x < ox+215; x += 12) {
+      const h = 60 + ((x*7)%60);
+      ctx.fillStyle = '#040804';
+      ctx.fillRect(x+4, 300-h, 4, h);
+      ctx.fillRect(x, 300-h*0.55, 12, 2);
+    }
+    // Gas pool
+    const gG = ctx.createRadialGradient(ox+107,260,20,ox+107,260,130);
+    gG.addColorStop(0,'rgba(80,150,20,0.35)');
+    gG.addColorStop(1,'rgba(60,120,10,0)');
+    ctx.fillStyle=gG; ctx.fillRect(ox,150,215,150);
+    // Pigeon low
+    ctx.fillStyle='#c4b890';
+    ctx.beginPath(); ctx.ellipse(ox+90,210,22,10,-0.1,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#a09070';
+    ctx.beginPath(); ctx.moveTo(ox+80,204); ctx.lineTo(ox+98,196); ctx.lineTo(ox+102,204); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(ox+80,217); ctx.lineTo(ox+98,225); ctx.lineTo(ox+102,217); ctx.closePath(); ctx.fill();
+    // GAS warning
+    ctx.fillStyle='rgba(180,255,60,0.7)';
+    ctx.font='10px Georgia'; ctx.textAlign='center';
+    ctx.fillText('⚠  GAS  ⚠', ox+107, 130);
+    // canopy dark
+    const cG = ctx.createLinearGradient(ox,0,ox,300);
+    cG.addColorStop(0,'rgba(0,0,0,0.25)'); cG.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=cG; ctx.fillRect(ox,0,215,300);
+  })();
+
+  // Panel 2: Flying high (open sky)
+  (function() {
+    const ox = 430;
+    // Bright(er) sky gradient
+    ctx.fillStyle = '#050a18';
+    ctx.fillRect(ox, 0, 215, 300);
+    const skyG = ctx.createRadialGradient(ox+107,120,20,ox+107,120,200);
+    skyG.addColorStop(0,'rgba(30,60,100,0.3)'); skyG.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=skyG; ctx.fillRect(ox,0,215,300);
+    // Trees below
+    ctx.fillStyle='#040804';
+    for (let x = ox; x < ox+215; x += 12) {
+      const h = 30 + ((x*7)%25);
+      ctx.fillRect(x+4, 300-h, 3, h);
+    }
+    // Ground low
+    ctx.fillStyle='#060c04'; ctx.fillRect(ox,260,215,40);
+    // Pigeon high
+    ctx.fillStyle='#c4b890';
+    ctx.beginPath(); ctx.ellipse(ox+107,100,22,10,-0.1,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#a09070';
+    ctx.beginPath(); ctx.moveTo(ox+97,94); ctx.lineTo(ox+115,85); ctx.lineTo(ox+119,94); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(ox+97,107); ctx.lineTo(ox+115,116); ctx.lineTo(ox+119,107); ctx.closePath(); ctx.fill();
+    // Bullets targeting pigeon
+    for (let i=0; i<3; i++) {
+      const bx = ox+20+i*70, by=160+i*15;
+      ctx.fillStyle='rgba(255,220,60,0.8)';
+      ctx.fillRect(bx,by,16,3);
+      ctx.fillStyle='rgba(255,140,0,0.8)';
+      ctx.beginPath(); ctx.moveTo(bx+16,by-1); ctx.lineTo(bx+22,by+1.5); ctx.lineTo(bx+16,by+4); ctx.closePath(); ctx.fill();
+    }
+    // GUNFIRE warning
+    ctx.fillStyle='rgba(255,100,60,0.8)';
+    ctx.font='10px Georgia'; ctx.textAlign='center';
+    ctx.fillText('⚠  GUNFIRE  ⚠', ox+107, 145);
+  })();
+
+  // Panel 3: Death card
+  (function() {
+    const ox = 645;
+    ctx.fillStyle='#020304'; ctx.fillRect(ox,0,215,300);
+    // Silhouette treeline
+    ctx.fillStyle='#0a0a0a';
+    for (let x=ox; x<ox+215; x+=20) {
+      const h=25+((x*9)%30);
+      ctx.fillRect(x+8,300-55-h,5,h);
+      ctx.fillRect(x+4,300-55-h-4,11,4);
+    }
+    ctx.fillRect(ox,245,215,55);
+    // Red top stripe
+    ctx.fillStyle='#5a0808'; ctx.fillRect(ox,0,215,3);
+    // Cause text
+    ctx.fillStyle='#c4986a'; ctx.font='italic 13px Georgia'; ctx.textAlign='center';
+    ctx.fillText('Overcome by mustard gas.', ox+107, 85);
+    // Divider
+    ctx.strokeStyle='#2a1a1a'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(ox+40,105); ctx.lineTo(ox+175,105); ctx.stroke();
+    ctx.fillStyle='#2a2a2a'; ctx.font='8px Georgia';
+    ctx.fillText('— FIELD RECORD —', ox+107, 118);
+    // Fact
+    ctx.fillStyle='#5a6a5a'; ctx.font='italic 9px Georgia';
+    const fact = '"Chemical weapons killed\n90,000 soldiers in WWI."';
+    fact.split('\n').forEach((l,i) => ctx.fillText(l, ox+107, 145+i*16));
+    // Distance
+    ctx.fillStyle='#3a4a3a'; ctx.font='14px Georgia';
+    ctx.fillText('248 metres', ox+107, 200);
+    ctx.font='8px Georgia'; ctx.fillStyle='#1e2e1e';
+    ctx.fillText('DISTANCE COVERED', ox+107, 215);
+    // Buttons
+    ctx.fillStyle='#ccaa66'; ctx.font='12px Georgia';
+    ctx.fillText('TRY AGAIN', ox+72, 250);
+    ctx.fillStyle='#445544';
+    ctx.fillText('MISSIONS', ox+155, 250);
+  })();
+})();
+</script>
+</body>
+</html>
