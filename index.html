@@ -635,6 +635,83 @@
     #fmInvitation .inv-main { font-size: clamp(2rem, 5vw, 4rem); display: block; letter-spacing: 0.18em; }
     #fmInvitation .inv-only { font-size: clamp(0.7rem, 1.6vw, 1.3rem); display: block; letter-spacing: 0.55em; }
 
+    /* Password field */
+    .fm-pw-wrap {
+      display: flex; flex-direction: column; gap: 0.4rem;
+    }
+    .fm-pw-prompt {
+      font-size: 0.5rem; letter-spacing: 0.55em; text-transform: uppercase;
+      color: rgba(0,240,255,0.3);
+    }
+    .fm-pw-slots {
+      display: flex; align-items: center; gap: 0;
+    }
+    #fmPassword {
+      background: none;
+      border: none; border-bottom: 1px solid rgba(0,240,255,0.22);
+      color: #00f0ff;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.35rem;
+      letter-spacing: 0.55em;
+      width: clamp(200px, 24vw, 280px);
+      outline: none;
+      padding: 0.25rem 0.1rem;
+      text-transform: uppercase;
+      caret-color: #00f0ff;
+      transition: border-color 0.3s;
+    }
+    #fmPassword:focus { border-bottom-color: rgba(0,240,255,0.55); }
+    #fmPassword::placeholder { color: rgba(0,240,255,0.12); letter-spacing: 0.45em; }
+
+    .fm-enter-btn {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.5rem; letter-spacing: 0.5em; text-transform: uppercase;
+      color: rgba(0,240,255,0.35); background: none;
+      border: 1px solid rgba(0,240,255,0.18);
+      padding: 0.55rem 1.2rem; cursor: pointer;
+      transition: color 0.25s, border-color 0.25s;
+      align-self: flex-start;
+    }
+    .fm-enter-btn:hover { color: #00f0ff; border-color: rgba(0,240,255,0.5); }
+
+    .fm-error {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.55rem; letter-spacing: 0.4em; text-transform: uppercase;
+      color: rgba(255,60,60,0.7);
+      min-height: 1rem;
+      transition: opacity 0.3s;
+    }
+
+    /* Success screen */
+    #fmSuccess {
+      position: absolute; inset: 0; z-index: 5;
+      background: #00000f;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: clamp(2rem, 8vw, 6rem);
+      opacity: 0; pointer-events: none;
+      transition: opacity 1.6s ease;
+    }
+    #fmSuccess.visible { opacity: 1; pointer-events: all; }
+    #fmSuccessText {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: clamp(1.05rem, 2.4vw, 1.65rem);
+      color: #00f0ff;
+      text-align: center;
+      line-height: 1.7;
+      max-width: 720px;
+      text-shadow: 0 0 28px rgba(0,240,255,0.45), 0 0 70px rgba(0,240,255,0.15);
+      letter-spacing: 0.04em;
+    }
+    #fmSuccessBack {
+      margin-top: 3.5rem;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.42rem; letter-spacing: 0.45em; text-transform: uppercase;
+      color: rgba(0,240,255,0.2); background: none; border: none;
+      cursor: pointer; transition: color 0.3s;
+    }
+    #fmSuccessBack:hover { color: rgba(0,240,255,0.5); }
+
     .fm-back {
       font-family: 'Orbitron', sans-serif;
       font-size: 0.42rem; letter-spacing: 0.45em; text-transform: uppercase;
@@ -754,7 +831,7 @@
         <span>clearance required</span>
       </div>
       <div class="fm-drum-wrap">
-        <div class="fm-drum-label">Identity</div>
+        <div class="fm-drum-label">(MODE)</div>
         <div class="fm-drum">
           <button class="fm-drum-arrow" onclick="fmCycle(-1)">&#9650;</button>
           <div class="fm-drum-viewport" id="fmDrumViewport">
@@ -763,7 +840,24 @@
           <button class="fm-drum-arrow" onclick="fmCycle(1)">&#9660;</button>
         </div>
       </div>
+
+      <div class="fm-pw-wrap">
+        <div class="fm-pw-prompt">Who is Marion?</div>
+        <input type="text" id="fmPassword" maxlength="10"
+               autocomplete="off" spellcheck="false"
+               placeholder="_ _ _ _ _ _ _ _ _ _" />
+      </div>
+
+      <button class="fm-enter-btn" onclick="fmEnter()">Enter</button>
+      <div id="fmError" class="fm-error"></div>
+
       <button class="fm-back" onclick="closeFm()">&#8592; abort</button>
+    </div>
+
+    <!-- Success screen -->
+    <div id="fmSuccess">
+      <div id="fmSuccessText">Why do people fight for their servitude as though it were their salvation?</div>
+      <button id="fmSuccessBack" onclick="closeFmSuccess()">&#8592; exit</button>
     </div>
   </div>
 
@@ -851,7 +945,7 @@
 
     // ── FREE MARION ───────────────────────────────────────
     const FM_IDENTITIES = ['Manwë','Ulmo','Aulë','Oromë','Námo','Irmo','Tulkas','Varda','Yavanna','Nienna','Estë','Vairë','Vána','Nessa'];
-    let fmIdx = 0;
+    let fmIdx = 7; // default: Varda
     const ITEM_H = 44;
 
     function fmBuildDrum() {
@@ -888,10 +982,38 @@
     function openFm() {
       document.getElementById('fmOverlay').classList.add('visible');
       fmBuildDrum();
+      // Enter key submits password
+      const pw = document.getElementById('fmPassword');
+      pw.value = '';
+      pw.onkeydown = (e) => { if (e.key === 'Enter') fmEnter(); };
     }
 
     function closeFm() {
       document.getElementById('fmOverlay').classList.remove('visible');
+      document.getElementById('fmSuccess').classList.remove('visible');
+      document.getElementById('fmPassword').value = '';
+      document.getElementById('fmError').textContent = '';
+    }
+
+    function fmEnter() {
+      const raw = document.getElementById('fmPassword').value;
+      // Accept any variation of IAM with optional spaces between letters
+      const normalized = raw.replace(/\s/g, '').toLowerCase();
+      const validPw   = normalized === 'iam';
+      const validMode = FM_IDENTITIES[fmIdx] === 'Aulë';
+
+      if (validPw && validMode) {
+        document.getElementById('fmSuccess').classList.add('visible');
+      } else {
+        const err = document.getElementById('fmError');
+        err.textContent = 'ACCESS DENIED';
+        document.getElementById('fmPassword').value = '';
+        setTimeout(() => { err.textContent = ''; }, 1800);
+      }
+    }
+
+    function closeFmSuccess() {
+      document.getElementById('fmSuccess').classList.remove('visible');
     }
 
     function showMainSite() {
