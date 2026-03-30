@@ -6,7 +6,7 @@
   <title>Magus Jane</title>
   <link rel="preload" as="image" href="images/cover-nobg.png" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=Share+Tech+Mono&family=IM+Fell+English:ital@0;1&family=Orbitron:wght@400;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=Share+Tech+Mono&family=IM+Fell+English:ital@0;1&family=Orbitron:wght@400;700;900&family=Dancing+Script:wght@700&display=swap');
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -40,7 +40,7 @@
     }
 
     #bookCover {
-      width: min(300px, 70vw); height: auto;
+      width: min(400px, 78vw); height: auto;
       cursor: pointer; display: block;
       animation: levitate 4.5s ease-in-out infinite;
       filter:
@@ -208,15 +208,34 @@
     }
     #mainSite.visible { opacity: 1; pointer-events: all; }
 
-    /* Wordmark — faint, top center */
+    /* Wordmark — top center */
     .site-wordmark {
-      position: absolute; top: clamp(1.2rem, 3vh, 2.5rem);
+      position: absolute; top: clamp(1.4rem, 3.5vh, 3rem);
       left: 50%; transform: translateX(-50%);
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(0.8rem, 2vw, 1.4rem);
-      color: rgba(200,178,138,0.28);
-      letter-spacing: 0.2em; white-space: nowrap;
+      font-size: clamp(1.4rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      color: rgba(200,178,138,0.55);
+      letter-spacing: 0.22em; white-space: nowrap;
       pointer-events: none;
+      text-shadow: 0 0 40px rgba(200,150,80,0.2);
+    }
+
+    /* Center j glyph */
+    #hexCenter {
+      position: absolute; left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Dancing Script', cursive;
+      font-weight: 700;
+      font-size: clamp(5rem, 10vw, 9rem);
+      color: #8B1229;
+      text-shadow:
+        0 0 20px rgba(139,18,41,0.9),
+        0 0 60px rgba(139,18,41,0.5),
+        0 0 120px rgba(139,18,41,0.2);
+      pointer-events: none;
+      user-select: none;
+      line-height: 1;
     }
 
     /* Full-screen constellation SVG */
@@ -236,11 +255,11 @@
     }
 
     .menu-node .node-img {
-      width: clamp(80px, 12vw, 140px);
-      height: clamp(80px, 12vw, 140px);
+      width: clamp(80px, 11vw, 130px);
+      height: clamp(80px, 11vw, 130px);
       object-fit: contain;
-      transition: transform 0.35s ease, filter 0.35s ease;
-      filter: drop-shadow(0 0 8px rgba(0,0,0,0.6));
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), filter 0.4s ease;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,0.5));
     }
 
     /* Running man is black — invert to pale gold on dark bg */
@@ -251,18 +270,21 @@
 
     .menu-node .node-label {
       font-family: 'Cinzel', serif;
-      font-size: clamp(0.48rem, 1vw, 0.62rem);
-      letter-spacing: 0.35em; text-transform: uppercase;
-      color: rgba(200,178,138,0.55);
-      margin-top: 0.9rem;
+      font-size: clamp(0.7rem, 1.4vw, 0.95rem);
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: rgba(200,178,138,0.9);
+      margin-top: 0.8rem;
       opacity: 0;
-      transition: opacity 0.5s ease;
+      transition: opacity 0.35s ease;
       white-space: nowrap;
+      text-shadow: 0 0 12px rgba(200,150,80,0.5);
     }
 
     /* Hover state */
     .menu-node:hover .node-img {
-      transform: scale(1.1);
+      transform: scale(1.22);
+      filter: drop-shadow(0 0 18px rgba(200,178,138,0.65))
+              drop-shadow(0 0 45px rgba(200,150,80,0.3));
     }
     .menu-node:hover .node-label { opacity: 1; }
 
@@ -275,28 +297,7 @@
               drop-shadow(0 0 4px rgba(0,0,0,0.4));
     }
 
-    /* Individual float animations — offset phases so they never sync */
-    @keyframes float-a {
-      0%,100% { transform: translate(-50%,-50%) translateY(0px); }
-      50%      { transform: translate(-50%,-50%) translateY(-14px); }
-    }
-    @keyframes float-b {
-      0%,100% { transform: translate(-50%,-50%) translateY(-6px); }
-      50%      { transform: translate(-50%,-50%) translateY(10px); }
-    }
-    @keyframes float-c {
-      0%,100% { transform: translate(-50%,-50%) translateY(-10px); }
-      50%      { transform: translate(-50%,-50%) translateY(6px); }
-    }
-    .float-a { animation: float-a 5.2s ease-in-out infinite; }
-    .float-b { animation: float-b 6.8s ease-in-out infinite 1.4s; }
-    .float-c { animation: float-c 4.9s ease-in-out infinite 2.9s; }
-    @keyframes float-d { 0%,100%{transform:translate(-50%,-50%) translateY(-4px)} 50%{transform:translate(-50%,-50%) translateY(12px)} }
-    @keyframes float-e { 0%,100%{transform:translate(-50%,-50%) translateY(8px)}  50%{transform:translate(-50%,-50%) translateY(-10px)} }
-    @keyframes float-f { 0%,100%{transform:translate(-50%,-50%) translateY(0px)}  50%{transform:translate(-50%,-50%) translateY(-8px)} }
-    .float-d { animation: float-d 7.4s ease-in-out infinite 0.7s; }
-    .float-e { animation: float-e 5.8s ease-in-out infinite 3.6s; }
-    .float-f { animation: float-f 6.2s ease-in-out infinite 1.9s; }
+    /* Node positions and bobbing driven by JS hexagon animation */
 
     /* Constellation line pulse */
     @keyframes line-pulse {
@@ -305,37 +306,9 @@
     }
     .const-line { animation: line-pulse 8s ease-in-out infinite; }
 
-    /* Glow on hover — per node colour */
-    .node-the-lost:hover .node-img {
-      filter: drop-shadow(0 0 22px rgba(80,160,80,0.55))
-              drop-shadow(0 0 50px rgba(40,100,40,0.3));
-    }
-    .node-cherrywood:hover .node-img {
-      filter: drop-shadow(0 0 22px rgba(180,150,40,0.6))
-              drop-shadow(0 0 50px rgba(30,100,50,0.3));
-    }
-    .node-free-marion:hover .node-img {
-      filter: brightness(0) invert(0.95) sepia(0.3)
-              drop-shadow(0 0 22px rgba(200,180,130,0.65))
-              drop-shadow(0 0 50px rgba(200,160,80,0.3));
-    }
-    .node-cooper:hover .node-img {
-      filter: drop-shadow(0 0 22px rgba(200,120,40,0.65))
-              drop-shadow(0 0 50px rgba(160,80,20,0.3));
-    }
-    .node-lyceum:hover .node-img {
-      filter: drop-shadow(0 0 22px rgba(220,180,50,0.65))
-              drop-shadow(0 0 50px rgba(180,140,20,0.3));
-    }
-    /* JT Lab is white-bg — dim it slightly at rest, glow on hover */
-    .node-jt-lab .node-img {
-      filter: brightness(0.85) drop-shadow(0 0 4px rgba(0,0,0,0.5));
-      opacity: 0.7;
-    }
-    .node-jt-lab:hover .node-img {
-      filter: brightness(1) drop-shadow(0 0 16px rgba(255,255,255,0.4));
-      opacity: 1;
-    }
+    /* JT Lab is white-bg — dim at rest */
+    .node-jt-lab .node-img { opacity: 0.72; }
+    .node-jt-lab:hover .node-img { opacity: 1; }
 
     #siteMenu {
       position: absolute; inset: 0;
@@ -641,15 +614,9 @@
   <!-- ── MAIN SITE ──────────────────────────────────────── -->
   <div id="mainSite">
     <div class="site-wordmark">Magus Jane</div>
-
-    <!-- Constellation lines SVG -->
-    <svg id="constellationSvg" xmlns="http://www.w3.org/2000/svg">
-      <!-- lines drawn by JS once layout is known -->
-    </svg>
-
-    <div id="siteMenu">
-      <!-- nodes injected by JS -->
-    </div>
+    <svg id="constellationSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="hexCenter">j</div>
+    <div id="siteMenu"></div>
   </div>
 
   <script>
@@ -744,14 +711,10 @@
       if (opened) return; opened = true;
       document.getElementById('bookCover').classList.add('opening');
       document.querySelector('.book-glow').style.cssText='transition:opacity 0.3s;opacity:0';
-      document.getElementById('matrix').style.opacity   = '0.1';
-      document.getElementById('vignette').style.opacity = '0.12';
-      document.getElementById('darkOverlay').classList.add('active');
-      setTimeout(() => {
-        document.getElementById('pageReveal').classList.add('open');
-        inkReveal(document.getElementById('inscription'), 'Speak, Friend,\nand Enter', 68);
-        setTimeout(() => document.getElementById('pwd').focus(), 2200);
-      }, 520);
+      document.getElementById('matrix').style.transition = 'opacity 1.4s ease';
+      document.getElementById('matrix').style.opacity = '0';
+      document.getElementById('vignette').style.opacity = '0';
+      setTimeout(() => showMainSite(), 520);
     }
 
     // ── PASSWORD ──────────────────────────────────────────
@@ -797,12 +760,12 @@
     // ── MAIN SITE ─────────────────────────────────────────
     // Scattered positions as % of viewport [left, top]
     const NODES = [
-      { id: 'the-lost',    src: 'images/icon-the-lost.png',    label: 'The Lost',    pos: [18, 22], float: 'float-a', action: () => window.location.href = 'the-lost/' },
-      { id: 'cherrywood',  src: 'images/icon-cherrywood.png',  label: 'Cherrywood',  pos: [72, 18], float: 'float-b', action: () => window.open('https://cherrywoodgolf.com/', '_blank') },
-      { id: 'free-marion', src: 'images/icon-free-marion.png', label: 'Free Marion', pos: [50, 52], float: 'float-c', action: () => {} },
-      { id: 'cooper',      src: 'images/icon-cooper.svg',      label: 'Cooper',      pos: [82, 58], float: 'float-d', action: () => {} },
-      { id: 'lyceum',      src: 'images/icon-lyceum.svg',      label: 'Lyceum',      pos: [28, 72], float: 'float-e', action: () => {} },
-      { id: 'jt-lab',      src: 'images/icon-jt-lab.svg',      label: 'JT Lab',      pos: [68, 78], float: 'float-f', action: () => {} },
+      { id: 'the-lost',    src: 'images/icon-the-lost.png',    label: 'The Lost',    action: () => window.location.href = 'the-lost/' },
+      { id: 'cherrywood',  src: 'images/icon-cherrywood.png',  label: 'Cherrywood',  action: () => window.open('https://cherrywoodgolf.com/', '_blank') },
+      { id: 'free-marion', src: 'images/icon-free-marion.png', label: 'Free Marion', action: () => {} },
+      { id: 'cooper',      src: 'images/icon-cooper.png',      label: 'Cooper',      action: () => {} },
+      { id: 'lyceum',      src: 'images/icon-lyceum.png',      label: 'Lyceum',      action: () => {} },
+      { id: 'jt-lab',      src: 'images/icon-jt-lab.svg',      label: 'JT Lab',      action: () => {} },
     ];
 
     // ── FREE MARION ───────────────────────────────────────
@@ -890,65 +853,71 @@
     function showMainSite() {
       document.getElementById('mainSite').classList.add('visible');
       buildMenu();
+      requestAnimationFrame(animateHex);
     }
 
     function buildMenu() {
       const menu = document.getElementById('siteMenu');
       menu.innerHTML = '';
-
       NODES.forEach(n => {
         const node = document.createElement('div');
-        node.className = `menu-node node-${n.id} ${n.float}`;
-        node.style.left = n.pos[0] + '%';
-        node.style.top  = n.pos[1] + '%';
-
+        node.className = `menu-node node-${n.id}`;
         const img = document.createElement('img');
         img.src = n.src; img.alt = n.label; img.className = 'node-img';
         node.appendChild(img);
-
         const lbl = document.createElement('div');
         lbl.className = 'node-label'; lbl.textContent = n.label;
         node.appendChild(lbl);
-
         node.addEventListener('click', n.action);
         menu.appendChild(node);
       });
-
-      // Draw constellation lines after layout
-      requestAnimationFrame(drawConstellation);
-    }
-
-    function drawConstellation() {
+      // Pre-create SVG lines for hexagon edges (adjacent pairs in a ring)
       const svg = document.getElementById('constellationSvg');
       svg.innerHTML = '';
-
-      const centers = NODES.map(n => ({
-        x: (n.pos[0] / 100) * window.innerWidth,
-        y: (n.pos[1] / 100) * window.innerHeight,
-      }));
-
-      // Connect all 3 pairs
-      [[0,1],[1,2],[0,2]].forEach(([a, b]) => {
+      for (let i = 0; i < 6; i++) {
         const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-        line.setAttribute('x1', centers[a].x);
-        line.setAttribute('y1', centers[a].y);
-        line.setAttribute('x2', centers[b].x);
-        line.setAttribute('y2', centers[b].y);
-        line.setAttribute('stroke', 'rgba(200,178,138,0.5)');
-        line.setAttribute('stroke-width', '0.6');
-        line.classList.add('const-line');
-        // Stagger pulse phase per line
-        line.style.animationDelay = `${([0,2.5,5][[0,1,2].indexOf(a)])}s`;
+        line.setAttribute('stroke','rgba(200,178,138,0.18)');
+        line.setAttribute('stroke-width','0.7');
+        line.id = `hex-line-${i}`;
         svg.appendChild(line);
+      }
+    }
+
+    // ── HEXAGON ROTATION ──────────────────────────────────
+    let hexAngle = 0;
+    const HEX_SPEED = 0.00055; // ~190s full rotation
+    const BOB_AMP = 8;
+    const BOB_FREQ = [0.011,0.009,0.013,0.010,0.012,0.008];
+    const BOB_PHASE = [0, 1.1, 2.2, 3.3, 4.4, 5.5];
+
+    function animateHex(ts) {
+      hexAngle += HEX_SPEED;
+      const cx = window.innerWidth  / 2;
+      const cy = window.innerHeight / 2;
+      const radius = Math.min(window.innerWidth * 0.42, window.innerHeight * 0.38, 400);
+      const t = (ts || 0) / 1000;
+      const pts = [];
+
+      NODES.forEach((n, i) => {
+        const angle = (i / 6) * Math.PI * 2 + hexAngle;
+        const bob   = Math.sin(t * BOB_FREQ[i] * 60 + BOB_PHASE[i]) * BOB_AMP;
+        const x = cx + Math.cos(angle) * radius;
+        const y = cy + Math.sin(angle) * radius + bob;
+        pts.push({ x, y });
+        const el = document.querySelector(`.node-${n.id}`);
+        if (el) { el.style.left = x + 'px'; el.style.top = y + 'px'; }
       });
 
-      // Dot at each center
-      centers.forEach(c => {
-        const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
-        dot.setAttribute('cx', c.x); dot.setAttribute('cy', c.y); dot.setAttribute('r', '1.5');
-        dot.setAttribute('fill', 'rgba(200,178,138,0.25)');
-        svg.appendChild(dot);
-      });
+      // Update hexagon edge lines
+      for (let i = 0; i < 6; i++) {
+        const line = document.getElementById(`hex-line-${i}`);
+        if (!line) continue;
+        const a = pts[i], b = pts[(i + 1) % 6];
+        line.setAttribute('x1', a.x); line.setAttribute('y1', a.y);
+        line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
+      }
+
+      requestAnimationFrame(animateHex);
     }
   </script>
 
