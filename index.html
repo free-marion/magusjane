@@ -208,34 +208,21 @@
     }
     #mainSite.visible { opacity: 1; pointer-events: all; }
 
-    /* Wordmark — top center */
-    .site-wordmark {
-      position: absolute; top: clamp(1.4rem, 3.5vh, 3rem);
-      left: 50%; transform: translateX(-50%);
-      font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1.4rem, 3.5vw, 2.8rem);
-      font-weight: 700;
-      color: rgba(200,178,138,0.55);
-      letter-spacing: 0.22em; white-space: nowrap;
-      pointer-events: none;
-      text-shadow: 0 0 40px rgba(200,150,80,0.2);
-    }
-
     /* Center j glyph */
     #hexCenter {
       position: absolute; left: 50%; top: 50%;
       transform: translate(-50%, -50%);
-      font-family: 'Dancing Script', cursive;
-      font-weight: 700;
-      font-size: clamp(5rem, 10vw, 9rem);
-      color: #8B1229;
-      text-shadow:
-        0 0 20px rgba(139,18,41,0.9),
-        0 0 60px rgba(139,18,41,0.5),
-        0 0 120px rgba(139,18,41,0.2);
       pointer-events: none;
       user-select: none;
-      line-height: 1;
+    }
+    #jGlyph {
+      width: clamp(3.5rem, 7vw, 6.5rem);
+      height: auto;
+      overflow: visible;
+      filter:
+        drop-shadow(0 0 8px rgba(139,18,41,0.95))
+        drop-shadow(0 0 30px rgba(139,18,41,0.55))
+        drop-shadow(0 0 80px rgba(139,18,41,0.2));
     }
 
     /* Full-screen constellation SVG */
@@ -613,9 +600,19 @@
 
   <!-- ── MAIN SITE ──────────────────────────────────────── -->
   <div id="mainSite">
-    <div class="site-wordmark">Magus Jane</div>
     <svg id="constellationSvg" xmlns="http://www.w3.org/2000/svg"></svg>
-    <div id="hexCenter">j</div>
+    <div id="hexCenter">
+      <svg id="jGlyph" viewBox="0 0 48 112" xmlns="http://www.w3.org/2000/svg">
+        <!-- Ink stroke tittle: short angled brushstroke, tapered -->
+        <path d="M 18 13 Q 22 7 29 12"
+              stroke="#8B1229" stroke-width="3.2"
+              fill="none" stroke-linecap="round"/>
+        <!-- j body: italic calligraphic downstroke with sweeping curl -->
+        <path d="M 23 24 C 24 36 27 62 26 79 C 25 93 16 106 7 103 C 2 101 2 94 6 93 C 10 92 14 96 12 101"
+              stroke="#8B1229" stroke-width="3.8"
+              fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
     <div id="siteMenu"></div>
   </div>
 
@@ -670,13 +667,6 @@
         if(c.type===TYPE_BS&&fr%14===0){c.bsCharIdx++;if(c.bsCharIdx>=c.bsWord.length){c.bsCharIdx=0;c.bsIdx=(c.bsIdx+1)%BS_TOKENS.length;c.bsWord=BS_TOKENS[c.bsIdx];}}
         if(yp>H+20&&Math.random()>.97)c.y=-rand(5,30);
       });
-      const cyc=fr%600; let iOp=0;
-      if(cyc<60)iOp=cyc/60*.18; else if(cyc<300)iOp=.18; else if(cyc<420)iOp=(1-(cyc-300)/120)*.18;
-      if(iOp>.005){
-        ctx.save(); ctx.globalAlpha=iOp; ctx.font='13px "Share Tech Mono",monospace'; ctx.fillStyle='rgba(180,130,40,1)';
-        const tw=ctx.measureText(RING_TEXT).width,off=(fr*.15)%tw;
-        ctx.fillText(RING_TEXT,-off,cy+230); ctx.fillText(RING_TEXT,-off+tw,cy+230); ctx.restore();
-      }
       fr++; requestAnimationFrame(drawMatrix);
     }
     drawMatrix();
