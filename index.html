@@ -291,6 +291,12 @@
     .float-a { animation: float-a 5.2s ease-in-out infinite; }
     .float-b { animation: float-b 6.8s ease-in-out infinite 1.4s; }
     .float-c { animation: float-c 4.9s ease-in-out infinite 2.9s; }
+    @keyframes float-d { 0%,100%{transform:translate(-50%,-50%) translateY(-4px)} 50%{transform:translate(-50%,-50%) translateY(12px)} }
+    @keyframes float-e { 0%,100%{transform:translate(-50%,-50%) translateY(8px)}  50%{transform:translate(-50%,-50%) translateY(-10px)} }
+    @keyframes float-f { 0%,100%{transform:translate(-50%,-50%) translateY(0px)}  50%{transform:translate(-50%,-50%) translateY(-8px)} }
+    .float-d { animation: float-d 7.4s ease-in-out infinite 0.7s; }
+    .float-e { animation: float-e 5.8s ease-in-out infinite 3.6s; }
+    .float-f { animation: float-f 6.2s ease-in-out infinite 1.9s; }
 
     /* Constellation line pulse */
     @keyframes line-pulse {
@@ -312,6 +318,23 @@
       filter: brightness(0) invert(0.95) sepia(0.3)
               drop-shadow(0 0 22px rgba(200,180,130,0.65))
               drop-shadow(0 0 50px rgba(200,160,80,0.3));
+    }
+    .node-cooper:hover .node-img {
+      filter: drop-shadow(0 0 22px rgba(200,120,40,0.65))
+              drop-shadow(0 0 50px rgba(160,80,20,0.3));
+    }
+    .node-lyceum:hover .node-img {
+      filter: drop-shadow(0 0 22px rgba(220,180,50,0.65))
+              drop-shadow(0 0 50px rgba(180,140,20,0.3));
+    }
+    /* JT Lab is white-bg — dim it slightly at rest, glow on hover */
+    .node-jt-lab .node-img {
+      filter: brightness(0.85) drop-shadow(0 0 4px rgba(0,0,0,0.5));
+      opacity: 0.7;
+    }
+    .node-jt-lab:hover .node-img {
+      filter: brightness(1) drop-shadow(0 0 16px rgba(255,255,255,0.4));
+      opacity: 1;
     }
 
     #siteMenu {
@@ -774,9 +797,12 @@
     // ── MAIN SITE ─────────────────────────────────────────
     // Scattered positions as % of viewport [left, top]
     const NODES = [
-      { id: 'the-lost',    src: 'images/icon-the-lost.png',     label: 'The Lost',    pos: [22, 30], float: 'float-a', action: () => window.location.href = 'the-lost/' },
-      { id: 'cherrywood',  src: 'images/icon-cherrywood.png',   label: 'Cherrywood',  pos: [70, 26], float: 'float-b', action: () => window.open('https://cherrywoodgolf.com/', '_blank') },
-      { id: 'free-marion', src: 'images/icon-free-marion.png',  label: 'Free Marion', pos: [46, 65], float: 'float-c', action: () => {} },
+      { id: 'the-lost',    src: 'images/icon-the-lost.png',    label: 'The Lost',    pos: [18, 22], float: 'float-a', action: () => window.location.href = 'the-lost/' },
+      { id: 'cherrywood',  src: 'images/icon-cherrywood.png',  label: 'Cherrywood',  pos: [72, 18], float: 'float-b', action: () => window.open('https://cherrywoodgolf.com/', '_blank') },
+      { id: 'free-marion', src: 'images/icon-free-marion.png', label: 'Free Marion', pos: [50, 52], float: 'float-c', action: () => {} },
+      { id: 'cooper',      src: 'images/icon-cooper.svg',      label: 'Cooper',      pos: [82, 58], float: 'float-d', action: () => {} },
+      { id: 'lyceum',      src: 'images/icon-lyceum.svg',      label: 'Lyceum',      pos: [28, 72], float: 'float-e', action: () => {} },
+      { id: 'jt-lab',      src: 'images/icon-jt-lab.svg',      label: 'JT Lab',      pos: [68, 78], float: 'float-f', action: () => {} },
     ];
 
     // ── FREE MARION ───────────────────────────────────────
