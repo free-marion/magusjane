@@ -212,17 +212,31 @@
     #hexCenter {
       position: absolute; left: 50%; top: 50%;
       transform: translate(-50%, -50%);
+      font-family: 'Dancing Script', cursive;
+      font-weight: 700;
+      font-size: clamp(5rem, 10vw, 9rem);
+      color: #8B1229;
+      text-shadow: 0 0 20px rgba(139,18,41,0.9), 0 0 60px rgba(139,18,41,0.5), 0 0 120px rgba(139,18,41,0.2);
       pointer-events: none;
       user-select: none;
+      line-height: 1;
     }
-    #jGlyph {
-      width: clamp(3.5rem, 7vw, 6.5rem);
-      height: auto;
-      overflow: visible;
-      filter:
-        drop-shadow(0 0 8px rgba(139,18,41,0.95))
-        drop-shadow(0 0 30px rgba(139,18,41,0.55))
-        drop-shadow(0 0 80px rgba(139,18,41,0.2));
+
+    /* Loading screen j — hidden until fonts ready */
+    #bookJ {
+      position: fixed; left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Dancing Script', cursive;
+      font-weight: 700;
+      font-size: clamp(5rem, 10vw, 9rem);
+      color: #8B1229;
+      text-shadow: 0 0 20px rgba(139,18,41,0.9), 0 0 60px rgba(139,18,41,0.5), 0 0 120px rgba(139,18,41,0.2);
+      pointer-events: none;
+      user-select: none;
+      line-height: 1;
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 0.8s ease;
     }
 
     /* Full-screen constellation SVG */
@@ -303,7 +317,7 @@
 
     /* ── FREE MARION OVERLAY ────────────────────────────── */
     #fmOverlay {
-      position: fixed; inset: 0; z-index: 200;
+      position: fixed; inset: 0; z-index: 500;
       background: #00000f;
       opacity: 0; pointer-events: none;
       transition: opacity 1.2s ease;
@@ -423,70 +437,25 @@
       animation: fm-glitch 0.22s steps(1) forwards;
     }
 
-    /* Cipher input */
-    .fm-cipher-wrap {
-      display: flex; flex-direction: column; gap: 0.5rem;
-    }
-    .fm-cipher-label {
-      font-size: 0.5rem; letter-spacing: 0.55em; text-transform: uppercase;
-      color: rgba(0,240,255,0.3);
-    }
-    .fm-cipher-track {
-      display: flex; gap: 0.35rem; align-items: center;
-    }
-    .fm-cipher-digit {
-      width: clamp(1.8rem, 3vw, 2.4rem);
-      height: clamp(2.2rem, 3.5vw, 2.8rem);
-      background: rgba(0,240,255,0.04);
-      border: 1px solid rgba(0,240,255,0.18);
-      display: flex; align-items: center; justify-content: center;
-      font-size: clamp(0.9rem, 1.6vw, 1.3rem);
-      font-weight: 700; letter-spacing: 0;
-      color: #00f0ff;
-      text-shadow: 0 0 8px rgba(0,240,255,0.7);
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .fm-cipher-digit.filled {
-      border-color: rgba(0,240,255,0.55);
-      background: rgba(0,240,255,0.08);
-    }
-    .fm-cipher-digit.active-digit {
-      border-color: #00f0ff;
-      background: rgba(0,240,255,0.12);
-      box-shadow: 0 0 12px rgba(0,240,255,0.3);
-    }
-    /* Hidden real input */
-    #fmCipherInput {
-      position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0;
-    }
-
-    /* Authenticate button */
-    .fm-auth-btn {
-      background: transparent;
-      border: 1px solid rgba(0,240,255,0.25);
-      padding: 0.7rem 0;
-      width: clamp(160px, 22vw, 240px);
+    /* By Invitation Only — ghostly overlay on runner */
+    #fmInvitation {
+      position: absolute;
+      right: clamp(2rem, 10vw, 16rem);
+      top: 50%;
+      transform: translateY(-50%) rotate(-6deg);
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.58rem; font-weight: 700;
-      letter-spacing: 0.55em; text-transform: uppercase;
-      color: rgba(0,240,255,0.4);
-      cursor: pointer;
-      transition: border-color 0.3s, color 0.3s, box-shadow 0.3s;
-      position: relative; overflow: hidden;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.38em;
+      color: rgba(0,240,255,0.09);
+      pointer-events: none;
+      z-index: 2;
+      text-align: right;
+      line-height: 1.3;
     }
-    .fm-auth-btn::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(0,240,255,0.06), transparent);
-      transform: translateX(-100%);
-      transition: transform 0.5s ease;
-    }
-    .fm-auth-btn:hover::before { transform: translateX(100%); }
-    .fm-auth-btn:hover {
-      border-color: rgba(0,240,255,0.6);
-      color: #00f0ff;
-      box-shadow: 0 0 20px rgba(0,240,255,0.15);
-    }
+    #fmInvitation .inv-by   { font-size: clamp(0.55rem, 1.1vw, 0.85rem); display: block; }
+    #fmInvitation .inv-main { font-size: clamp(2rem, 5vw, 4rem); display: block; letter-spacing: 0.18em; }
+    #fmInvitation .inv-only { font-size: clamp(0.7rem, 1.6vw, 1.3rem); display: block; letter-spacing: 0.55em; }
 
     .fm-back {
       font-family: 'Orbitron', sans-serif;
@@ -523,6 +492,9 @@
   <div class="vignette" id="vignette"></div>
   <div id="darkOverlay"></div>
 
+  <!-- ── LOADING SCREEN J ──────────────────────────────── -->
+  <div id="bookJ">j</div>
+
   <!-- ── BOOK ──────────────────────────────────────────── -->
   <div class="scene">
     <img id="bookCover" src="images/cover-nobg.png" alt="" onclick="openBook()" />
@@ -551,6 +523,13 @@
     <button class="return-link" id="returnBtn" onclick="dismissWrong()">← return</button>
   </div>
 
+  <!-- ── MAIN SITE ──────────────────────────────────────── -->
+  <div id="mainSite">
+    <svg id="constellationSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="hexCenter">j</div>
+    <div id="siteMenu"></div>
+  </div>
+
   <!-- ── FREE MARION OVERLAY ─────────────────────────────── -->
   <div id="fmOverlay">
     <!-- HUD corners -->
@@ -561,6 +540,13 @@
 
     <!-- Giant running man background -->
     <img id="fmRunner" src="images/icon-free-marion.png" alt="" />
+
+    <!-- By invitation only — ghostly text over runner -->
+    <div id="fmInvitation">
+      <span class="inv-by">by</span>
+      <span class="inv-main">invitation</span>
+      <span class="inv-only">only</span>
+    </div>
 
     <!-- Login panel -->
     <div class="fm-panel">
@@ -583,37 +569,8 @@
         </div>
       </div>
 
-      <!-- Cipher: 10 digit visual track -->
-      <div class="fm-cipher-wrap">
-        <div class="fm-cipher-label">Cipher</div>
-        <div class="fm-cipher-track" id="fmCipherTrack" onclick="document.getElementById('fmCipherInput').focus()">
-          <!-- 10 digit boxes injected by JS -->
-        </div>
-        <input id="fmCipherInput" type="tel" maxlength="10" inputmode="numeric"
-               oninput="fmCipherUpdate(this.value)" autocomplete="off" />
-      </div>
-
-      <button class="fm-auth-btn" onclick="fmAuth()">Authenticate</button>
       <button class="fm-back" onclick="closeFm()">&#8592; abort</button>
     </div>
-  </div>
-
-  <!-- ── MAIN SITE ──────────────────────────────────────── -->
-  <div id="mainSite">
-    <svg id="constellationSvg" xmlns="http://www.w3.org/2000/svg"></svg>
-    <div id="hexCenter">
-      <svg id="jGlyph" viewBox="0 0 48 112" xmlns="http://www.w3.org/2000/svg">
-        <!-- Ink stroke tittle: short angled brushstroke, tapered -->
-        <path d="M 18 13 Q 22 7 29 12"
-              stroke="#8B1229" stroke-width="3.2"
-              fill="none" stroke-linecap="round"/>
-        <!-- j body: italic calligraphic downstroke with sweeping curl -->
-        <path d="M 23 24 C 24 36 27 62 26 79 C 25 93 16 106 7 103 C 2 101 2 94 6 93 C 10 92 14 96 12 101"
-              stroke="#8B1229" stroke-width="3.8"
-              fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-    <div id="siteMenu"></div>
   </div>
 
   <script>
@@ -671,6 +628,12 @@
     }
     drawMatrix();
 
+    // Show loading-screen j only after Dancing Script has loaded
+    document.fonts.ready.then(() => {
+      const bj = document.getElementById('bookJ');
+      if (bj) bj.style.opacity = '1';
+    });
+
     // ── INK REVEAL ────────────────────────────────────────
     // Characters seep in one by one — blur fades, opacity rises
     function inkReveal(el, text, msPerChar, done) {
@@ -704,6 +667,9 @@
       document.getElementById('matrix').style.transition = 'opacity 1.4s ease';
       document.getElementById('matrix').style.opacity = '0';
       document.getElementById('vignette').style.opacity = '0';
+      const bj = document.getElementById('bookJ');
+      bj.style.transition = 'opacity 0.4s ease';
+      bj.style.opacity = '0';
       setTimeout(() => showMainSite(), 520);
     }
 
@@ -750,7 +716,7 @@
     // ── MAIN SITE ─────────────────────────────────────────
     // Scattered positions as % of viewport [left, top]
     const NODES = [
-      { id: 'the-lost',    src: 'images/icon-the-lost.png',    label: 'The Lost',    action: () => window.location.href = 'the-lost/' },
+      { id: 'the-lost',    src: 'images/icon-the-lost.png',    label: 'The Lost',    action: () => window.open('https://the-lost.vercel.app/', '_blank') },
       { id: 'cherrywood',  src: 'images/icon-cherrywood.png',  label: 'Cherrywood',  action: () => window.open('https://cherrywoodgolf.com/', '_blank') },
       { id: 'free-marion', src: 'images/icon-free-marion.png', label: 'Free Marion', action: () => openFm() },
       { id: 'cooper',      src: 'images/icon-cooper.png',      label: 'Cooper',      action: () => {} },
@@ -759,7 +725,8 @@
     ];
 
     // ── FREE MARION ───────────────────────────────────────
-    const FM_IDENTITIES = ['Hyperion','Thebes','Keats','Roger','Brutus','Titus','Four'];
+    // The 14 Valar of Tolkien's Silmarillion (Lords + Queens, excl. Melkor)
+    const FM_IDENTITIES = ['Manwë','Ulmo','Aulë','Oromë','Námo','Irmo','Tulkas','Varda','Yavanna','Nienna','Estë','Vairë','Vána','Nessa'];
     let fmIdx = 0;
     const ITEM_H = 44; // px — must match .fm-drum-item height (2.8rem @ 16px base)
 
@@ -796,44 +763,9 @@
       fmUpdateDrum(true);
     }
 
-    function fmBuildCipher() {
-      const track = document.getElementById('fmCipherTrack');
-      track.innerHTML = '';
-      for (let i = 0; i < 10; i++) {
-        const box = document.createElement('div');
-        box.className = 'fm-cipher-digit';
-        box.dataset.pos = i;
-        track.appendChild(box);
-      }
-    }
-
-    function fmCipherUpdate(val) {
-      const digits = val.replace(/\D/g,'').slice(0,10);
-      document.getElementById('fmCipherInput').value = digits;
-      const boxes = document.querySelectorAll('.fm-cipher-digit');
-      boxes.forEach((box, i) => {
-        box.textContent = digits[i] || '';
-        box.className = 'fm-cipher-digit' +
-          (i < digits.length ? ' filled' : '') +
-          (i === digits.length && digits.length < 10 ? ' active-digit' : '');
-      });
-    }
-
-    function fmAuth() {
-      // Aesthetic — flicker all digits then clear
-      const boxes = document.querySelectorAll('.fm-cipher-digit');
-      boxes.forEach((b, i) => {
-        setTimeout(() => { b.style.opacity = '0'; }, i * 40);
-        setTimeout(() => { b.style.opacity = '1'; b.textContent = ''; b.className = 'fm-cipher-digit'; }, i * 40 + 200);
-      });
-      document.getElementById('fmCipherInput').value = '';
-    }
-
     function openFm() {
       document.getElementById('fmOverlay').classList.add('visible');
       fmBuildDrum();
-      fmBuildCipher();
-      setTimeout(() => document.getElementById('fmCipherInput').focus(), 600);
     }
 
     function closeFm() {
