@@ -720,6 +720,188 @@
     }
     .fm-back:hover { color: rgba(0,240,255,0.4); }
 
+    /* ── LYCEUM OVERLAY ─────────────────────────────── */
+    #lyceumOverlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: #030303;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.9s ease;
+    }
+    #lyceumOverlay.visible { opacity: 1; pointer-events: all; }
+
+    /* ── INTRO SCREEN ── */
+    #lyceumIntro {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: clamp(1.4rem, 4vh, 2.8rem);
+      padding: 3rem;
+      z-index: 2;
+      transition: opacity 1.2s ease;
+    }
+    #lyceumIntro.fade-out { opacity: 0; pointer-events: none; }
+
+    .lyceum-line {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: clamp(1.1rem, 2.8vw, 1.9rem);
+      color: rgba(210,195,170,0.92);
+      text-align: center;
+      line-height: 1.5;
+      opacity: 0;
+      transition: opacity 1.4s ease;
+      max-width: 780px;
+    }
+    .lyceum-line.show { opacity: 1; }
+
+    #lyceumLineAcross {
+      font-family: 'Cinzel Decorative', cursive;
+      font-style: normal;
+      font-size: clamp(2rem, 6vw, 4.5rem);
+      color: rgba(200,178,138,0.95);
+      letter-spacing: 0.18em;
+      text-shadow: 0 0 50px rgba(180,120,40,0.3), 0 0 100px rgba(180,120,40,0.12);
+      opacity: 0;
+      transition: opacity 1.6s ease;
+    }
+    #lyceumLineAcross.show { opacity: 1; }
+
+    #lyceumContinue {
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem; letter-spacing: 0.5em; text-transform: uppercase;
+      color: rgba(200,178,138,0.3);
+      background: none; border: none; cursor: pointer;
+      opacity: 0; transition: opacity 0.8s ease, color 0.3s;
+      margin-top: 1.5rem;
+    }
+    #lyceumContinue.show { opacity: 1; }
+    #lyceumContinue:hover { color: rgba(200,178,138,0.7); }
+
+    /* ── LIBRARY MAIN ── */
+    #lyceumMain {
+      position: absolute; inset: 0;
+      opacity: 0; pointer-events: none;
+      transition: opacity 1.2s ease;
+      z-index: 1;
+    }
+    #lyceumMain.show { opacity: 1; pointer-events: all; }
+
+    #lyceumImgWrap {
+      position: relative;
+      width: 100%; height: 100%;
+    }
+    #lyceumImg {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      transition: opacity 0.5s;
+    }
+    #lyceumImgWrap.panel-open #lyceumImg { opacity: 0.4; }
+
+    #lyceumTitle {
+      position: absolute; top: 2rem; left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: clamp(1rem, 2.5vw, 1.8rem);
+      color: rgba(210,190,150,0.75);
+      letter-spacing: 0.25em;
+      text-shadow: 0 2px 14px rgba(0,0,0,0.9);
+      pointer-events: none; white-space: nowrap; z-index: 3;
+    }
+    #lyceumHint {
+      position: absolute; bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Cinzel', serif;
+      font-size: 0.48rem; letter-spacing: 0.5em; text-transform: uppercase;
+      color: rgba(200,178,138,0.28); pointer-events: none;
+      white-space: nowrap; z-index: 3;
+    }
+    #lyceumBack {
+      position: absolute; bottom: 1.6rem; left: 1.8rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.5rem; letter-spacing: 0.45em; text-transform: uppercase;
+      color: rgba(200,178,138,0.22); background: none; border: none;
+      cursor: pointer; transition: color 0.3s; z-index: 4;
+    }
+    #lyceumBack:hover { color: rgba(200,178,138,0.6); }
+
+    /* ── ZONES ── */
+    .lz-zone {
+      position: absolute; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.35s ease, outline 0.35s ease;
+    }
+    .lz-zone:hover { outline: 1px solid rgba(210,190,150,0.25); }
+    .lz-label {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.5rem, 1.1vw, 0.78rem);
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: rgba(210,190,150,0.32);
+      text-align: center; pointer-events: none;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.95), 0 0 20px rgba(0,0,0,0.8);
+      transition: color 0.3s;
+      padding: 0.2rem 0.5rem;
+    }
+    .lz-zone:hover .lz-label { color: rgba(215,195,155,0.95); }
+
+    /* ── DOMAIN PANEL ── */
+    #lyceumPanel {
+      position: absolute; top: 0; right: 0;
+      width: clamp(290px, 36vw, 450px);
+      height: 100%;
+      background: rgba(3,2,2,0.97);
+      border-left: 1px solid rgba(200,178,138,0.1);
+      transform: translateX(100%);
+      transition: transform 0.5s cubic-bezier(0.25,1,0.5,1);
+      display: flex; flex-direction: column;
+      padding: 3.5rem 2.2rem 2.2rem;
+      overflow-y: auto; z-index: 4;
+    }
+    #lyceumPanel.open { transform: translateX(0); }
+
+    #lyceumPanelClose {
+      position: absolute; top: 1rem; right: 1.4rem;
+      background: none; border: none;
+      color: rgba(200,178,138,0.3); font-size: 1.5rem;
+      cursor: pointer; transition: color 0.2s; line-height: 1;
+    }
+    #lyceumPanelClose:hover { color: rgba(200,178,138,0.8); }
+
+    #lyceumPanelTitle {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: clamp(1.1rem, 2.5vw, 1.55rem);
+      color: rgba(210,190,150,0.92);
+      letter-spacing: 0.12em; margin-bottom: 0.5rem;
+      font-weight: 400;
+    }
+    #lyceumPanelDesc {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 0.92rem;
+      color: rgba(180,165,140,0.5);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(200,178,138,0.07);
+    }
+    .lz-link {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem; letter-spacing: 0.1em;
+      color: rgba(200,178,138,0.62);
+      text-decoration: none;
+      padding: 0.75rem 0 0.75rem 0.8rem;
+      border-bottom: 1px solid rgba(200,178,138,0.06);
+      transition: color 0.2s, padding-left 0.2s, border-color 0.2s;
+    }
+    .lz-link:hover {
+      color: rgba(220,200,162,0.96);
+      padding-left: 1.4rem;
+      border-bottom-color: rgba(200,178,138,0.15);
+    }
+    .lz-link::before { content: '→ '; color: rgba(139,18,41,0.55); }
+
     .fm-hud {
       position: absolute; z-index: 2; pointer-events: none;
       border-color: rgba(0,240,255,0.12); border-style: solid;
@@ -812,6 +994,36 @@
 
     </div><!-- /contentWrap -->
   </div><!-- /mainSite -->
+
+  <!-- ── LYCEUM OVERLAY ─────────────────────────────────── -->
+  <div id="lyceumOverlay">
+
+    <!-- Intro screen -->
+    <div id="lyceumIntro">
+      <div class="lyceum-line" id="ll1">Humans have 2 main advantages.</div>
+      <div class="lyceum-line" id="ll2">Physical persistence, and the ability to collaborate</div>
+      <div id="lyceumLineAcross">ACROSS TIME</div>
+      <button id="lyceumContinue" onclick="showLyceumMain()">Enter the Library →</button>
+    </div>
+
+    <!-- Main library -->
+    <div id="lyceumMain">
+      <div id="lyceumImgWrap">
+        <img id="lyceumImg" src="images/lyceum-library.jpg" alt="" />
+        <div id="lyceumTitle">The Lyceum</div>
+        <div id="lyceumHint">Select a domain to explore</div>
+        <!-- zones injected by JS -->
+      </div>
+      <div id="lyceumPanel">
+        <button id="lyceumPanelClose" onclick="closeLyceumPanel()">×</button>
+        <div id="lyceumPanelTitle"></div>
+        <div id="lyceumPanelDesc"></div>
+        <div id="lyceumPanelLinks"></div>
+      </div>
+      <button id="lyceumBack" onclick="closeLyceum()">← Return</button>
+    </div>
+
+  </div>
 
   <!-- ── FREE MARION OVERLAY ─────────────────────────────── -->
   <div id="fmOverlay">
@@ -939,7 +1151,7 @@
       { id: 'cherrywood',  src: 'images/icon-cherrywood.png',  label: 'Cherrywood',  action: () => window.open('https://cherrywoodgolf.com/', '_blank') },
       { id: 'free-marion', src: 'images/icon-free-marion.png', label: 'Free Marion', action: () => openFm() },
       { id: 'cooper',      src: 'images/icon-cooper.png',      label: 'Cooper',      action: () => {} },
-      { id: 'lyceum',      src: 'images/icon-lyceum.png',      label: 'Lyceum',      action: () => {} },
+      { id: 'lyceum',      src: 'images/icon-lyceum.png',      label: 'Lyceum',      action: () => openLyceum() },
       { id: 'jt-lab',      src: 'images/icon-jt-lab.svg',      label: 'JT Lab',      action: () => {} },
     ];
 
@@ -1156,6 +1368,196 @@
           submitBtn.textContent = 'Send Message';
         }
       });
+    }
+    // ── LYCEUM ────────────────────────────────────────────
+    const DOMAINS = [
+      {
+        id: 'astronomy', label: 'Astronomy',
+        desc: 'The cosmos — from our solar system to the edge of the observable universe.',
+        zone: { left:'22%', top:'0%', width:'56%', height:'25%' },
+        color: 'rgba(80,110,200,0.28)',
+        links: [
+          { name: 'NASA',                                  url: 'https://www.nasa.gov' },
+          { name: 'Khan Academy — Cosmology & Astronomy',  url: 'https://www.khanacademy.org/science/cosmology-and-astronomy' },
+          { name: 'Stellarium Web Planetarium',            url: 'https://stellarium-web.org' },
+          { name: 'Crash Course Astronomy',                url: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtPAJr1ysd5yGIyiSFuh0mIL' },
+          { name: 'Eyes on the Solar System (NASA)',       url: 'https://eyes.nasa.gov/apps/solar-system/' },
+          { name: 'Hubble Site',                           url: 'https://hubblesite.org' },
+          { name: 'Space.com',                             url: 'https://www.space.com' },
+        ]
+      },
+      {
+        id: 'literature', label: 'Literature',
+        desc: 'The full tradition of written human thought — from Homer to the present.',
+        zone: { left:'0%', top:'0%', width:'22%', height:'40%' },
+        color: 'rgba(160,110,30,0.28)',
+        links: [
+          { name: 'Project Gutenberg',        url: 'https://www.gutenberg.org' },
+          { name: 'Standard Ebooks',          url: 'https://standardebooks.org' },
+          { name: 'LibriVox — Free Audiobooks', url: 'https://librivox.org' },
+          { name: 'CommonLit',                url: 'https://www.commonlit.org' },
+          { name: 'Poetry Foundation',        url: 'https://www.poetryfoundation.org' },
+          { name: 'Open Library',             url: 'https://openlibrary.org' },
+          { name: 'SparkNotes',               url: 'https://www.sparknotes.com' },
+        ]
+      },
+      {
+        id: 'music', label: 'Music',
+        desc: 'Theory, history, and practice — from fundamentals to advanced composition.',
+        zone: { left:'78%', top:'0%', width:'22%', height:'55%' },
+        color: 'rgba(140,50,160,0.28)',
+        links: [
+          { name: 'musictheory.net',          url: 'https://www.musictheory.net' },
+          { name: 'teoria.com',               url: 'https://www.teoria.com' },
+          { name: '8notes.com',               url: 'https://www.8notes.com' },
+          { name: 'IMSLP — Free Sheet Music', url: 'https://imslp.org' },
+          { name: 'MuseScore',                url: 'https://musescore.com' },
+          { name: 'Crash Course Music Theory', url: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtpaW1gFGCPEe-VaGLbCxBHr' },
+          { name: '12tone (YouTube)',          url: 'https://www.youtube.com/@12tone' },
+        ]
+      },
+      {
+        id: 'art', label: 'Art',
+        desc: "Visual art history, technique, and the world's greatest collections.",
+        zone: { left:'28%', top:'25%', width:'44%', height:'28%' },
+        color: 'rgba(200,80,40,0.28)',
+        links: [
+          { name: 'Google Arts & Culture',         url: 'https://artsandculture.google.com' },
+          { name: 'The Metropolitan Museum',       url: 'https://www.metmuseum.org/art/collection' },
+          { name: 'Smarthistory',                  url: 'https://smarthistory.org' },
+          { name: 'Khan Academy — Art History',    url: 'https://www.khanacademy.org/humanities/art-history' },
+          { name: 'The Art Story',                 url: 'https://www.theartstory.org' },
+          { name: 'Web Gallery of Art',            url: 'https://www.wga.hu' },
+          { name: 'Proko — Figure Drawing',        url: 'https://www.youtube.com/@ProkoTV' },
+        ]
+      },
+      {
+        id: 'philosophy', label: 'Philosophy',
+        desc: 'Logic, ethics, metaphysics, and the examined life.',
+        zone: { left:'0%', top:'40%', width:'22%', height:'30%' },
+        color: 'rgba(60,60,140,0.28)',
+        links: [
+          { name: 'Stanford Encyclopedia of Philosophy', url: 'https://plato.stanford.edu' },
+          { name: 'Internet Encyclopedia of Philosophy', url: 'https://iep.utm.edu' },
+          { name: 'Crash Course Philosophy',             url: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtNgK6MZucdYldNkMybYIHKR' },
+          { name: 'Philosophy Bites Podcast',            url: 'https://philosophybites.com' },
+          { name: 'Philosophy Now',                      url: 'https://philosophynow.org' },
+          { name: 'MIT OpenCourseWare — Philosophy',     url: 'https://ocw.mit.edu/search/?d=Philosophy' },
+        ]
+      },
+      {
+        id: 'earth', label: 'Earth Sciences',
+        desc: 'Geology, meteorology, oceanography, and the living planet.',
+        zone: { left:'0%', top:'70%', width:'22%', height:'30%' },
+        color: 'rgba(40,130,70,0.28)',
+        links: [
+          { name: 'USGS Education',                        url: 'https://www.usgs.gov/education' },
+          { name: 'NOAA Education',                        url: 'https://www.noaa.gov/education' },
+          { name: 'NASA Earth Observatory',                url: 'https://earthobservatory.nasa.gov' },
+          { name: 'Khan Academy — Earth & Space Science',  url: 'https://www.khanacademy.org/science/earth-and-space-science' },
+          { name: 'Geology.com',                           url: 'https://geology.com' },
+          { name: 'National Geographic Education',         url: 'https://education.nationalgeographic.org' },
+          { name: 'Crash Course Geography',                url: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtO85gEstkyKG13C0HwIBjnv' },
+        ]
+      },
+      {
+        id: 'chemistry', label: 'Chemistry',
+        desc: 'From atomic structure to organic compounds — the science of matter.',
+        zone: { left:'78%', top:'55%', width:'22%', height:'45%' },
+        color: 'rgba(40,170,170,0.28)',
+        links: [
+          { name: 'Khan Academy — Chemistry',  url: 'https://www.khanacademy.org/science/chemistry' },
+          { name: 'ChemLibreTexts',            url: 'https://chem.libretexts.org' },
+          { name: 'Tyler DeWitt (YouTube)',    url: 'https://www.youtube.com/@tylerdewitt' },
+          { name: 'Crash Course Chemistry',   url: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtPHzzYuWy6fYEaX9mQQ8oGr' },
+          { name: 'Periodic Table — ptable',  url: 'https://ptable.com' },
+          { name: 'Royal Society of Chemistry', url: 'https://www.rsc.org/learn-chemistry/' },
+          { name: 'ChemSpider',               url: 'http://www.chemspider.com' },
+        ]
+      },
+      {
+        id: 'mathematics', label: 'Mathematics',
+        desc: 'Arithmetic to calculus, logic to topology — the language of the universe.',
+        zone: { left:'22%', top:'53%', width:'56%', height:'47%' },
+        color: 'rgba(190,150,30,0.28)',
+        links: [
+          { name: 'Khan Academy — Mathematics',   url: 'https://www.khanacademy.org/math' },
+          { name: '3Blue1Brown',                  url: 'https://www.3blue1brown.com' },
+          { name: 'Art of Problem Solving',       url: 'https://artofproblemsolving.com' },
+          { name: 'Desmos Graphing Calculator',   url: 'https://www.desmos.com/calculator' },
+          { name: 'GeoGebra',                     url: 'https://www.geogebra.org' },
+          { name: 'Wolfram Alpha',                url: 'https://www.wolframalpha.com' },
+          { name: "Paul's Online Math Notes",     url: 'https://tutorial.math.lamar.edu' },
+        ]
+      },
+    ];
+
+    function openLyceum() {
+      document.getElementById('lyceumOverlay').classList.add('visible');
+      // Reset state
+      document.getElementById('lyceumIntro').classList.remove('fade-out');
+      document.getElementById('lyceumMain').classList.remove('show');
+      ['ll1','ll2','lyceumLineAcross','lyceumContinue'].forEach(id => {
+        document.getElementById(id).classList.remove('show');
+      });
+      // Staggered reveal
+      setTimeout(() => document.getElementById('ll1').classList.add('show'), 800);
+      setTimeout(() => document.getElementById('ll2').classList.add('show'), 3200);
+      setTimeout(() => document.getElementById('lyceumLineAcross').classList.add('show'), 5600);
+      setTimeout(() => document.getElementById('lyceumContinue').classList.add('show'), 7800);
+    }
+
+    function showLyceumMain() {
+      document.getElementById('lyceumIntro').classList.add('fade-out');
+      setTimeout(() => {
+        document.getElementById('lyceumMain').classList.add('show');
+        buildLyceumZones();
+      }, 1200);
+    }
+
+    function buildLyceumZones() {
+      const wrap = document.getElementById('lyceumImgWrap');
+      // Remove old zones
+      wrap.querySelectorAll('.lz-zone').forEach(z => z.remove());
+      DOMAINS.forEach(d => {
+        const zone = document.createElement('div');
+        zone.className = 'lz-zone';
+        zone.style.cssText = `left:${d.zone.left};top:${d.zone.top};width:${d.zone.width};height:${d.zone.height};`;
+        zone.style.setProperty('--zone-color', d.color);
+        zone.addEventListener('mouseenter', () => zone.style.background = d.color);
+        zone.addEventListener('mouseleave', () => { if (!zone.classList.contains('active')) zone.style.background = ''; });
+        const lbl = document.createElement('div');
+        lbl.className = 'lz-label'; lbl.textContent = d.label;
+        zone.appendChild(lbl);
+        zone.addEventListener('click', () => openLyceumPanel(d));
+        wrap.appendChild(zone);
+      });
+    }
+
+    function openLyceumPanel(domain) {
+      document.getElementById('lyceumImgWrap').classList.add('panel-open');
+      document.getElementById('lyceumPanelTitle').textContent = domain.label;
+      document.getElementById('lyceumPanelDesc').textContent = domain.desc;
+      const linkWrap = document.getElementById('lyceumPanelLinks');
+      linkWrap.innerHTML = '';
+      domain.links.forEach(l => {
+        const a = document.createElement('a');
+        a.className = 'lz-link'; a.href = l.url;
+        a.target = '_blank'; a.rel = 'noopener noreferrer';
+        a.textContent = l.name;
+        linkWrap.appendChild(a);
+      });
+      document.getElementById('lyceumPanel').classList.add('open');
+    }
+
+    function closeLyceumPanel() {
+      document.getElementById('lyceumImgWrap').classList.remove('panel-open');
+      document.getElementById('lyceumPanel').classList.remove('open');
+    }
+
+    function closeLyceum() {
+      closeLyceumPanel();
+      document.getElementById('lyceumOverlay').classList.remove('visible');
     }
   </script>
 
