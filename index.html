@@ -153,8 +153,8 @@
 
     /* Center j glyph */
     #hexCenter {
-      position: absolute; left: 50%; top: 50%;
-      transform: translate(-50%, -60%);
+      position: absolute; left: 50%; top: 46%;
+      transform: translate(-50%, -50%);
       font-family: 'UnifrakturMaguntia', cursive;
       font-size: clamp(5rem, 10vw, 9rem);
       color: #8B1229;
@@ -162,6 +162,9 @@
       pointer-events: none;
       user-select: none;
       line-height: 1;
+    }
+    @media (max-width: 768px) {
+      #hexCenter { top: 43%; }
     }
 
     /* Scroll hint — bouncing chevron */
