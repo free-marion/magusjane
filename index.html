@@ -4,9 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Magus Jane</title>
-  <link rel="preload" as="image" href="images/cover-nobg.png" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=Share+Tech+Mono&family=IM+Fell+English:ital@0;1&family=Orbitron:wght@400;700;900&family=Dancing+Script:wght@700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=Share+Tech+Mono&family=IM+Fell+English:ital@0;1&family=Orbitron:wght@400;700;900&family=UnifrakturMaguntia&display=swap');
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -33,144 +32,67 @@
     }
     #darkOverlay.active { background: rgba(0,0,0,0.82); }
 
-    /* ── BOOK ───────────────────────────────────────────── */
-    .scene {
-      z-index: 10; position: relative; perspective: 1200px;
-      display: flex; flex-direction: column; align-items: center;
-    }
-
-    #bookCover {
-      width: min(400px, 78vw); height: auto;
-      cursor: pointer; display: block;
-      animation: levitate 4.5s ease-in-out infinite;
-      filter:
-        drop-shadow(-10px 6px 24px rgba(0,0,0,0.9))
-        drop-shadow(0 30px 50px rgba(0,0,0,0.8))
-        drop-shadow(0 0 60px rgba(90,0,0,0.22));
-      transition: opacity 0.35s ease, filter 0.4s ease;
-    }
-    #bookCover:hover {
-      filter:
-        drop-shadow(-10px 6px 24px rgba(0,0,0,0.9))
-        drop-shadow(0 30px 50px rgba(0,0,0,0.8))
-        drop-shadow(0 0 90px rgba(130,0,0,0.4));
-    }
-    @keyframes levitate {
-      0%,100% { transform: rotateX(5deg) rotateY(-8deg) translateY(0px); }
-      50%      { transform: rotateX(5deg) rotateY(-8deg) translateY(-16px); }
-    }
-    #bookCover.opening {
-      animation: none;
-      transform: rotateX(12deg) rotateY(-40deg) scale(1.04);
-      transition: transform 0.28s ease, opacity 0.25s ease 0.22s;
-      opacity: 0;
-    }
-
-    .book-glow {
-      position: absolute; bottom: -18px; width: 70%; height: 28px;
-      background: radial-gradient(ellipse, rgba(100,0,0,0.45) 0%, transparent 70%);
-      animation: glow-breathe 4.5s ease-in-out infinite;
-      pointer-events: none;
-    }
-    @keyframes glow-breathe {
-      0%,100% { opacity: 0.55; transform: scaleX(1); }
-      50%      { opacity: 0.85; transform: scaleX(0.82); }
-    }
-
-    /* ── PARCHMENT ──────────────────────────────────────── */
-    #pageReveal {
-      position: fixed; inset: 0; z-index: 50;
-      opacity: 0; pointer-events: none; transition: opacity 0.9s ease;
-      background:
-        repeating-linear-gradient(0deg,
-          transparent, transparent 30px,
-          rgba(120,75,20,0.055) 30px, rgba(120,75,20,0.055) 31px),
-        linear-gradient(165deg, #f6e5bc 0%, #edd5a0 30%, #e6c98a 60%, #f0d9a8 100%);
-    }
-    #pageReveal::before {
-      content: ''; position: fixed; inset: 0; pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.065'/%3E%3C/svg%3E");
-    }
-    #pageReveal::after {
-      content: ''; position: fixed; inset: 0; pointer-events: none;
-      background: radial-gradient(ellipse at center,
-        transparent 45%, rgba(90,50,8,0.1) 75%, rgba(70,35,5,0.28) 100%);
-    }
-    #pageReveal.open { opacity: 1; pointer-events: all; }
-
-    #pageContent {
-      position: absolute; inset: 0; z-index: 1;
+    /* ── LANDING SCREEN ─────────────────────────────────── */
+    #landingScreen {
+      position: fixed; inset: 0; z-index: 10;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      padding: 3rem 2rem; gap: clamp(1rem, 3vh, 2rem);
+      gap: clamp(1.5rem, 4vh, 3rem);
+      transition: opacity 0.7s ease;
+    }
+    #landingScreen.hidden { opacity: 0; pointer-events: none; }
+
+    #landingTitle {
+      font-family: 'Cinzel Decorative', cursive;
+      font-weight: 700;
+      font-size: clamp(1.8rem, 5vw, 3.8rem);
+      color: rgba(210,180,130,0.88);
+      letter-spacing: 0.25em;
+      text-align: center;
+      text-shadow: 0 0 40px rgba(180,120,40,0.35), 0 2px 4px rgba(0,0,0,0.8);
     }
 
-    .page-border {
-      position: absolute; inset: clamp(14px, 3vw, 40px);
-      border: 1px solid rgba(80,40,10,0.2); pointer-events: none;
-    }
-    .page-border::before { content:'✦'; position:absolute; top:-7px; left:-7px; color:rgba(80,40,10,0.35); font-size:0.65rem; }
-    .page-border::after  { content:'✦'; position:absolute; bottom:-7px; right:-7px; color:rgba(80,40,10,0.35); font-size:0.65rem; }
-
-    .page-ornament {
-      font-family: 'IM Fell English', serif;
-      font-size: clamp(0.55rem, 1.2vw, 0.85rem);
-      color: rgba(80,40,10,0.38); letter-spacing: 0.6em;
-    }
-
-    /* Ink inscription — container for ink-reveal chars */
-    .ink-inscription {
-      font-family: 'IM Fell English', serif; font-style: italic;
-      font-size: clamp(1.6rem, 5vw, 3.2rem);
-      color: #2a1005; text-align: center; line-height: 1.45;
-      filter: url(#inkBleed);
-      text-shadow: 1px 1px 3px rgba(20,8,0,0.25);
-    }
-
-    .ink-rule {
-      width: min(400px, 70vw); height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(80,40,10,0.4), transparent);
+    #landingCenter {
       position: relative;
+      width: clamp(170px, 30vw, 280px);
+      height: clamp(170px, 30vw, 280px);
+      cursor: pointer;
     }
-    .ink-rule::before {
-      content: '⬥'; position: absolute; left: 50%; top: 50%;
-      transform: translate(-50%,-50%); color: rgba(80,40,10,0.28); font-size: 0.5rem;
-    }
-
-    /* ── PASSWORD ───────────────────────────────────────── */
-    .pwd-wrap {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 1.2rem; width: min(320px, 80vw);
+    #landingCenter:hover #landingHex {
+      filter:
+        drop-shadow(0 0 16px rgba(139,18,41,0.95))
+        drop-shadow(0 0 55px rgba(139,18,41,0.5));
     }
 
-    .pwd-input {
-      background: transparent; border: none;
-      border-bottom: 1px solid rgba(60,30,5,0.45);
-      padding: 0.6rem 0.5rem;
-      font-family: 'IM Fell English', serif; font-style: italic;
-      font-size: clamp(1.2rem, 3vw, 1.6rem);
-      color: #2a1005; text-align: center; width: 100%;
-      outline: none; letter-spacing: 0.25em; caret-color: #8b0000;
-      filter: url(#inkBleed);
+    #landingHex {
+      width: 100%; height: 100%;
+      animation: hex-spin 22s linear infinite;
+      filter:
+        drop-shadow(0 0 8px rgba(139,18,41,0.7))
+        drop-shadow(0 0 28px rgba(139,18,41,0.3));
+      transition: filter 0.4s ease;
     }
-    .pwd-input::placeholder { color: rgba(60,30,5,0.22); font-size: 1rem; letter-spacing: 0.4em; font-style: normal; }
-    .pwd-input:focus { border-bottom-color: rgba(100,0,0,0.6); }
+    @keyframes hex-spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
 
-    .enter-btn {
-      background: #2a1005; color: #f0ddb5; border: none;
-      padding: 0.65rem 2.5rem;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
-      cursor: pointer; transition: background 0.25s;
+    #landingJ {
+      position: absolute; left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'UnifrakturMaguntia', cursive;
+      font-size: clamp(4rem, 9vw, 8rem);
+      color: #8B1229;
+      text-shadow:
+        0 0 20px rgba(139,18,41,0.9),
+        0 0 55px rgba(139,18,41,0.45),
+        0 0 100px rgba(139,18,41,0.18);
+      line-height: 1;
+      user-select: none;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.8s ease;
     }
-    .enter-btn:hover { background: #8b0000; }
-
-    .pwd-error {
-      font-family: 'IM Fell English', serif; font-style: italic;
-      font-size: 0.9rem; color: #8b0000;
-      opacity: 0; transition: opacity 0.35s; min-height: 1.2em;
-    }
-    .pwd-error.visible { opacity: 1; }
 
     /* ── WRONG SCREEN ───────────────────────────────────── */
     #wrongScreen {
@@ -208,35 +130,17 @@
     }
     #mainSite.visible { opacity: 1; pointer-events: all; }
 
-    /* Center j glyph */
+    /* Center j glyph — main site hex */
     #hexCenter {
       position: absolute; left: 50%; top: 50%;
       transform: translate(-50%, -50%);
-      font-family: 'Dancing Script', cursive;
-      font-weight: 700;
+      font-family: 'UnifrakturMaguntia', cursive;
       font-size: clamp(5rem, 10vw, 9rem);
       color: #8B1229;
       text-shadow: 0 0 20px rgba(139,18,41,0.9), 0 0 60px rgba(139,18,41,0.5), 0 0 120px rgba(139,18,41,0.2);
       pointer-events: none;
       user-select: none;
       line-height: 1;
-    }
-
-    /* Loading screen j — hidden until fonts ready */
-    #bookJ {
-      position: fixed; left: 50%; top: 50%;
-      transform: translate(-50%, -50%);
-      font-family: 'Dancing Script', cursive;
-      font-weight: 700;
-      font-size: clamp(5rem, 10vw, 9rem);
-      color: #8B1229;
-      text-shadow: 0 0 20px rgba(139,18,41,0.9), 0 0 60px rgba(139,18,41,0.5), 0 0 120px rgba(139,18,41,0.2);
-      pointer-events: none;
-      user-select: none;
-      line-height: 1;
-      z-index: 5;
-      opacity: 0;
-      transition: opacity 0.8s ease;
     }
 
     /* Full-screen constellation SVG */
@@ -492,35 +396,16 @@
   <div class="vignette" id="vignette"></div>
   <div id="darkOverlay"></div>
 
-  <!-- ── LOADING SCREEN J ──────────────────────────────── -->
-  <div id="bookJ">j</div>
-
-  <!-- ── BOOK ──────────────────────────────────────────── -->
-  <div class="scene">
-    <img id="bookCover" src="images/cover-nobg.png" alt="" onclick="openBook()" />
-    <div class="book-glow"></div>
-  </div>
-
-  <!-- ── PARCHMENT PAGE ─────────────────────────────────── -->
-  <div id="pageReveal">
-    <div id="pageContent">
-      <div class="page-border"></div>
-      <div class="page-ornament">— ✦ ✦ ✦ —</div>
-      <div class="ink-inscription" id="inscription"></div>
-      <div class="ink-rule"></div>
-      <div class="pwd-wrap">
-        <input class="pwd-input" type="password" id="pwd"
-               placeholder="· · · · · ·" onkeydown="handleKey(event)" autocomplete="off"/>
-        <button class="enter-btn" onclick="checkPwd()">Enter</button>
-        <div class="pwd-error" id="pwdError">The door remains closed.</div>
-      </div>
+  <!-- ── LANDING SCREEN ───────────────────────────────── -->
+  <div id="landingScreen">
+    <div id="landingTitle">Magus Jane</div>
+    <div id="landingCenter" onclick="openSite()">
+      <svg id="landingHex" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="100,10 178,55 178,145 100,190 22,145 22,55"
+                 fill="none" stroke="#8B1229" stroke-width="1.5"/>
+      </svg>
+      <div id="landingJ">j</div>
     </div>
-  </div>
-
-  <!-- ── WRONG SCREEN ───────────────────────────────────── -->
-  <div id="wrongScreen">
-    <div class="wrong-text" id="wrongText"></div>
-    <button class="return-link" id="returnBtn" onclick="dismissWrong()">← return</button>
   </div>
 
   <!-- ── MAIN SITE ──────────────────────────────────────── -->
@@ -628,89 +513,22 @@
     }
     drawMatrix();
 
-    // Show loading-screen j only after Dancing Script has loaded
+    // Show landing j once UnifrakturMaguntia is loaded
     document.fonts.ready.then(() => {
-      const bj = document.getElementById('bookJ');
-      if (bj) bj.style.opacity = '1';
+      const lj = document.getElementById('landingJ');
+      if (lj) lj.style.opacity = '1';
     });
 
-    // ── INK REVEAL ────────────────────────────────────────
-    // Characters seep in one by one — blur fades, opacity rises
-    function inkReveal(el, text, msPerChar, done) {
-      el.innerHTML = '';
-      // Split into lines preserving <br> logic
-      const lines = text.split('\n');
-      lines.forEach((line, li) => {
-        if (li > 0) el.appendChild(document.createElement('br'));
-        [...line].forEach((char, i) => {
-          const span = document.createElement('span');
-          span.textContent = char === ' ' ? '\u00a0' : char;
-          span.style.cssText = 'opacity:0;filter:blur(6px);display:inline-block;transition:opacity 1s ease,filter 1.2s ease';
-          el.appendChild(span);
-          const charPos = el.children.length - 1;
-          setTimeout(() => {
-            span.style.opacity = '1';
-            span.style.filter  = 'blur(0)';
-          }, charPos * msPerChar + Math.random() * (msPerChar * 0.7));
-        });
-      });
-      if (done) setTimeout(done, text.replace(/\n/g,'').length * msPerChar + 1400);
-    }
-
-    // ── BOOK OPEN ─────────────────────────────────────────
+    // ── ENTER SITE ────────────────────────────────────────
     let opened = false;
 
-    function openBook() {
+    function openSite() {
       if (opened) return; opened = true;
-      document.getElementById('bookCover').classList.add('opening');
-      document.querySelector('.book-glow').style.cssText='transition:opacity 0.3s;opacity:0';
+      document.getElementById('landingScreen').classList.add('hidden');
       document.getElementById('matrix').style.transition = 'opacity 1.4s ease';
       document.getElementById('matrix').style.opacity = '0';
       document.getElementById('vignette').style.opacity = '0';
-      const bj = document.getElementById('bookJ');
-      bj.style.transition = 'opacity 0.4s ease';
-      bj.style.opacity = '0';
-      setTimeout(() => showMainSite(), 520);
-    }
-
-    // ── PASSWORD ──────────────────────────────────────────
-    function handleKey(e) { if (e.key === 'Enter') checkPwd(); }
-
-    function checkPwd() {
-      const val = document.getElementById('pwd').value.toLowerCase().trim();
-      if (val === 'mellon' || val === 'melon' || val === 'friend') {
-        document.getElementById('pwd').disabled = true;
-        showMainSite();
-      } else {
-        showWrong();
-      }
-    }
-
-    // ── WRONG ─────────────────────────────────────────────
-    function showWrong() {
-      const input = document.getElementById('pwd');
-      input.value = '';
-      // Shake input
-      input.style.transition = 'transform 0.07s';
-      ['-7px','7px','-4px','4px','0px'].forEach((x,i) =>
-        setTimeout(() => input.style.transform = `translateX(${x})`, i * 70)
-      );
-      // Show wrong screen with ink reveal
-      const screen = document.getElementById('wrongScreen');
-      const textEl  = document.getElementById('wrongText');
-      textEl.innerHTML = '';
-      screen.classList.add('visible');
-      inkReveal(textEl, 'Beware of unearned wisdom....', 72, () => {
-        setTimeout(() => document.getElementById('returnBtn').classList.add('visible'), 400);
-      });
-    }
-
-    function dismissWrong() {
-      document.getElementById('wrongScreen').classList.remove('visible');
-      document.getElementById('returnBtn').classList.remove('visible');
-      document.getElementById('wrongText').innerHTML = '';
-      document.getElementById('pwd').disabled = false;
-      setTimeout(() => document.getElementById('pwd').focus(), 300);
+      setTimeout(() => showMainSite(), 600);
     }
 
     // ── MAIN SITE ─────────────────────────────────────────
