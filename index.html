@@ -753,6 +753,274 @@
     }
     .fm-back:hover { color: rgba(0,240,255,0.4); }
 
+    /* ── COOPER OVERLAY ─────────────────────────────── */
+    #cooperOverlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: #080604;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.9s ease;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    #cooperOverlay.visible { opacity: 1; pointer-events: all; }
+
+    #cooperPuzzle, #cooperPortal {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity 0.7s ease;
+    }
+    #cooperPortal { opacity: 0; pointer-events: none; }
+    #cooperPortal.show { opacity: 1; pointer-events: all; }
+    #cooperPuzzle.hide { opacity: 0; pointer-events: none; }
+
+    .cooper-title {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: clamp(1rem, 2.5vw, 1.6rem);
+      color: rgba(200,178,138,0.7);
+      letter-spacing: 0.3em;
+      margin-bottom: clamp(1.2rem, 3vh, 2rem);
+      text-align: center;
+    }
+    .cooper-hint {
+      font-family: 'Cinzel', serif;
+      font-size: 0.5rem; letter-spacing: 0.5em;
+      color: rgba(200,178,138,0.25);
+      text-transform: uppercase;
+      margin-bottom: clamp(1rem, 2.5vh, 1.6rem);
+      text-align: center;
+    }
+
+    /* 3×3 photo gallery grid */
+    #cooperGrid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      width: min(320px, 82vw);
+      margin-bottom: clamp(1rem, 2.5vh, 1.8rem);
+    }
+    .cooper-thumb {
+      aspect-ratio: 1;
+      border: 1px solid rgba(200,178,138,0.15);
+      cursor: grab;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+      background: #0e0c08;
+      position: relative;
+    }
+    .cooper-thumb:active { cursor: grabbing; }
+    .cooper-thumb.dragging { opacity: 0.4; transform: scale(0.95); }
+    .cooper-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      pointer-events: none; display: block;
+      filter: sepia(20%) brightness(0.85);
+    }
+    .cooper-thumb .ph-label {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cinzel', serif; font-size: 0.45rem;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: rgba(200,178,138,0.3);
+    }
+    .cooper-thumb:hover { border-color: rgba(200,178,138,0.45); }
+    .cooper-thumb.placed { opacity: 0.25; cursor: default; pointer-events: none; }
+
+    /* 3 drop slots */
+    #cooperSlots {
+      display: flex; gap: 10px;
+      width: min(320px, 82vw);
+    }
+    .cooper-slot {
+      flex: 1; aspect-ratio: 1;
+      border: 1px dashed rgba(200,178,138,0.25);
+      background: rgba(200,178,138,0.03);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cinzel', serif; font-size: 0.55rem;
+      color: rgba(200,178,138,0.2); letter-spacing: 0.3em;
+      transition: border-color 0.2s, background 0.2s;
+      overflow: hidden; position: relative;
+    }
+    .cooper-slot.drag-over { border-color: rgba(200,178,138,0.6); background: rgba(200,178,138,0.07); }
+    .cooper-slot.filled { border-color: rgba(200,178,138,0.35); }
+    .cooper-slot img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block;
+    }
+    .slot-num {
+      position: absolute; bottom: 4px; right: 6px;
+      font-family: 'Cinzel', serif; font-size: 0.4rem;
+      color: rgba(200,178,138,0.25); pointer-events: none;
+    }
+    .cooper-error {
+      font-family: 'Cinzel', serif; font-size: 0.48rem;
+      letter-spacing: 0.4em; text-transform: uppercase;
+      color: rgba(160,40,40,0.7);
+      margin-top: 1rem; min-height: 1rem;
+      opacity: 0; transition: opacity 0.3s;
+      text-align: center;
+    }
+    .cooper-error.show { opacity: 1; }
+
+    /* Cooper portal content */
+    #cooperPortal {
+      padding: 2rem;
+      overflow-y: auto;
+      justify-content: flex-start;
+      padding-top: clamp(3rem, 6vh, 5rem);
+    }
+    .cp-header {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: clamp(0.9rem, 2.2vw, 1.4rem);
+      color: rgba(200,178,138,0.8);
+      letter-spacing: 0.3em;
+      text-align: center; margin-bottom: 0.4rem;
+    }
+    .cp-sub {
+      font-family: 'Cinzel', serif; font-size: 0.48rem;
+      letter-spacing: 0.5em; text-transform: uppercase;
+      color: rgba(200,178,138,0.22);
+      text-align: center; margin-bottom: 2rem;
+    }
+    .cp-section {
+      width: min(600px, 92vw); margin: 0 auto 1.6rem;
+      border: 1px solid rgba(200,178,138,0.08);
+      padding: 1.2rem 1.4rem;
+      background: rgba(200,178,138,0.02);
+    }
+    .cp-section-title {
+      font-family: 'Cinzel', serif; font-size: 0.52rem;
+      letter-spacing: 0.5em; text-transform: uppercase;
+      color: rgba(200,178,138,0.35);
+      margin-bottom: 0.8rem;
+    }
+    .cp-placeholder {
+      font-family: 'IM Fell English', serif; font-style: italic;
+      font-size: 0.8rem; color: rgba(200,178,138,0.18);
+      text-align: center; padding: 1rem 0;
+    }
+    #cooperBack, #jtlabBack, #cooperLock {
+      position: absolute; bottom: 1.4rem; left: 1.6rem;
+      font-family: 'Cinzel', serif; font-size: 0.48rem;
+      letter-spacing: 0.45em; text-transform: uppercase;
+      color: rgba(200,178,138,0.22); background: none; border: none;
+      cursor: pointer; transition: color 0.3s; z-index: 4;
+    }
+    #cooperBack:hover, #jtlabBack:hover, #cooperLock:hover { color: rgba(200,178,138,0.6); }
+    #cooperLock { left: auto; right: 1.6rem; }
+
+    /* ── JT LAB OVERLAY ──────────────────────────────── */
+    #jtlabOverlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: #04060a;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.9s ease;
+    }
+    #jtlabOverlay.visible { opacity: 1; pointer-events: all; }
+
+    #jtlabLogin, #jtlabDash {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity 0.7s ease;
+    }
+    #jtlabDash { opacity: 0; pointer-events: none; overflow-y: auto;
+      justify-content: flex-start; padding-top: clamp(3rem, 6vh, 5rem); }
+    #jtlabDash.show { opacity: 1; pointer-events: all; }
+    #jtlabLogin.hide { opacity: 0; pointer-events: none; }
+
+    .jtl-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1rem, 2.8vw, 1.8rem);
+      color: rgba(100,160,220,0.7);
+      letter-spacing: 0.25em;
+      margin-bottom: 0.4rem; text-align: center;
+    }
+    .jtl-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem; color: rgba(100,160,220,0.28);
+      letter-spacing: 0.4em; margin-bottom: 2.5rem;
+      text-align: center;
+    }
+    #jtlabDots {
+      display: flex; gap: 12px; margin-bottom: 1.8rem;
+    }
+    .jtl-dot {
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 1px solid rgba(100,160,220,0.3);
+      background: transparent;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .jtl-dot.filled { background: rgba(100,160,220,0.6); border-color: rgba(100,160,220,0.7); }
+
+    #jtlabPad {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 8px; width: min(200px, 55vw);
+    }
+    .jtl-key {
+      aspect-ratio: 1;
+      background: rgba(100,160,220,0.04);
+      border: 1px solid rgba(100,160,220,0.14);
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+      color: rgba(100,160,220,0.55);
+      cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      user-select: none;
+    }
+    .jtl-key:hover { background: rgba(100,160,220,0.10); color: rgba(100,160,220,0.9); border-color: rgba(100,160,220,0.4); }
+    .jtl-key:active { background: rgba(100,160,220,0.20); }
+    .jtl-key.clear { font-size: 0.55rem; letter-spacing: 0.2em; color: rgba(100,160,220,0.3); }
+
+    .jtl-error {
+      font-family: 'Share Tech Mono', monospace; font-size: 0.55rem;
+      color: rgba(180,60,60,0.7); letter-spacing: 0.3em;
+      margin-top: 1.2rem; min-height: 1rem;
+      opacity: 0; transition: opacity 0.3s; text-align: center;
+    }
+    .jtl-error.show { opacity: 1; }
+
+    /* JT Lab dashboard */
+    .jtl-dash-header {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(0.8rem, 2vw, 1.2rem);
+      color: rgba(100,160,220,0.7);
+      letter-spacing: 0.3em; text-align: center; margin-bottom: 0.3rem;
+    }
+    .jtl-dash-sub {
+      font-family: 'Share Tech Mono', monospace; font-size: 0.52rem;
+      color: rgba(100,160,220,0.22); letter-spacing: 0.4em;
+      text-align: center; margin-bottom: 2rem;
+    }
+    .jtl-panel {
+      width: min(600px, 92vw); margin: 0 auto 1.2rem;
+      border: 1px solid rgba(100,160,220,0.10);
+      padding: 1.2rem 1.4rem;
+      background: rgba(100,160,220,0.02);
+    }
+    .jtl-panel-title {
+      font-family: 'Share Tech Mono', monospace; font-size: 0.52rem;
+      letter-spacing: 0.45em; text-transform: uppercase;
+      color: rgba(100,160,220,0.35); margin-bottom: 0.8rem;
+    }
+    .jtl-panel-body {
+      font-family: 'Share Tech Mono', monospace; font-size: 0.62rem;
+      color: rgba(100,160,220,0.18); font-style: italic;
+      text-align: center; padding: 0.8rem 0;
+    }
+    .jtl-site-link {
+      display: block; font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem; color: rgba(100,160,220,0.45);
+      text-decoration: none; padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(100,160,220,0.06);
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .jtl-site-link:last-child { border-bottom: none; }
+    .jtl-site-link:hover { color: rgba(100,160,220,0.85); }
+
     /* ── LYCEUM OVERLAY ─────────────────────────────── */
     #lyceumOverlay {
       position: fixed; inset: 0; z-index: 500;
@@ -1035,6 +1303,97 @@
     </div><!-- /contentWrap -->
   </div><!-- /mainSite -->
 
+  <!-- ── COOPER OVERLAY ─────────────────────────────────── -->
+  <div id="cooperOverlay">
+
+    <!-- Puzzle login -->
+    <div id="cooperPuzzle">
+      <div class="cooper-title">Cooper</div>
+      <div class="cooper-hint">Arrange the key — three of nine, in order</div>
+      <div id="cooperGrid"></div>
+      <div id="cooperSlots">
+        <div class="cooper-slot" data-slot="0"><span class="slot-num">I</span></div>
+        <div class="cooper-slot" data-slot="1"><span class="slot-num">II</span></div>
+        <div class="cooper-slot" data-slot="2"><span class="slot-num">III</span></div>
+      </div>
+      <div class="cooper-error" id="cooperError">Incorrect sequence</div>
+    </div>
+
+    <!-- Portal content (shown after correct login) -->
+    <div id="cooperPortal">
+      <div class="cp-header">Cooper Portal</div>
+      <div class="cp-sub">Family Access · Verified</div>
+      <div class="cp-section">
+        <div class="cp-section-title">Contact Submissions</div>
+        <div class="cp-placeholder">No submissions yet — connect Supabase to populate.</div>
+      </div>
+      <div class="cp-section">
+        <div class="cp-section-title">Site Analytics</div>
+        <div class="cp-placeholder">Coming soon.</div>
+      </div>
+      <div class="cp-section">
+        <div class="cp-section-title">Notes</div>
+        <div class="cp-placeholder">Private notes will appear here.</div>
+      </div>
+      <button id="cooperLock" onclick="lockCooper()">Lock ⬡</button>
+    </div>
+
+    <button id="cooperBack" onclick="closeCooper()">← Back</button>
+  </div>
+
+  <!-- ── JT LAB OVERLAY ──────────────────────────────────── -->
+  <div id="jtlabOverlay">
+
+    <!-- PIN login -->
+    <div id="jtlabLogin">
+      <div class="jtl-title">JT Lab</div>
+      <div class="jtl-sub">Enter access code</div>
+      <div id="jtlabDots">
+        <div class="jtl-dot" id="jtd0"></div>
+        <div class="jtl-dot" id="jtd1"></div>
+        <div class="jtl-dot" id="jtd2"></div>
+        <div class="jtl-dot" id="jtd3"></div>
+      </div>
+      <div id="jtlabPad">
+        <div class="jtl-key" onclick="jtKey('1')">1</div>
+        <div class="jtl-key" onclick="jtKey('2')">2</div>
+        <div class="jtl-key" onclick="jtKey('3')">3</div>
+        <div class="jtl-key" onclick="jtKey('4')">4</div>
+        <div class="jtl-key" onclick="jtKey('5')">5</div>
+        <div class="jtl-key" onclick="jtKey('6')">6</div>
+        <div class="jtl-key" onclick="jtKey('7')">7</div>
+        <div class="jtl-key" onclick="jtKey('8')">8</div>
+        <div class="jtl-key" onclick="jtKey('9')">9</div>
+        <div class="jtl-key clear" onclick="jtClear()">CLR</div>
+        <div class="jtl-key" onclick="jtKey('0')">0</div>
+        <div class="jtl-key clear" onclick="jtBackspace()">⌫</div>
+      </div>
+      <div class="jtl-error" id="jtlabError">Access denied</div>
+    </div>
+
+    <!-- Dashboard (shown after correct PIN) -->
+    <div id="jtlabDash">
+      <div class="jtl-dash-header">JT Lab</div>
+      <div class="jtl-dash-sub">Magus Jane · Internal Dashboard</div>
+      <div class="jtl-panel">
+        <div class="jtl-panel-title">Sites</div>
+        <a class="jtl-site-link" href="https://magusjane.com" target="_blank">magusjane.com</a>
+        <a class="jtl-site-link" href="https://the-lost.vercel.app" target="_blank">the-lost.vercel.app</a>
+        <a class="jtl-site-link" href="https://cherrywoodgolf.com" target="_blank">cherrywoodgolf.com</a>
+      </div>
+      <div class="jtl-panel">
+        <div class="jtl-panel-title">Contact Form Data</div>
+        <div class="jtl-panel-body">Connect Supabase to view submissions.</div>
+      </div>
+      <div class="jtl-panel">
+        <div class="jtl-panel-title">System</div>
+        <div class="jtl-panel-body">Integrations coming soon.</div>
+      </div>
+    </div>
+
+    <button id="jtlabBack" onclick="closeJtlab()">← Back</button>
+  </div>
+
   <!-- ── LYCEUM OVERLAY ─────────────────────────────────── -->
   <div id="lyceumOverlay">
 
@@ -1204,9 +1563,9 @@
       { id: 'the-lost',    src: 'images/icon-the-lost.png',    label: 'The Lost',    action: () => window.open('https://the-lost.vercel.app/', '_blank') },
       { id: 'cherrywood',  src: 'images/icon-cherrywood.png',  label: 'Cherrywood',  action: () => window.open('https://cherrywoodgolf.com/', '_blank') },
       { id: 'free-marion', src: 'images/icon-free-marion.png', label: 'Free Marion', action: () => openFm() },
-      { id: 'cooper',      src: 'images/icon-cooper.png',      label: 'Cooper',      action: () => {} },
+      { id: 'cooper',      src: 'images/icon-cooper.png',      label: 'Cooper',      action: () => openCooper() },
       { id: 'lyceum',      src: 'images/icon-lyceum.png',      label: 'Lyceum',      action: () => openLyceum() },
-      { id: 'jt-lab',      src: 'images/icon-jt-lab.svg',      label: 'JT Lab',      action: () => {} },
+      { id: 'jt-lab',      src: 'images/icon-jt-lab.svg',      label: 'JT Lab',      action: () => openJtlab() },
     ];
 
     // ── FREE MARION ───────────────────────────────────────
@@ -1613,6 +1972,207 @@
       closeLyceumPanel();
       document.getElementById('lyceumOverlay').classList.remove('visible');
     }
+
+    // ── COOPER PORTAL ─────────────────────────────────────
+    const COOPER_IMAGES = [
+      { id: 'jake',  src: 'images/Jake.jpg',                              label: null },
+      { id: 'cena',  src: 'images/John-Cena-960x540-3383925362.jpg',      label: null },
+      { id: 'angel', src: 'images/angel.jpg',                             label: null },
+      { id: 'ph1',   src: null, label: '?' },
+      { id: 'ph2',   src: null, label: '?' },
+      { id: 'ph3',   src: null, label: '?' },
+      { id: 'ph4',   src: null, label: '?' },
+      { id: 'ph5',   src: null, label: '?' },
+      { id: 'ph6',   src: null, label: '?' },
+    ];
+    const COOPER_KEY = ['jake', 'cena', 'angel']; // correct order
+    let cooperSlots  = [null, null, null];
+    let cooperDragging = null;
+
+    function openCooper() {
+      document.getElementById('cooperOverlay').classList.add('visible');
+      buildCooperGrid();
+    }
+    function closeCooper() {
+      document.getElementById('cooperOverlay').classList.remove('visible');
+      resetCooperPuzzle();
+    }
+    function lockCooper() {
+      document.getElementById('cooperPortal').classList.remove('show');
+      document.getElementById('cooperPuzzle').classList.remove('hide');
+      resetCooperPuzzle();
+    }
+
+    function buildCooperGrid() {
+      const grid = document.getElementById('cooperGrid');
+      grid.innerHTML = '';
+      // Shuffle images
+      const shuffled = [...COOPER_IMAGES].sort(() => Math.random() - 0.5);
+      shuffled.forEach(img => {
+        const thumb = document.createElement('div');
+        thumb.className = 'cooper-thumb';
+        thumb.dataset.id = img.id;
+        thumb.draggable = true;
+        if (img.src) {
+          const el = document.createElement('img');
+          el.src = img.src; el.alt = img.id;
+          thumb.appendChild(el);
+        } else {
+          const ph = document.createElement('div');
+          ph.className = 'ph-label'; ph.textContent = img.label;
+          thumb.appendChild(ph);
+        }
+        thumb.addEventListener('dragstart', e => {
+          cooperDragging = img.id;
+          thumb.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        thumb.addEventListener('dragend', () => thumb.classList.remove('dragging'));
+        grid.appendChild(thumb);
+      });
+    }
+
+    function resetCooperPuzzle() {
+      cooperSlots = [null, null, null];
+      document.querySelectorAll('.cooper-slot').forEach(s => {
+        s.innerHTML = `<span class="slot-num">${['I','II','III'][s.dataset.slot]}</span>`;
+        s.classList.remove('filled', 'drag-over');
+      });
+      document.querySelectorAll('.cooper-thumb').forEach(t => t.classList.remove('placed'));
+      document.getElementById('cooperError').classList.remove('show');
+    }
+
+    function initCooperSlots() {
+      document.querySelectorAll('.cooper-slot').forEach(slot => {
+        slot.addEventListener('dragover', e => {
+          e.preventDefault();
+          slot.classList.add('drag-over');
+        });
+        slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
+        slot.addEventListener('drop', e => {
+          e.preventDefault();
+          slot.classList.remove('drag-over');
+          if (!cooperDragging) return;
+          const idx = parseInt(slot.dataset.slot);
+
+          // If slot already had something, return it to grid
+          if (cooperSlots[idx]) {
+            returnToGrid(cooperSlots[idx]);
+          }
+
+          // Place into slot
+          cooperSlots[idx] = cooperDragging;
+          slot.innerHTML = '';
+          const img = COOPER_IMAGES.find(i => i.id === cooperDragging);
+          if (img && img.src) {
+            const el = document.createElement('img');
+            el.src = img.src; el.alt = img.id;
+            slot.appendChild(el);
+          } else if (img) {
+            const ph = document.createElement('div');
+            ph.className = 'ph-label'; ph.textContent = img.label;
+            slot.appendChild(ph);
+          }
+          const numSpan = document.createElement('span');
+          numSpan.className = 'slot-num';
+          numSpan.textContent = ['I','II','III'][idx];
+          slot.appendChild(numSpan);
+          slot.classList.add('filled');
+
+          // Mark thumb as placed
+          document.querySelectorAll('.cooper-thumb').forEach(t => {
+            if (t.dataset.id === cooperDragging) t.classList.add('placed');
+          });
+
+          cooperDragging = null;
+          checkCooperKey();
+        });
+      });
+    }
+
+    function returnToGrid(imgId) {
+      document.querySelectorAll('.cooper-thumb').forEach(t => {
+        if (t.dataset.id === imgId) t.classList.remove('placed');
+      });
+    }
+
+    function checkCooperKey() {
+      if (cooperSlots.includes(null)) return;
+      if (cooperSlots[0] === COOPER_KEY[0] &&
+          cooperSlots[1] === COOPER_KEY[1] &&
+          cooperSlots[2] === COOPER_KEY[2]) {
+        // Correct!
+        setTimeout(() => {
+          document.getElementById('cooperPuzzle').classList.add('hide');
+          document.getElementById('cooperPortal').classList.add('show');
+        }, 400);
+      } else {
+        // Wrong — flash error then return all to grid
+        const err = document.getElementById('cooperError');
+        err.classList.add('show');
+        setTimeout(() => {
+          err.classList.remove('show');
+          cooperSlots = [null, null, null];
+          document.querySelectorAll('.cooper-slot').forEach(s => {
+            s.innerHTML = `<span class="slot-num">${['I','II','III'][s.dataset.slot]}</span>`;
+            s.classList.remove('filled');
+          });
+          document.querySelectorAll('.cooper-thumb').forEach(t => t.classList.remove('placed'));
+        }, 900);
+      }
+    }
+
+    // ── JT LAB ────────────────────────────────────────────
+    let jtCode = '';
+    const JT_PIN = '1295';
+
+    function openJtlab() {
+      document.getElementById('jtlabOverlay').classList.add('visible');
+      jtReset();
+    }
+    function closeJtlab() {
+      document.getElementById('jtlabOverlay').classList.remove('visible');
+      setTimeout(jtReset, 600);
+    }
+    function jtReset() {
+      jtCode = '';
+      jtUpdateDots();
+      document.getElementById('jtlabLogin').classList.remove('hide');
+      document.getElementById('jtlabDash').classList.remove('show');
+      document.getElementById('jtlabError').classList.remove('show');
+    }
+    function jtKey(d) {
+      if (jtCode.length >= 4) return;
+      jtCode += d;
+      jtUpdateDots();
+      if (jtCode.length === 4) {
+        setTimeout(() => {
+          if (jtCode === JT_PIN) {
+            document.getElementById('jtlabLogin').classList.add('hide');
+            document.getElementById('jtlabDash').classList.add('show');
+          } else {
+            document.getElementById('jtlabError').classList.add('show');
+            setTimeout(() => {
+              jtCode = '';
+              jtUpdateDots();
+              document.getElementById('jtlabError').classList.remove('show');
+            }, 900);
+          }
+        }, 200);
+      }
+    }
+    function jtClear()     { jtCode = ''; jtUpdateDots(); }
+    function jtBackspace() { jtCode = jtCode.slice(0,-1); jtUpdateDots(); }
+    function jtUpdateDots() {
+      for (let i = 0; i < 4; i++) {
+        document.getElementById('jtd'+i).classList.toggle('filled', i < jtCode.length);
+      }
+    }
+
+    // Init on load
+    document.addEventListener('DOMContentLoaded', () => {
+      initCooperSlots();
+    });
   </script>
 
 </body>
