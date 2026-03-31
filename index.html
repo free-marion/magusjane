@@ -106,6 +106,54 @@
       margin-top: -0.5rem;
     }
 
+    @keyframes front-glow {
+      0%, 100% { opacity: 0.22; text-shadow: none; }
+      50%       { opacity: 0.85; text-shadow: 0 0 18px rgba(139,18,41,0.75), 0 0 45px rgba(139,18,41,0.25); }
+    }
+    #landingFront {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.55rem, 1.1vw, 0.78rem);
+      letter-spacing: 0.55em;
+      text-transform: uppercase;
+      color: rgba(200,178,138,0.85);
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 1.4s ease;
+      animation: front-glow 3.2s ease-in-out infinite;
+      margin-top: 0.6rem;
+      user-select: none;
+    }
+
+    /* ── SITE NAV ────────────────────────────────────────── */
+    #siteNav {
+      position: absolute; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 22px;
+      pointer-events: all;
+    }
+    #siteNav button {
+      background: none; border: none; cursor: pointer;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.6rem, 1.2vw, 0.78rem);
+      letter-spacing: 0.4em; text-transform: uppercase;
+      color: rgba(200,178,138,0.45);
+      transition: color 0.3s;
+    }
+    #siteNav button:hover { color: rgba(200,178,138,0.9); }
+
+    /* ── BACK TO TOP ─────────────────────────────────────── */
+    #backToTop {
+      display: block; text-align: center;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.58rem, 1.1vw, 0.74rem);
+      letter-spacing: 0.45em; text-transform: uppercase;
+      color: rgba(200,178,138,0.3);
+      cursor: pointer; padding: 2rem 0 0.5rem;
+      background: none; border: none; width: 100%;
+      transition: color 0.3s;
+    }
+    #backToTop:hover { color: rgba(200,178,138,0.75); }
+
     /* ── WRONG SCREEN ───────────────────────────────────── */
     #wrongScreen {
       position: fixed; inset: 0; z-index: 100;
@@ -941,10 +989,17 @@
       <div id="landingJ">j</div>
     </div>
     <div id="landingSolutions">Solutions</div>
+    <div id="landingFront" onclick="openSite()">To The Front</div>
   </div>
 
   <!-- ── MAIN SITE ──────────────────────────────────────── -->
   <div id="mainSite">
+
+    <!-- Site nav — always visible, overlays hex section -->
+    <nav id="siteNav">
+      <button onclick="goHome()">← Home</button>
+      <button onclick="scrollToContact()">Contact</button>
+    </nav>
 
     <!-- Hero hex section -->
     <div id="hexSection">
@@ -988,6 +1043,8 @@
 
         <div id="formFeedback"></div>
       </section>
+
+      <button id="backToTop" onclick="document.getElementById('mainSite').scrollTo({top:0,behavior:'smooth'})">↑ Back to top</button>
 
       <footer id="siteFooter">
         <p>&copy; 2025 Magus Jane &nbsp;·&nbsp; All rights reserved</p>
@@ -1127,6 +1184,8 @@
       if (lj) lj.style.opacity = '1';
       const ls = document.getElementById('landingSolutions');
       if (ls) setTimeout(() => ls.style.opacity = '1', 600);
+      const lf = document.getElementById('landingFront');
+      if (lf) setTimeout(() => lf.style.opacity = '1', 1400);
     });
 
     // ── ENTER SITE ────────────────────────────────────────
@@ -1139,6 +1198,20 @@
       document.getElementById('matrix').style.opacity = '0';
       document.getElementById('vignette').style.opacity = '0';
       setTimeout(() => showMainSite(), 600);
+    }
+
+    function goHome() {
+      document.getElementById('mainSite').classList.remove('visible');
+      document.getElementById('mainSite').scrollTop = 0;
+      document.getElementById('landingScreen').classList.remove('hidden');
+      document.getElementById('matrix').style.opacity = '1';
+      document.getElementById('vignette').style.opacity = '1';
+      opened = false;
+    }
+
+    function scrollToContact() {
+      const s = document.getElementById('contactSection');
+      if (s) s.scrollIntoView({ behavior: 'smooth' });
     }
 
     function scrollToContent() {
