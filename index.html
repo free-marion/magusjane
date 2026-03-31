@@ -2204,6 +2204,30 @@
       },
     ];
 
+    // Background assignments
+    const LYCEUM_BG = {
+      hall:         'images/lyceum-spiral.jpg',
+      humanities:   'images/lyceum-alexandria.png',
+      sciences:     'images/lyceum-cosmos.jpg',
+      arts:         'images/lyceum-infinite.jpg',
+      // section overrides
+      history:      'images/lyceum-mosaic.jpg',
+      anthropology: 'images/lyceum-mosaic.jpg',
+      psychology:   'images/lyceum-atrium.jpg',
+      chemistry:    'images/lyceum-vault.jpg',
+      biology:      'images/lyceum-vault.jpg',
+      music:        'images/lyceum-spiral.jpg',
+      art:          'images/lyceum-mosaic.jpg',
+      mathematics:  'images/lyceum-infinite.jpg',
+    };
+
+    function lcSetBackground(src) {
+      const img = document.getElementById('lyceumImg');
+      if (img.dataset.bg === src) return;
+      img.style.opacity = '0';
+      setTimeout(() => { img.src = src; img.dataset.bg = src; img.style.opacity = '1'; }, 320);
+    }
+
     // Navigation state
     let lcCurrentWing = null;
     let lcCurrentSection = null;
@@ -2236,6 +2260,7 @@
 
     function lcGoHall() {
       lcCurrentWing = null; lcCurrentSection = null; lcCurrentSub = null;
+      lcSetBackground(LYCEUM_BG.hall);
       lcSetOverlay(null);
       lcSetBreadcrumb(null);
       lcShow('lcHall');
@@ -2243,6 +2268,7 @@
 
     function lcGoWing() {
       lcCurrentSection = null; lcCurrentSub = null;
+      lcSetBackground(LYCEUM_BG[lcCurrentWing.id] || LYCEUM_BG.hall);
       lcSetOverlay(lcCurrentWing);
       lcSetBreadcrumb(lcCurrentWing);
       buildWingView(lcCurrentWing);
@@ -2271,6 +2297,7 @@
         card.appendChild(lbl);
         card.addEventListener('click', () => {
           lcCurrentWing = wing;
+          lcSetBackground(LYCEUM_BG[wing.id] || LYCEUM_BG.hall);
           lcSetOverlay(wing);
           lcSetBreadcrumb(wing);
           buildWingView(wing);
@@ -2304,6 +2331,7 @@
         card.addEventListener('click', () => {
           lcCurrentSection = sec;
           lcCurrentSub = null;
+          lcSetBackground(LYCEUM_BG[sec.id] || LYCEUM_BG[wing.id] || LYCEUM_BG.hall);
           lcSetBreadcrumb(wing, sec);
           buildSectionContent(sec, wing, null);
           lcShow('lcSection');
@@ -2406,6 +2434,8 @@
       document.getElementById('lyceumIntro').classList.add('fade-out');
       setTimeout(() => {
         document.getElementById('lyceumMain').classList.add('show');
+        document.getElementById('lyceumImg').src = LYCEUM_BG.hall;
+        document.getElementById('lyceumImg').dataset.bg = LYCEUM_BG.hall;
         lcGoHall();
         buildHallView();
       }, 1200);
