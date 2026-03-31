@@ -771,7 +771,16 @@
       transition: opacity 0.7s ease;
     }
     #cooperPortal { opacity: 0; pointer-events: none; }
-    #cooperPortal.show { opacity: 1; pointer-events: all; }
+    #cooperPortal.show {
+      opacity: 1; pointer-events: all;
+      background: url('images/cooper-family.jpg') center center / cover no-repeat;
+    }
+    #cooperPortal.show::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.55);
+      pointer-events: none;
+    }
     #cooperPuzzle.hide { opacity: 0; pointer-events: none; }
 
     .cooper-title {
@@ -2557,12 +2566,12 @@
       { id: 'jake',  src: 'images/Jake.jpg',                              label: null },
       { id: 'cena',  src: 'images/John-Cena-960x540-3383925362.jpg',      label: null },
       { id: 'angel', src: 'images/angel.jpg',                             label: null },
-      { id: 'ph1',   src: null, label: '?' },
-      { id: 'ph2',   src: null, label: '?' },
-      { id: 'ph3',   src: null, label: '?' },
-      { id: 'ph4',   src: null, label: '?' },
-      { id: 'ph5',   src: null, label: '?' },
-      { id: 'ph6',   src: null, label: '?' },
+      { id: 'ph1',   src: 'images/ph-lion.jpg',      label: null },
+      { id: 'ph2',   src: 'images/ph-silhouette.jpg', label: null },
+      { id: 'ph3',   src: 'images/ph-cheramipic.jpg', label: null },
+      { id: 'ph4',   src: 'images/ph-edith.jpg',      label: null },
+      { id: 'ph5',   src: 'images/ph-ancientlib.jpg', label: null },
+      { id: 'ph6',   src: 'images/ph-princip.jpg',    label: null },
     ];
     const COOPER_KEY = ['jake', 'cena', 'angel']; // correct order
     let cooperSlots  = [null, null, null];
