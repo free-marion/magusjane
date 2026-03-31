@@ -1211,6 +1211,214 @@
     .fm-hud.tr { top:1.6rem; right:1.6rem; width:3.5rem; height:3.5rem; border-width:1px 1px 0 0; }
     .fm-hud.bl { bottom:1.6rem; left:1.6rem; width:3.5rem; height:3.5rem; border-width:0 0 1px 1px; }
     .fm-hud.br { bottom:1.6rem; right:1.6rem; width:3.5rem; height:3.5rem; border-width:0 1px 1px 0; }
+
+    /* ── LYCEUM MULTI-LEVEL ───────────────────────────── */
+    #lyceumColorOverlay {
+      position: absolute; inset: 0;
+      background: rgba(4,3,2,0.74);
+      transition: background 1s ease;
+      pointer-events: none; z-index: 1;
+    }
+    #lyceumNav {
+      position: absolute; inset: 0; z-index: 2;
+      display: flex; flex-direction: column;
+      align-items: center;
+      padding: clamp(3rem,6vh,4.5rem) clamp(1.2rem,4vw,3rem) clamp(2rem,4vh,3rem);
+      overflow-y: auto;
+    }
+    #lyceumBreadcrumb {
+      font-family: 'Cinzel', serif;
+      font-size: 0.46rem; letter-spacing: 0.42em; text-transform: uppercase;
+      color: rgba(200,178,138,0.3);
+      text-align: center; margin-bottom: clamp(1.4rem,3.5vh,2.5rem);
+      min-height: 1rem; line-height: 1.8;
+    }
+    .bc-sep { color: rgba(200,178,138,0.18); margin: 0 0.4em; }
+    .bc-link { cursor: pointer; transition: color 0.25s; }
+    .bc-link:hover { color: rgba(200,178,138,0.75); }
+
+    .lc-view {
+      width: 100%; max-width: 820px;
+      display: flex; flex-direction: column; align-items: center;
+      flex: 1;
+    }
+    .lc-hall-title {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: clamp(1.1rem,2.8vw,1.9rem);
+      color: rgba(210,190,150,0.78); letter-spacing: 0.2em;
+      margin-bottom: clamp(1.4rem,3.5vh,2.4rem);
+      text-align: center;
+      text-shadow: 0 0 40px rgba(180,120,40,0.25);
+    }
+    .lc-wing-heading {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: clamp(0.95rem,2.2vw,1.4rem);
+      color: rgba(210,190,150,0.72); letter-spacing: 0.16em;
+      margin-bottom: clamp(1.2rem,3vh,2rem);
+      text-align: center;
+    }
+    .lc-cards-grid {
+      display: flex; gap: clamp(0.7rem,1.8vw,1.2rem);
+      width: 100%; justify-content: center; flex-wrap: wrap;
+    }
+    .lc-card {
+      border: 1px solid rgba(200,178,138,0.14);
+      background: rgba(8,6,3,0.65);
+      padding: clamp(1.1rem,2.5vh,1.8rem) clamp(0.9rem,2.5vw,1.5rem);
+      cursor: pointer; text-align: center;
+      transition: border-color 0.3s, background 0.3s, transform 0.3s;
+    }
+    .lc-card:hover {
+      border-color: rgba(200,178,138,0.48);
+      background: rgba(18,12,6,0.82);
+      transform: translateY(-2px);
+    }
+    .lc-wings .lc-card { flex:1; min-width:clamp(145px,22vw,210px); max-width:250px; }
+    .lc-sections .lc-card { flex:1; min-width:clamp(120px,17vw,170px); max-width:195px; }
+    .lc-card-accent {
+      width:28px; height:1px; margin:0 auto 0.9rem;
+      transition: width 0.3s;
+    }
+    .lc-card:hover .lc-card-accent { width:48px; }
+    .lc-card-label {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.58rem,1.3vw,0.8rem);
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: rgba(200,178,138,0.68); line-height: 1.5;
+    }
+    .lc-card-star {
+      font-family: 'Cinzel', serif; font-size: 0.44rem;
+      color: rgba(200,155,45,0.6); letter-spacing: 0.3em;
+      margin-top: 0.35rem;
+    }
+    /* Content panel */
+    .lc-content-wrap {
+      width: 100%; max-width: 560px;
+      background: rgba(5,3,1,0.9);
+      border: 1px solid rgba(200,178,138,0.09);
+      padding: clamp(1.4rem,3.5vh,2.2rem) clamp(1.2rem,4vw,2rem);
+      overflow-y: auto; max-height: 62vh;
+    }
+    .lc-content-title {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: clamp(0.95rem,2.2vw,1.35rem);
+      color: rgba(210,190,150,0.9); letter-spacing: 0.14em;
+      margin-bottom: 0.4rem; font-weight: 400;
+    }
+    .lc-content-desc {
+      font-family: 'IM Fell English', serif; font-style: italic;
+      font-size: 0.87rem; color: rgba(175,160,138,0.48);
+      line-height: 1.65; margin-bottom: 1.4rem;
+      padding-bottom: 1.1rem;
+      border-bottom: 1px solid rgba(200,178,138,0.07);
+    }
+    /* Featured exhibit glowing button */
+    .lc-featured-btn {
+      display: block; width: 100%;
+      background: rgba(160,90,15,0.07);
+      border: 1px solid rgba(195,135,35,0.3);
+      padding: 0.85rem 1.1rem; margin-bottom: 1.4rem;
+      text-align: center; cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+      animation: lc-feat-pulse 3.2s ease-in-out infinite;
+    }
+    .lc-featured-btn:hover {
+      border-color: rgba(220,155,40,0.65);
+      background: rgba(195,110,18,0.13);
+      box-shadow: 0 0 22px rgba(195,135,35,0.2), inset 0 0 18px rgba(195,135,35,0.05);
+      animation: none;
+    }
+    @keyframes lc-feat-pulse {
+      0%,100% { box-shadow:0 0 7px rgba(195,135,35,0.09); border-color:rgba(195,135,35,0.30); }
+      50%      { box-shadow:0 0 18px rgba(195,135,35,0.22); border-color:rgba(195,135,35,0.52); }
+    }
+    .lc-feat-label {
+      font-family:'Cinzel',serif; font-size:0.42rem;
+      letter-spacing:0.58em; text-transform:uppercase;
+      color:rgba(200,158,50,0.45); margin-bottom:0.28rem;
+    }
+    .lc-feat-name {
+      font-family:'Cinzel Decorative',cursive;
+      font-size:clamp(0.72rem,1.7vw,0.96rem);
+      color:rgba(220,178,75,0.85); letter-spacing:0.09em;
+    }
+    /* History hero frame */
+    .lc-hero-frame {
+      border:1px solid rgba(200,178,138,0.18);
+      background:rgba(8,6,3,0.65);
+      padding:1.2rem; margin-bottom:1.4rem;
+      text-align:center; position:relative;
+    }
+    .lc-hero-frame::before,.lc-hero-frame::after {
+      content:''; position:absolute;
+      width:12px; height:12px;
+      border-color:rgba(200,158,50,0.35); border-style:solid;
+    }
+    .lc-hero-frame::before { top:-1px; left:-1px; border-width:2px 0 0 2px; }
+    .lc-hero-frame::after  { bottom:-1px; right:-1px; border-width:0 2px 2px 0; }
+    .lc-hero-portrait {
+      width:clamp(68px,11vw,96px); height:clamp(68px,11vw,96px);
+      border:1px solid rgba(200,178,138,0.18);
+      margin:0 auto 0.7rem;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(18,13,7,0.8); overflow:hidden;
+      font-family:'UnifrakturMaguntia',cursive;
+      font-size:2.2rem; color:rgba(200,178,138,0.12);
+    }
+    .lc-hero-portrait img { width:100%; height:100%; object-fit:cover; filter:sepia(25%) brightness(0.82); }
+    .lc-hero-label {
+      font-family:'Cinzel',serif; font-size:0.4rem;
+      letter-spacing:0.62em; text-transform:uppercase;
+      color:rgba(200,178,138,0.28); margin-bottom:0.38rem;
+    }
+    .lc-hero-name {
+      font-family:'Cinzel Decorative',cursive;
+      font-size:clamp(0.8rem,2vw,1.1rem);
+      color:rgba(210,190,150,0.88); letter-spacing:0.1em; margin-bottom:0.75rem;
+    }
+    .lc-hero-wiki {
+      display:inline-block; font-family:'Cinzel',serif; font-size:0.48rem;
+      letter-spacing:0.4em; text-transform:uppercase;
+      color:rgba(200,178,138,0.42); text-decoration:none;
+      border-bottom:1px solid rgba(200,178,138,0.14);
+      padding-bottom:0.12rem; transition:color 0.2s, border-color 0.2s;
+    }
+    .lc-hero-wiki:hover { color:rgba(210,190,150,0.82); border-bottom-color:rgba(200,178,138,0.45); }
+    /* Literature subsection buttons */
+    .lc-sub-btns {
+      display:flex; gap:0.7rem; margin-bottom:1.4rem;
+      padding-bottom:1.1rem; border-bottom:1px solid rgba(200,178,138,0.07);
+    }
+    .lc-sub-btn {
+      flex:1; text-align:center;
+      font-family:'Cinzel',serif; font-size:0.52rem;
+      letter-spacing:0.35em; text-transform:uppercase;
+      color:rgba(200,178,138,0.48); background:none;
+      border:1px solid rgba(200,178,138,0.14);
+      padding:0.55rem; cursor:pointer;
+      transition:color 0.22s, border-color 0.22s, background 0.22s;
+    }
+    .lc-sub-btn:hover,.lc-sub-btn.active {
+      color:rgba(210,190,150,0.9); border-color:rgba(200,178,138,0.44);
+      background:rgba(200,178,138,0.04);
+    }
+    .lc-link {
+      display:block; font-family:'Cinzel',serif;
+      font-size:0.73rem; letter-spacing:0.1em;
+      color:rgba(200,178,138,0.6); text-decoration:none;
+      padding:0.72rem 0 0.72rem 0.75rem;
+      border-bottom:1px solid rgba(200,178,138,0.055);
+      transition:color 0.2s, padding-left 0.2s, border-color 0.2s;
+    }
+    .lc-link:last-child { border-bottom:none; }
+    .lc-link:hover { color:rgba(220,200,162,0.96); padding-left:1.35rem; border-bottom-color:rgba(200,178,138,0.14); }
+    .lc-link::before { content:'→ '; color:rgba(139,18,41,0.5); }
+    .lc-placeholder {
+      font-family:'IM Fell English',serif; font-style:italic;
+      font-size:0.82rem; color:rgba(200,178,138,0.18);
+      text-align:center; padding:1rem 0;
+    }
   </style>
 </head>
 <body>
@@ -1409,17 +1617,31 @@
     <div id="lyceumMain">
       <div id="lyceumImgWrap">
         <img id="lyceumImg" src="images/lyceum-library.jpg" alt="" />
-        <div id="lyceumTitle">The Lyceum</div>
-        <div id="lyceumHint">Select a domain to explore</div>
-        <!-- zones injected by JS -->
+        <div id="lyceumColorOverlay"></div>
+
+        <div id="lyceumNav">
+          <div id="lyceumBreadcrumb"></div>
+
+          <!-- Hall: 3 wing cards -->
+          <div id="lcHall" class="lc-view">
+            <div class="lc-hall-title">The Lyceum</div>
+            <div id="lcWingCards" class="lc-cards-grid lc-wings"></div>
+          </div>
+
+          <!-- Wing: section cards -->
+          <div id="lcWing" class="lc-view" style="display:none">
+            <div id="lcWingTitle" class="lc-wing-heading"></div>
+            <div id="lcSectionCards" class="lc-cards-grid lc-sections"></div>
+          </div>
+
+          <!-- Section: content panel -->
+          <div id="lcSection" class="lc-view" style="display:none">
+            <div id="lcSectionContent" class="lc-content-wrap"></div>
+          </div>
+        </div>
       </div>
-      <div id="lyceumPanel">
-        <button id="lyceumPanelClose" onclick="closeLyceumPanel()">×</button>
-        <div id="lyceumPanelTitle"></div>
-        <div id="lyceumPanelDesc"></div>
-        <div id="lyceumPanelLinks"></div>
-      </div>
-      <button id="lyceumBack" onclick="closeLyceum()">← Return</button>
+
+      <button id="lyceumBack" onclick="closeLyceum()">← Return to Site</button>
     </div>
 
   </div>
@@ -1783,137 +2005,397 @@
       });
     }
     // ── LYCEUM ────────────────────────────────────────────
-    const DOMAINS = [
+    const HISTORY_HEROES = [
+      { name: 'John Brown',          wiki: 'https://en.wikipedia.org/wiki/John_Brown_(abolitionist)' },
+      { name: 'Gaspar Yanga',        wiki: 'https://en.wikipedia.org/wiki/Gaspar_Yanga' },
+      { name: 'Saint Valentine',     wiki: 'https://en.wikipedia.org/wiki/Saint_Valentine' },
+      { name: 'Edith Cavell',        wiki: 'https://en.wikipedia.org/wiki/Edith_Cavell' },
+      { name: 'Roger Casement',      wiki: 'https://en.wikipedia.org/wiki/Roger_Casement' },
+      { name: 'Toussaint Louverture',wiki: 'https://en.wikipedia.org/wiki/Toussaint_Louverture' },
+      { name: 'Cato the Younger',    wiki: 'https://en.wikipedia.org/wiki/Cato_the_Younger' },
+      { name: 'Dr Frances Kelsey',   wiki: 'https://en.wikipedia.org/wiki/Frances_Oldham_Kelsey' },
+      { name: 'Dr Jonas Salk',       wiki: 'https://en.wikipedia.org/wiki/Jonas_Salk' },
+      { name: 'Helmuth Hübener',     wiki: 'https://en.wikipedia.org/wiki/Helmuth_H%C3%BCbener' },
+      { name: 'Hannie Schaft',       wiki: 'https://en.wikipedia.org/wiki/Hannie_Schaft' },
+    ];
+
+    const LYCEUM_WINGS = [
       {
-        id: 'astronomy', label: 'Astronomy',
-        desc: 'The cosmos — from our solar system to the edge of the observable universe.',
-        zone: { left:'22%', top:'0%', width:'56%', height:'25%' },
-        color: 'rgba(80,110,200,0.28)',
-        links: [
-          { name: 'NASA',                                  url: 'https://www.nasa.gov' },
-          { name: 'Khan Academy — Cosmology & Astronomy',  url: 'https://www.khanacademy.org/science/cosmology-and-astronomy' },
-          { name: 'Stellarium Web Planetarium',            url: 'https://stellarium-web.org' },
-          { name: 'Crash Course Astronomy',                url: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtPAJr1ysd5yGIyiSFuh0mIL' },
-          { name: 'Eyes on the Solar System (NASA)',       url: 'https://eyes.nasa.gov/apps/solar-system/' },
-          { name: 'Hubble Site',                           url: 'https://hubblesite.org' },
-          { name: 'Space.com',                             url: 'https://www.space.com' },
+        id: 'humanities', label: 'The Humanities Wing',
+        accentColor: 'rgba(140,75,15,0.55)',
+        accentHex: '#8C4B0F',
+        sections: [
+          {
+            id: 'history', label: 'History', hero: true, featured: null,
+            desc: 'The record of human civilisation — triumph, failure, and moral courage through the ages.',
+            links: [
+              { name: 'World History Encyclopedia',         url: 'https://www.worldhistory.org' },
+              { name: 'Internet History Sourcebooks',       url: 'https://sourcebooks.fordham.edu' },
+              { name: 'JSTOR',                              url: 'https://www.jstor.org' },
+              { name: 'Khan Academy — World History',       url: 'https://www.khanacademy.org/humanities/world-history' },
+              { name: 'Crash Course History (YouTube)',     url: 'https://www.youtube.com/playlist?list=PLBDA2E52FB1EF80C9' },
+              { name: 'BBC History',                        url: 'https://www.bbc.co.uk/history' },
+            ]
+          },
+          {
+            id: 'philosophy', label: 'Philosophy', featured: null,
+            desc: 'Logic, ethics, metaphysics, and the examined life.',
+            links: [
+              { name: 'Stanford Encyclopedia of Philosophy', url: 'https://plato.stanford.edu' },
+              { name: 'Internet Encyclopedia of Philosophy', url: 'https://iep.utm.edu' },
+              { name: 'Philosophy Bites Podcast',            url: 'https://philosophybites.com' },
+              { name: 'Crash Course Philosophy (YouTube)',   url: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtNgK6MZucdYldNkMybYIHKR' },
+              { name: 'Philosophy Now',                      url: 'https://philosophynow.org' },
+              { name: 'MIT OpenCourseWare — Philosophy',     url: 'https://ocw.mit.edu/search/?d=Philosophy' },
+            ]
+          },
+          {
+            id: 'anthropology', label: 'Anthropology', featured: null,
+            desc: 'Human origins, culture, language, and society across time and place.',
+            links: [
+              { name: 'Smithsonian Human Origins',          url: 'https://humanorigins.si.edu' },
+              { name: 'American Anthropological Association', url: 'https://www.americananthro.org' },
+              { name: 'Open Learn — Anthropology',          url: 'https://www.open.edu/openlearn/history-the-arts/culture-ethnicity-and-citizenship/anthropology' },
+              { name: 'AnthroBase',                         url: 'https://www.anthrobase.com' },
+              { name: 'Crash Course Sociology (YouTube)',   url: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtMJ-AfB_7J1538YKZkEjJsN' },
+            ]
+          },
+          {
+            id: 'psychology', label: 'Psychology', featured: null,
+            desc: 'The science of mind, behaviour, and the inner life of the human animal.',
+            links: [
+              { name: 'Simply Psychology',                  url: 'https://www.simplypsychology.org' },
+              { name: 'Psychology Today',                   url: 'https://www.psychologytoday.com' },
+              { name: 'Khan Academy — Health & Medicine',   url: 'https://www.khanacademy.org/science/health-and-medicine' },
+              { name: 'Crash Course Psychology (YouTube)',  url: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtOPRKzVLY0jJY-uHOH9KVU6' },
+              { name: 'APA',                                url: 'https://www.apa.org' },
+              { name: 'PsyArXiv Preprints',                 url: 'https://psyarxiv.com' },
+            ]
+          },
         ]
       },
       {
-        id: 'literature', label: 'Literature',
-        desc: 'The full tradition of written human thought — from Homer to the present.',
-        zone: { left:'0%', top:'0%', width:'22%', height:'40%' },
-        color: 'rgba(160,110,30,0.28)',
-        links: [
-          { name: 'Project Gutenberg',        url: 'https://www.gutenberg.org' },
-          { name: 'Standard Ebooks',          url: 'https://standardebooks.org' },
-          { name: 'LibriVox — Free Audiobooks', url: 'https://librivox.org' },
-          { name: 'CommonLit',                url: 'https://www.commonlit.org' },
-          { name: 'Poetry Foundation',        url: 'https://www.poetryfoundation.org' },
-          { name: 'Open Library',             url: 'https://openlibrary.org' },
-          { name: 'SparkNotes',               url: 'https://www.sparknotes.com' },
+        id: 'sciences', label: 'The Sciences Wing',
+        accentColor: 'rgba(20,55,130,0.55)',
+        accentHex: '#143782',
+        sections: [
+          {
+            id: 'physics', label: 'Science / Physics', featured: null,
+            desc: 'The fundamental laws governing matter, energy, space, and time.',
+            links: [
+              { name: 'Feynman Lectures on Physics',        url: 'https://www.feynmanlectures.caltech.edu' },
+              { name: 'Khan Academy — Physics',             url: 'https://www.khanacademy.org/science/physics' },
+              { name: 'MIT OpenCourseWare — Physics',       url: 'https://ocw.mit.edu/search/?d=Physics' },
+              { name: 'PBS Space Time (YouTube)',           url: 'https://www.youtube.com/@pbsspacetime' },
+              { name: 'HyperPhysics',                       url: 'http://hyperphysics.phy-astr.gsu.edu/hbase/hph.html' },
+              { name: 'Physics Classroom',                  url: 'https://www.physicsclassroom.com' },
+            ]
+          },
+          {
+            id: 'chemistry', label: 'Chemistry', featured: null,
+            desc: 'From atomic structure to organic compounds — the science of matter.',
+            links: [
+              { name: 'Khan Academy — Chemistry',           url: 'https://www.khanacademy.org/science/chemistry' },
+              { name: 'ChemLibreTexts',                     url: 'https://chem.libretexts.org' },
+              { name: 'Periodic Table — ptable',            url: 'https://ptable.com' },
+              { name: 'Tyler DeWitt (YouTube)',             url: 'https://www.youtube.com/@tylerdewitt' },
+              { name: 'Crash Course Chemistry (YouTube)',   url: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtPHzzYuWy6fYEaX9mQQ8oGr' },
+              { name: 'Royal Society of Chemistry',         url: 'https://www.rsc.org/learn-chemistry/' },
+            ]
+          },
+          {
+            id: 'biology', label: 'Biology', featured: null,
+            desc: 'Life in all its forms — from the cell to the ecosystem.',
+            links: [
+              { name: 'Khan Academy — Biology',             url: 'https://www.khanacademy.org/science/biology' },
+              { name: 'HHMI BioInteractive',                url: 'https://www.biointeractive.org' },
+              { name: 'Crash Course Biology (YouTube)',     url: 'https://www.youtube.com/playlist?list=PL3EED4C1D684D3ADF' },
+              { name: 'BiologyOnline',                      url: 'https://www.biologyonline.com' },
+              { name: 'Tree of Life Web Project',           url: 'http://tolweb.org/tree/' },
+              { name: 'NIH MedlinePlus',                    url: 'https://medlineplus.gov' },
+            ]
+          },
+          {
+            id: 'astronomy', label: 'Astronomy',
+            featured: { name: 'NASA 10,000 Star Project', url: 'https://stars.chromeexperiments.com' },
+            desc: 'The cosmos — from our solar system to the edge of the observable universe.',
+            links: [
+              { name: 'NASA',                               url: 'https://www.nasa.gov' },
+              { name: 'Stellarium Web Planetarium',         url: 'https://stellarium-web.org' },
+              { name: 'Eyes on the Solar System (NASA)',    url: 'https://eyes.nasa.gov/apps/solar-system/' },
+              { name: 'Khan Academy — Cosmology & Astronomy', url: 'https://www.khanacademy.org/science/cosmology-and-astronomy' },
+              { name: 'Hubble Site',                        url: 'https://hubblesite.org' },
+              { name: 'Crash Course Astronomy (YouTube)',   url: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtPAJr1ysd5yGIyiSFuh0mIL' },
+            ]
+          },
+          {
+            id: 'mathematics', label: 'Mathematics', featured: null,
+            desc: 'Arithmetic to calculus, logic to topology — the language of the universe.',
+            links: [
+              { name: '3Blue1Brown',                        url: 'https://www.3blue1brown.com' },
+              { name: 'Khan Academy — Mathematics',         url: 'https://www.khanacademy.org/math' },
+              { name: 'Art of Problem Solving',             url: 'https://artofproblemsolving.com' },
+              { name: 'Wolfram Alpha',                      url: 'https://www.wolframalpha.com' },
+              { name: 'Desmos Graphing Calculator',         url: 'https://www.desmos.com/calculator' },
+              { name: "Paul's Online Math Notes",           url: 'https://tutorial.math.lamar.edu' },
+            ]
+          },
         ]
       },
       {
-        id: 'music', label: 'Music',
-        desc: 'Theory, history, and practice — from fundamentals to advanced composition.',
-        zone: { left:'78%', top:'0%', width:'22%', height:'55%' },
-        color: 'rgba(140,50,160,0.28)',
-        links: [
-          { name: 'musictheory.net',          url: 'https://www.musictheory.net' },
-          { name: 'teoria.com',               url: 'https://www.teoria.com' },
-          { name: '8notes.com',               url: 'https://www.8notes.com' },
-          { name: 'IMSLP — Free Sheet Music', url: 'https://imslp.org' },
-          { name: 'MuseScore',                url: 'https://musescore.com' },
-          { name: 'Crash Course Music Theory', url: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtpaW1gFGCPEe-VaGLbCxBHr' },
-          { name: '12tone (YouTube)',          url: 'https://www.youtube.com/@12tone' },
-        ]
-      },
-      {
-        id: 'art', label: 'Art',
-        desc: "Visual art history, technique, and the world's greatest collections.",
-        zone: { left:'28%', top:'25%', width:'44%', height:'28%' },
-        color: 'rgba(200,80,40,0.28)',
-        links: [
-          { name: 'Google Arts & Culture',         url: 'https://artsandculture.google.com' },
-          { name: 'The Metropolitan Museum',       url: 'https://www.metmuseum.org/art/collection' },
-          { name: 'Smarthistory',                  url: 'https://smarthistory.org' },
-          { name: 'Khan Academy — Art History',    url: 'https://www.khanacademy.org/humanities/art-history' },
-          { name: 'The Art Story',                 url: 'https://www.theartstory.org' },
-          { name: 'Web Gallery of Art',            url: 'https://www.wga.hu' },
-          { name: 'Proko — Figure Drawing',        url: 'https://www.youtube.com/@ProkoTV' },
-        ]
-      },
-      {
-        id: 'philosophy', label: 'Philosophy',
-        desc: 'Logic, ethics, metaphysics, and the examined life.',
-        zone: { left:'0%', top:'40%', width:'22%', height:'30%' },
-        color: 'rgba(60,60,140,0.28)',
-        links: [
-          { name: 'Stanford Encyclopedia of Philosophy', url: 'https://plato.stanford.edu' },
-          { name: 'Internet Encyclopedia of Philosophy', url: 'https://iep.utm.edu' },
-          { name: 'Crash Course Philosophy',             url: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtNgK6MZucdYldNkMybYIHKR' },
-          { name: 'Philosophy Bites Podcast',            url: 'https://philosophybites.com' },
-          { name: 'Philosophy Now',                      url: 'https://philosophynow.org' },
-          { name: 'MIT OpenCourseWare — Philosophy',     url: 'https://ocw.mit.edu/search/?d=Philosophy' },
-        ]
-      },
-      {
-        id: 'earth', label: 'Earth Sciences',
-        desc: 'Geology, meteorology, oceanography, and the living planet.',
-        zone: { left:'0%', top:'70%', width:'22%', height:'30%' },
-        color: 'rgba(40,130,70,0.28)',
-        links: [
-          { name: 'USGS Education',                        url: 'https://www.usgs.gov/education' },
-          { name: 'NOAA Education',                        url: 'https://www.noaa.gov/education' },
-          { name: 'NASA Earth Observatory',                url: 'https://earthobservatory.nasa.gov' },
-          { name: 'Khan Academy — Earth & Space Science',  url: 'https://www.khanacademy.org/science/earth-and-space-science' },
-          { name: 'Geology.com',                           url: 'https://geology.com' },
-          { name: 'National Geographic Education',         url: 'https://education.nationalgeographic.org' },
-          { name: 'Crash Course Geography',                url: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtO85gEstkyKG13C0HwIBjnv' },
-        ]
-      },
-      {
-        id: 'chemistry', label: 'Chemistry',
-        desc: 'From atomic structure to organic compounds — the science of matter.',
-        zone: { left:'78%', top:'55%', width:'22%', height:'45%' },
-        color: 'rgba(40,170,170,0.28)',
-        links: [
-          { name: 'Khan Academy — Chemistry',  url: 'https://www.khanacademy.org/science/chemistry' },
-          { name: 'ChemLibreTexts',            url: 'https://chem.libretexts.org' },
-          { name: 'Tyler DeWitt (YouTube)',    url: 'https://www.youtube.com/@tylerdewitt' },
-          { name: 'Crash Course Chemistry',   url: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtPHzzYuWy6fYEaX9mQQ8oGr' },
-          { name: 'Periodic Table — ptable',  url: 'https://ptable.com' },
-          { name: 'Royal Society of Chemistry', url: 'https://www.rsc.org/learn-chemistry/' },
-          { name: 'ChemSpider',               url: 'http://www.chemspider.com' },
-        ]
-      },
-      {
-        id: 'mathematics', label: 'Mathematics',
-        desc: 'Arithmetic to calculus, logic to topology — the language of the universe.',
-        zone: { left:'22%', top:'53%', width:'56%', height:'47%' },
-        color: 'rgba(190,150,30,0.28)',
-        links: [
-          { name: 'Khan Academy — Mathematics',   url: 'https://www.khanacademy.org/math' },
-          { name: '3Blue1Brown',                  url: 'https://www.3blue1brown.com' },
-          { name: 'Art of Problem Solving',       url: 'https://artofproblemsolving.com' },
-          { name: 'Desmos Graphing Calculator',   url: 'https://www.desmos.com/calculator' },
-          { name: 'GeoGebra',                     url: 'https://www.geogebra.org' },
-          { name: 'Wolfram Alpha',                url: 'https://www.wolframalpha.com' },
-          { name: "Paul's Online Math Notes",     url: 'https://tutorial.math.lamar.edu' },
+        id: 'arts', label: 'The Arts Hall',
+        accentColor: 'rgba(90,18,130,0.55)',
+        accentHex: '#5A1282',
+        sections: [
+          {
+            id: 'music', label: 'Music',
+            featured: { name: 'Every Noise At Once', url: 'https://everynoise.com' },
+            desc: 'Theory, history, and practice — from fundamentals to advanced composition.',
+            links: [
+              { name: 'musictheory.net',                    url: 'https://www.musictheory.net' },
+              { name: 'IMSLP — Free Sheet Music',           url: 'https://imslp.org' },
+              { name: 'MuseScore',                          url: 'https://musescore.com' },
+              { name: 'teoria.com',                         url: 'https://www.teoria.com' },
+              { name: 'Crash Course Music Theory (YouTube)', url: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtpaW1gFGCPEe-VaGLbCxBHr' },
+              { name: '12tone (YouTube)',                   url: 'https://www.youtube.com/@12tone' },
+            ]
+          },
+          {
+            id: 'art', label: 'Art', featured: null,
+            desc: "Visual art history, technique, and the world's greatest collections.",
+            links: [
+              { name: 'Google Arts & Culture',              url: 'https://artsandculture.google.com' },
+              { name: 'The Metropolitan Museum',            url: 'https://www.metmuseum.org/art/collection' },
+              { name: 'Smarthistory',                       url: 'https://smarthistory.org' },
+              { name: 'Khan Academy — Art History',         url: 'https://www.khanacademy.org/humanities/art-history' },
+              { name: 'The Art Story',                      url: 'https://www.theartstory.org' },
+              { name: 'Web Gallery of Art',                 url: 'https://www.wga.hu' },
+            ]
+          },
+          {
+            id: 'literature', label: 'Literature', featured: null,
+            desc: 'The full tradition of written human thought — from Homer to the present.',
+            subsections: [
+              {
+                id: 'fiction', label: 'Fiction',
+                desc: 'Novels, stories, and the imagination at its fullest range.',
+                links: [
+                  { name: 'Project Gutenberg',              url: 'https://www.gutenberg.org' },
+                  { name: 'Standard Ebooks',                url: 'https://standardebooks.org' },
+                  { name: 'LibriVox — Free Audiobooks',     url: 'https://librivox.org' },
+                  { name: 'Open Library',                   url: 'https://openlibrary.org' },
+                  { name: 'SparkNotes',                     url: 'https://www.sparknotes.com' },
+                ]
+              },
+              {
+                id: 'nonfiction', label: 'Non-Fiction',
+                desc: 'Essays, memoir, reportage, and the literature of fact.',
+                links: [
+                  { name: 'Longform.org',                   url: 'https://longform.org' },
+                  { name: 'CommonLit',                      url: 'https://www.commonlit.org' },
+                  { name: 'Poetry Foundation',              url: 'https://www.poetryfoundation.org' },
+                  { name: 'Internet Archive Texts',         url: 'https://archive.org/details/texts' },
+                  { name: 'The Atlantic Archive',           url: 'https://www.theatlantic.com/magazine/backissues/' },
+                ]
+              }
+            ]
+          },
         ]
       },
     ];
 
+    // Navigation state
+    let lcCurrentWing = null;
+    let lcCurrentSection = null;
+    let lcCurrentSub = null;
+
+    function getCurrentHero() {
+      const day = Math.floor(Date.now() / 86400000);
+      return HISTORY_HEROES[day % HISTORY_HEROES.length];
+    }
+
+    function lcSetOverlay(wing) {
+      const el = document.getElementById('lyceumColorOverlay');
+      el.style.background = wing ? wing.accentColor.replace('0.55','0.62') : 'rgba(4,3,2,0.74)';
+    }
+
+    function lcSetBreadcrumb(wing, section, sub) {
+      const bc = document.getElementById('lyceumBreadcrumb');
+      let html = '<span class="bc-link" onclick="lcGoHall()">Main Hall</span>';
+      if (wing) html += `<span class="bc-sep">›</span><span class="${section ? 'bc-link" onclick="lcGoWing()' : ''}">${wing.label}</span>`;
+      if (section) html += `<span class="bc-sep">›</span><span class="${sub ? 'bc-link" onclick="lcGoSection()' : ''}">${section.label}</span>`;
+      if (sub) html += `<span class="bc-sep">›</span><span>${sub.label}</span>`;
+      bc.innerHTML = html;
+    }
+
+    function lcShow(viewId) {
+      ['lcHall','lcWing','lcSection'].forEach(id => {
+        document.getElementById(id).style.display = (id === viewId) ? 'flex' : 'none';
+      });
+    }
+
+    function lcGoHall() {
+      lcCurrentWing = null; lcCurrentSection = null; lcCurrentSub = null;
+      lcSetOverlay(null);
+      lcSetBreadcrumb(null);
+      lcShow('lcHall');
+    }
+
+    function lcGoWing() {
+      lcCurrentSection = null; lcCurrentSub = null;
+      lcSetOverlay(lcCurrentWing);
+      lcSetBreadcrumb(lcCurrentWing);
+      buildWingView(lcCurrentWing);
+      lcShow('lcWing');
+    }
+
+    function lcGoSection() {
+      lcCurrentSub = null;
+      buildSectionContent(lcCurrentSection, lcCurrentWing, null);
+      lcShow('lcSection');
+    }
+
+    function buildHallView() {
+      const grid = document.getElementById('lcWingCards');
+      grid.innerHTML = '';
+      LYCEUM_WINGS.forEach(wing => {
+        const card = document.createElement('div');
+        card.className = 'lc-card';
+        const accent = document.createElement('div');
+        accent.className = 'lc-card-accent';
+        accent.style.background = wing.accentHex;
+        card.appendChild(accent);
+        const lbl = document.createElement('div');
+        lbl.className = 'lc-card-label';
+        lbl.textContent = wing.label;
+        card.appendChild(lbl);
+        card.addEventListener('click', () => {
+          lcCurrentWing = wing;
+          lcSetOverlay(wing);
+          lcSetBreadcrumb(wing);
+          buildWingView(wing);
+          lcShow('lcWing');
+        });
+        grid.appendChild(card);
+      });
+    }
+
+    function buildWingView(wing) {
+      document.getElementById('lcWingTitle').textContent = wing.label;
+      const grid = document.getElementById('lcSectionCards');
+      grid.innerHTML = '';
+      wing.sections.forEach(sec => {
+        const card = document.createElement('div');
+        card.className = 'lc-card';
+        const accent = document.createElement('div');
+        accent.className = 'lc-card-accent';
+        accent.style.background = wing.accentHex;
+        card.appendChild(accent);
+        const lbl = document.createElement('div');
+        lbl.className = 'lc-card-label';
+        lbl.textContent = sec.label;
+        card.appendChild(lbl);
+        if (sec.featured) {
+          const star = document.createElement('div');
+          star.className = 'lc-card-star';
+          star.textContent = '★ Featured Exhibit';
+          card.appendChild(star);
+        }
+        card.addEventListener('click', () => {
+          lcCurrentSection = sec;
+          lcCurrentSub = null;
+          lcSetBreadcrumb(wing, sec);
+          buildSectionContent(sec, wing, null);
+          lcShow('lcSection');
+        });
+        grid.appendChild(card);
+      });
+    }
+
+    function buildSectionContent(sec, wing, sub) {
+      const wrap = document.getElementById('lcSectionContent');
+      wrap.innerHTML = '';
+      const activeData = sub || sec;
+
+      // Title
+      const title = document.createElement('div');
+      title.className = 'lc-content-title';
+      title.textContent = sub ? sub.label : sec.label;
+      wrap.appendChild(title);
+
+      // Description
+      const desc = document.createElement('div');
+      desc.className = 'lc-content-desc';
+      desc.textContent = activeData.desc || sec.desc;
+      wrap.appendChild(desc);
+
+      // History hero frame
+      if (sec.hero && !sub) {
+        const hero = getCurrentHero();
+        const frame = document.createElement('div');
+        frame.className = 'lc-hero-frame';
+        frame.innerHTML = `
+          <div class="lc-hero-label">Featured Profile</div>
+          <div class="lc-hero-portrait">✦</div>
+          <div class="lc-hero-name">${hero.name}</div>
+          <a class="lc-hero-wiki" href="${hero.wiki}" target="_blank" rel="noopener noreferrer">Wikipedia →</a>
+        `;
+        wrap.appendChild(frame);
+      }
+
+      // Featured exhibit
+      if (sec.featured && !sub) {
+        const feat = document.createElement('a');
+        feat.className = 'lc-featured-btn';
+        feat.href = sec.featured.url;
+        feat.target = '_blank';
+        feat.rel = 'noopener noreferrer';
+        feat.innerHTML = `<div class="lc-feat-label">Featured Exhibit</div><div class="lc-feat-name">${sec.featured.name}</div>`;
+        wrap.appendChild(feat);
+      }
+
+      // Literature subsection buttons
+      if (sec.subsections && !sub) {
+        const subBtns = document.createElement('div');
+        subBtns.className = 'lc-sub-btns';
+        sec.subsections.forEach(s => {
+          const btn = document.createElement('button');
+          btn.className = 'lc-sub-btn';
+          btn.textContent = s.label;
+          btn.addEventListener('click', () => {
+            lcCurrentSub = s;
+            lcSetBreadcrumb(wing, sec, s);
+            buildSectionContent(sec, wing, s);
+          });
+          subBtns.appendChild(btn);
+        });
+        wrap.appendChild(subBtns);
+        // Show placeholder if no sub selected yet
+        const ph = document.createElement('div');
+        ph.className = 'lc-placeholder';
+        ph.textContent = 'Select Fiction or Non-Fiction above.';
+        wrap.appendChild(ph);
+        return;
+      }
+
+      // Links
+      const links = activeData.links || [];
+      links.forEach(l => {
+        const a = document.createElement('a');
+        a.className = 'lc-link';
+        a.href = l.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        a.textContent = l.name;
+        wrap.appendChild(a);
+      });
+    }
+
     function openLyceum() {
       document.getElementById('lyceumOverlay').classList.add('visible');
-      // Reset state
       document.getElementById('lyceumIntro').classList.remove('fade-out');
       document.getElementById('lyceumMain').classList.remove('show');
       ['ll1','ll2','lyceumLineAcross','lyceumContinue'].forEach(id => {
         document.getElementById(id).classList.remove('show');
       });
-      // Staggered reveal
       setTimeout(() => document.getElementById('ll1').classList.add('show'), 800);
       setTimeout(() => document.getElementById('ll2').classList.add('show'), 3200);
       setTimeout(() => document.getElementById('lyceumLineAcross').classList.add('show'), 5600);
@@ -1924,52 +2406,12 @@
       document.getElementById('lyceumIntro').classList.add('fade-out');
       setTimeout(() => {
         document.getElementById('lyceumMain').classList.add('show');
-        buildLyceumZones();
+        lcGoHall();
+        buildHallView();
       }, 1200);
     }
 
-    function buildLyceumZones() {
-      const wrap = document.getElementById('lyceumImgWrap');
-      // Remove old zones
-      wrap.querySelectorAll('.lz-zone').forEach(z => z.remove());
-      DOMAINS.forEach(d => {
-        const zone = document.createElement('div');
-        zone.className = 'lz-zone';
-        zone.style.cssText = `left:${d.zone.left};top:${d.zone.top};width:${d.zone.width};height:${d.zone.height};`;
-        zone.style.setProperty('--zone-color', d.color);
-        zone.addEventListener('mouseenter', () => zone.style.background = d.color);
-        zone.addEventListener('mouseleave', () => { if (!zone.classList.contains('active')) zone.style.background = ''; });
-        const lbl = document.createElement('div');
-        lbl.className = 'lz-label'; lbl.textContent = d.label;
-        zone.appendChild(lbl);
-        zone.addEventListener('click', () => openLyceumPanel(d));
-        wrap.appendChild(zone);
-      });
-    }
-
-    function openLyceumPanel(domain) {
-      document.getElementById('lyceumImgWrap').classList.add('panel-open');
-      document.getElementById('lyceumPanelTitle').textContent = domain.label;
-      document.getElementById('lyceumPanelDesc').textContent = domain.desc;
-      const linkWrap = document.getElementById('lyceumPanelLinks');
-      linkWrap.innerHTML = '';
-      domain.links.forEach(l => {
-        const a = document.createElement('a');
-        a.className = 'lz-link'; a.href = l.url;
-        a.target = '_blank'; a.rel = 'noopener noreferrer';
-        a.textContent = l.name;
-        linkWrap.appendChild(a);
-      });
-      document.getElementById('lyceumPanel').classList.add('open');
-    }
-
-    function closeLyceumPanel() {
-      document.getElementById('lyceumImgWrap').classList.remove('panel-open');
-      document.getElementById('lyceumPanel').classList.remove('open');
-    }
-
     function closeLyceum() {
-      closeLyceumPanel();
       document.getElementById('lyceumOverlay').classList.remove('visible');
     }
 
