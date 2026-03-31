@@ -1479,10 +1479,26 @@
     /* hide old breadcrumb — nav bar handles orientation */
     #lyceumBreadcrumb { display:none; }
 
-    /* tighten nav top padding now that nav bar handles heading */
-    #lyceumNav {
-      padding-top:clamp(1.4rem,3vh,2.2rem) !important;
+    /* image zoom support */
+    #lyceumImgWrap { overflow:hidden; }
+    #lyceumImg {
+      transition: opacity 0.35s ease, transform 0.85s cubic-bezier(0.25,1,0.5,1) !important;
     }
+
+    /* zone layer */
+    #lyceumZoneLayer { position:absolute; inset:0; z-index:2; }
+
+    /* nav bar — full-width, absolute, gradient fade for legibility */
+    #lyceumMain #lcNavBar {
+      position:absolute; top:0; left:0; right:0; max-width:none;
+      padding:clamp(1rem,2.5vh,1.6rem) clamp(1.2rem,3vw,2.5rem);
+      border-bottom:none; margin:0;
+      background:linear-gradient(to bottom, rgba(0,0,0,0.62) 0%, transparent 100%);
+      z-index:10;
+    }
+
+    /* remove color overlay entirely */
+    #lyceumColorOverlay { display:none; }
   </style>
 </head>
 <body>
@@ -1685,39 +1701,25 @@
     <!-- Main library -->
     <div id="lyceumMain">
       <div id="lyceumImgWrap">
-        <img id="lyceumImg" src="images/lyceum-library.jpg" alt="" />
-        <div id="lyceumColorOverlay"></div>
-
-        <div id="lyceumNav">
-
-          <!-- Navigation bar -->
-          <div id="lcNavBar">
-            <button id="lcBackBtn" class="invisible" onclick="lcBack()">← Back</button>
-            <div id="lcNavTitle">The Lyceum</div>
-            <button id="lcExitBtn" onclick="closeLyceum()">Exit Library ✕</button>
-          </div>
-
-          <div id="lyceumBreadcrumb"></div>
-
-          <!-- Hall: 3 wing cards -->
-          <div id="lcHall" class="lc-view">
-            <div class="lc-hall-title">The Lyceum</div>
-            <div id="lcWingCards" class="lc-cards-grid lc-wings"></div>
-          </div>
-
-          <!-- Wing: section cards -->
-          <div id="lcWing" class="lc-view" style="display:none">
-            <div id="lcWingTitle" class="lc-wing-heading"></div>
-            <div id="lcSectionCards" class="lc-cards-grid lc-sections"></div>
-          </div>
-
-          <!-- Section: content panel -->
-          <div id="lcSection" class="lc-view" style="display:none">
-            <div id="lcSectionContent" class="lc-content-wrap"></div>
-          </div>
-
-        </div>
+        <img id="lyceumImg" src="images/lyceum-spiral.jpg" alt="" />
+        <div id="lyceumZoneLayer"></div>
+        <div id="lyceumHint">Hover to explore — click to enter</div>
       </div>
+
+      <div id="lyceumPanel">
+        <button id="lyceumPanelClose" onclick="closeLyceumPanel()">×</button>
+        <div id="lyceumPanelTitle"></div>
+        <div id="lyceumPanelDesc"></div>
+        <div id="lyceumPanelContent"></div>
+      </div>
+
+      <div id="lcNavBar">
+        <button id="lcBackBtn" class="invisible" onclick="lcBack()">← Back</button>
+        <div id="lcNavTitle">The Lyceum</div>
+        <button id="lcExitBtn" onclick="closeLyceum()">Exit Library ✕</button>
+      </div>
+
+      <div id="lyceumBreadcrumb"></div>
     </div>
 
   </div>
@@ -2304,9 +2306,10 @@
       setTimeout(() => { img.src = src; img.dataset.bg = src; img.style.opacity = '1'; }, 320);
     }
 
-    // Navigation state
+    // ── LYCEUM NAVIGATION ─────────────────────────────────
     let lcCurrentWing = null;
     let lcCurrentSection = null;
+    let lcCurrentSectionZone = null;
     let lcCurrentSub = null;
 
     function getCurrentHero() {
@@ -2314,194 +2317,51 @@
       return HISTORY_HEROES[day % HISTORY_HEROES.length];
     }
 
-    function lcSetOverlay(wing) {
-      const el = document.getElementById('lyceumColorOverlay');
-      el.style.background = wing ? wing.accentColor.replace('0.55','0.62') : 'rgba(4,3,2,0.74)';
-    }
+    const HALL_ZONES = [
+      { id:'humanities', label:'The Humanities Wing', zone:{left:'0%', top:'0%',width:'33%',height:'100%'}, color:'rgba(140,75,15,0.22)' },
+      { id:'sciences',   label:'The Sciences Wing',   zone:{left:'33%',top:'0%',width:'34%',height:'100%'}, color:'rgba(20,55,130,0.22)' },
+      { id:'arts',       label:'The Arts Hall',        zone:{left:'67%',top:'0%',width:'33%',height:'100%'}, color:'rgba(90,18,130,0.22)' },
+    ];
 
-    function lcSetBreadcrumb(wing, section, sub) {
-      const bc = document.getElementById('lyceumBreadcrumb');
-      let html = '<span class="bc-link" onclick="lcGoHall()">Main Hall</span>';
-      if (wing) html += `<span class="bc-sep">›</span><span class="${section ? 'bc-link" onclick="lcGoWing()' : ''}">${wing.label}</span>`;
-      if (section) html += `<span class="bc-sep">›</span><span class="${sub ? 'bc-link" onclick="lcGoSection()' : ''}">${section.label}</span>`;
-      if (sub) html += `<span class="bc-sep">›</span><span>${sub.label}</span>`;
-      bc.innerHTML = html;
-    }
+    const SECTION_ZONES = {
+      // Humanities (Alexandria image — 4 sections, 2×2 quadrants)
+      anthropology: {zone:{left:'0%', top:'0%', width:'42%',height:'50%'}, color:'rgba(80,50,15,0.28)'},
+      philosophy:   {zone:{left:'42%',top:'0%', width:'58%',height:'50%'}, color:'rgba(100,70,20,0.28)'},
+      history:      {zone:{left:'0%', top:'50%',width:'50%',height:'50%'}, color:'rgba(130,50,10,0.28)'},
+      psychology:   {zone:{left:'50%',top:'50%',width:'50%',height:'50%'}, color:'rgba(120,60,10,0.28)'},
+      // Sciences (Cosmos image — top row 3, bottom row 2)
+      physics:      {zone:{left:'0%', top:'0%', width:'33%',height:'50%'}, color:'rgba(20,60,160,0.28)'},
+      astronomy:    {zone:{left:'33%',top:'0%', width:'34%',height:'50%'}, color:'rgba(30,80,200,0.28)'},
+      mathematics:  {zone:{left:'67%',top:'0%', width:'33%',height:'50%'}, color:'rgba(20,50,140,0.28)'},
+      chemistry:    {zone:{left:'0%', top:'50%',width:'50%',height:'50%'}, color:'rgba(10,100,130,0.28)'},
+      biology:      {zone:{left:'50%',top:'50%',width:'50%',height:'50%'}, color:'rgba(20,110,60,0.28)'},
+      // Arts (Infinite amber — top strip + bottom halves)
+      music:        {zone:{left:'0%', top:'0%', width:'100%',height:'35%'},color:'rgba(100,20,130,0.28)'},
+      art:          {zone:{left:'0%', top:'35%',width:'50%', height:'65%'},color:'rgba(80,20,100,0.28)'},
+      literature:   {zone:{left:'50%',top:'35%',width:'50%', height:'65%'},color:'rgba(90,15,110,0.28)'},
+      // Literature subs (shown after zooming into Literature zone)
+      fiction:      {zone:{left:'0%', top:'0%', width:'50%',height:'100%'},color:'rgba(90,18,130,0.25)'},
+      nonfiction:   {zone:{left:'50%',top:'0%', width:'50%',height:'100%'},color:'rgba(90,18,130,0.25)'},
+    };
 
-    function lcShow(viewId) {
-      ['lcHall','lcWing','lcSection'].forEach(id => {
-        document.getElementById(id).style.display = (id === viewId) ? 'flex' : 'none';
-      });
-    }
-
-    function lcGoHall() {
-      lcCurrentWing = null; lcCurrentSection = null; lcCurrentSub = null;
-      lcSetBackground(LYCEUM_BG.hall);
-      lcSetOverlay(null);
-      lcSetBreadcrumb(null);
-      lcUpdateNavBar(null, null);
-      lcShow('lcHall');
-    }
-
-    function lcGoWing() {
-      lcCurrentSection = null; lcCurrentSub = null;
-      lcSetBackground(LYCEUM_BG[lcCurrentWing.id] || LYCEUM_BG.hall);
-      lcSetOverlay(lcCurrentWing);
-      lcSetBreadcrumb(lcCurrentWing);
-      lcUpdateNavBar(lcCurrentWing, null);
-      buildWingView(lcCurrentWing);
-      lcShow('lcWing');
-    }
-
-    function lcGoSection() {
-      lcCurrentSub = null;
-      lcUpdateNavBar(lcCurrentWing, lcCurrentSection);
-      buildSectionContent(lcCurrentSection, lcCurrentWing, null);
-      lcShow('lcSection');
-    }
-
-    function buildHallView() {
-      const grid = document.getElementById('lcWingCards');
-      grid.innerHTML = '';
-      LYCEUM_WINGS.forEach(wing => {
-        const card = document.createElement('div');
-        card.className = 'lc-card';
-        const accent = document.createElement('div');
-        accent.className = 'lc-card-accent';
-        accent.style.background = wing.accentHex;
-        card.appendChild(accent);
+    function buildZones(items, onClickFn) {
+      const layer = document.getElementById('lyceumZoneLayer');
+      layer.innerHTML = '';
+      items.forEach(item => {
+        const z = document.createElement('div');
+        z.className = 'lz-zone';
+        const {left,top,width,height} = item.zone;
+        z.style.cssText = `left:${left};top:${top};width:${width};height:${height};`;
+        z.addEventListener('mouseenter', () => z.style.background = item.color);
+        z.addEventListener('mouseleave', () => z.style.background = '');
         const lbl = document.createElement('div');
-        lbl.className = 'lc-card-label';
-        lbl.textContent = wing.label;
-        card.appendChild(lbl);
-        card.addEventListener('click', () => {
-          lcCurrentWing = wing;
-          lcSetBackground(LYCEUM_BG[wing.id] || LYCEUM_BG.hall);
-          lcSetOverlay(wing);
-          lcSetBreadcrumb(wing);
-          lcUpdateNavBar(wing, null);
-          buildWingView(wing);
-          lcShow('lcWing');
-        });
-        grid.appendChild(card);
+        lbl.className = 'lz-label';
+        lbl.textContent = item.label + (item.featured ? ' ★' : '');
+        z.appendChild(lbl);
+        z.addEventListener('click', () => { z.style.background = ''; onClickFn(item); });
+        layer.appendChild(z);
       });
     }
-
-    function buildWingView(wing) {
-      document.getElementById('lcWingTitle').textContent = wing.label;
-      const grid = document.getElementById('lcSectionCards');
-      grid.innerHTML = '';
-      wing.sections.forEach(sec => {
-        const card = document.createElement('div');
-        card.className = 'lc-card';
-        const accent = document.createElement('div');
-        accent.className = 'lc-card-accent';
-        accent.style.background = wing.accentHex;
-        card.appendChild(accent);
-        const lbl = document.createElement('div');
-        lbl.className = 'lc-card-label';
-        lbl.textContent = sec.label;
-        card.appendChild(lbl);
-        if (sec.featured) {
-          const star = document.createElement('div');
-          star.className = 'lc-card-star';
-          star.textContent = '★ Featured Exhibit';
-          card.appendChild(star);
-        }
-        card.addEventListener('click', () => {
-          lcCurrentSection = sec;
-          lcCurrentSub = null;
-          lcSetBackground(LYCEUM_BG[sec.id] || LYCEUM_BG[wing.id] || LYCEUM_BG.hall);
-          lcSetBreadcrumb(wing, sec);
-          lcUpdateNavBar(wing, sec);
-          buildSectionContent(sec, wing, null);
-          lcShow('lcSection');
-        });
-        grid.appendChild(card);
-      });
-    }
-
-    function buildSectionContent(sec, wing, sub) {
-      const wrap = document.getElementById('lcSectionContent');
-      wrap.innerHTML = '';
-      const activeData = sub || sec;
-
-      // Title
-      const title = document.createElement('div');
-      title.className = 'lc-content-title';
-      title.textContent = sub ? sub.label : sec.label;
-      wrap.appendChild(title);
-
-      // Description
-      const desc = document.createElement('div');
-      desc.className = 'lc-content-desc';
-      desc.textContent = activeData.desc || sec.desc;
-      wrap.appendChild(desc);
-
-      // History hero frame
-      if (sec.hero && !sub) {
-        const hero = getCurrentHero();
-        const frame = document.createElement('div');
-        frame.className = 'lc-hero-frame';
-        frame.innerHTML = `
-          <div class="lc-hero-label">Featured Profile</div>
-          <div class="lc-hero-portrait">✦</div>
-          <div class="lc-hero-name">${hero.name}</div>
-          <a class="lc-hero-wiki" href="${hero.wiki}" target="_blank" rel="noopener noreferrer">Wikipedia →</a>
-        `;
-        wrap.appendChild(frame);
-      }
-
-      // Featured exhibit
-      if (sec.featured && !sub) {
-        const feat = document.createElement('a');
-        feat.className = 'lc-featured-btn';
-        feat.href = sec.featured.url;
-        feat.target = '_blank';
-        feat.rel = 'noopener noreferrer';
-        feat.innerHTML = `<div class="lc-feat-label">Featured Exhibit</div><div class="lc-feat-name">${sec.featured.name}</div>`;
-        wrap.appendChild(feat);
-      }
-
-      // Literature subsection buttons
-      if (sec.subsections && !sub) {
-        const subBtns = document.createElement('div');
-        subBtns.className = 'lc-sub-btns';
-        sec.subsections.forEach(s => {
-          const btn = document.createElement('button');
-          btn.className = 'lc-sub-btn';
-          btn.textContent = s.label;
-          btn.addEventListener('click', () => {
-            lcCurrentSub = s;
-            lcSetBreadcrumb(wing, sec, s);
-            lcUpdateNavBar(wing, sec);
-            buildSectionContent(sec, wing, s);
-          });
-          subBtns.appendChild(btn);
-        });
-        wrap.appendChild(subBtns);
-        // Show placeholder if no sub selected yet
-        const ph = document.createElement('div');
-        ph.className = 'lc-placeholder';
-        ph.textContent = 'Select Fiction or Non-Fiction above.';
-        wrap.appendChild(ph);
-        return;
-      }
-
-      // Links
-      const links = activeData.links || [];
-      links.forEach(l => {
-        const a = document.createElement('a');
-        a.className = 'lc-link';
-        a.href = l.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
-        a.textContent = l.name;
-        wrap.appendChild(a);
-      });
-    }
-
-    let _lcTimers = [];
-    function _lct(fn, ms) { const t = setTimeout(fn, ms); _lcTimers.push(t); return t; }
-    function _lcClear() { _lcTimers.forEach(clearTimeout); _lcTimers = []; }
 
     function lcUpdateNavBar(wing, section) {
       const back = document.getElementById('lcBackBtn');
@@ -2520,31 +2380,147 @@
       }
     }
 
-    function lcBack() {
-      if (lcCurrentSection) {
-        lcCurrentSection = null; lcCurrentSub = null;
-        lcGoWing();
-      } else if (lcCurrentWing) {
-        lcCurrentWing = null;
-        lcGoHall();
+    function zoomToZone(zone) {
+      const img = document.getElementById('lyceumImg');
+      const cx = parseFloat(zone.left) + parseFloat(zone.width) / 2;
+      const cy = parseFloat(zone.top) + parseFloat(zone.height) / 2;
+      img.style.transformOrigin = `${cx}% ${cy}%`;
+      img.style.transform = 'scale(2)';
+    }
+
+    function zoomReset() {
+      const img = document.getElementById('lyceumImg');
+      img.style.transformOrigin = 'center center';
+      img.style.transform = 'scale(1)';
+    }
+
+    function showHall() {
+      lcCurrentWing = null; lcCurrentSection = null; lcCurrentSub = null;
+      lcSetBackground(LYCEUM_BG.hall);
+      zoomReset();
+      closeLyceumPanel();
+      lcUpdateNavBar(null, null);
+      document.getElementById('lyceumHint').textContent = 'Hover to explore — click to enter';
+      buildZones(HALL_ZONES, hz => {
+        const wing = LYCEUM_WINGS.find(w => w.id === hz.id);
+        if (wing) showWing(wing);
+      });
+    }
+
+    function showWing(wing) {
+      lcCurrentWing = wing;
+      lcCurrentSection = null; lcCurrentSub = null;
+      lcSetBackground(LYCEUM_BG[wing.id] || LYCEUM_BG.hall);
+      zoomReset();
+      closeLyceumPanel();
+      lcUpdateNavBar(wing, null);
+      document.getElementById('lyceumHint').textContent = wing.label;
+      buildZones(wing.sections.map(sec => ({
+        label: sec.label,
+        zone: SECTION_ZONES[sec.id]?.zone || {left:'0%',top:'0%',width:'33%',height:'100%'},
+        color: SECTION_ZONES[sec.id]?.color || 'rgba(200,178,138,0.2)',
+        featured: sec.featured,
+        _sec: sec,
+      })), item => showSection(item._sec, wing, SECTION_ZONES[item._sec.id]?.zone));
+    }
+
+    function showSection(sec, wing, zone) {
+      lcCurrentSection = sec;
+      lcCurrentSectionZone = zone;
+      if (zone) zoomToZone(zone);
+      lcUpdateNavBar(wing, sec);
+      if (sec.subsections) {
+        document.getElementById('lyceumHint').textContent = sec.label + ' — select a branch';
+        buildZones(sec.subsections.map(sub => ({
+          label: sub.label,
+          zone: SECTION_ZONES[sub.id]?.zone || {left:'0%',top:'0%',width:'50%',height:'100%'},
+          color: SECTION_ZONES[sub.id]?.color || 'rgba(200,178,138,0.2)',
+          _sub: sub,
+        })), item => {
+          lcCurrentSub = item._sub;
+          openContentPanel(item._sub, sec);
+        });
+      } else {
+        document.getElementById('lyceumZoneLayer').innerHTML = '';
+        document.getElementById('lyceumHint').textContent = '';
+        openContentPanel(sec, null);
       }
     }
+
+    function openContentPanel(data, parentSection) {
+      const heroSec = parentSection || data;
+      document.getElementById('lyceumPanelTitle').textContent =
+        parentSection ? parentSection.label + ' — ' + data.label : data.label;
+      document.getElementById('lyceumPanelDesc').textContent =
+        data.desc || (parentSection && parentSection.desc) || '';
+      const content = document.getElementById('lyceumPanelContent');
+      content.innerHTML = '';
+      if (heroSec.hero) {
+        const hero = getCurrentHero();
+        const frame = document.createElement('div');
+        frame.className = 'lc-hero-frame';
+        frame.innerHTML = `
+          <div class="lc-hero-label">Featured Profile</div>
+          <div class="lc-hero-portrait">✦</div>
+          <div class="lc-hero-name">${hero.name}</div>
+          <a class="lc-hero-wiki" href="${hero.wiki}" target="_blank" rel="noopener noreferrer">Wikipedia →</a>
+        `;
+        content.appendChild(frame);
+      }
+      if (heroSec.featured) {
+        const feat = document.createElement('a');
+        feat.className = 'lc-featured-btn';
+        feat.href = heroSec.featured.url;
+        feat.target = '_blank'; feat.rel = 'noopener noreferrer';
+        feat.innerHTML = `<div class="lc-feat-label">Featured Exhibit</div><div class="lc-feat-name">${heroSec.featured.name}</div>`;
+        content.appendChild(feat);
+      }
+      (data.links || []).forEach(l => {
+        const a = document.createElement('a');
+        a.className = 'lc-link';
+        a.href = l.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        a.textContent = l.name;
+        content.appendChild(a);
+      });
+      document.getElementById('lyceumImgWrap').classList.add('panel-open');
+      document.getElementById('lyceumPanel').classList.add('open');
+    }
+
+    function closeLyceumPanel() {
+      document.getElementById('lyceumImgWrap').classList.remove('panel-open');
+      document.getElementById('lyceumPanel').classList.remove('open');
+    }
+
+    function lcBack() {
+      if (lcCurrentSub) {
+        lcCurrentSub = null;
+        closeLyceumPanel();
+        if (lcCurrentSection) showSection(lcCurrentSection, lcCurrentWing, lcCurrentSectionZone);
+      } else if (lcCurrentSection) {
+        lcCurrentSection = null;
+        showWing(lcCurrentWing);
+      } else if (lcCurrentWing) {
+        lcCurrentWing = null;
+        showHall();
+      }
+    }
+
+    let _lcTimers = [];
+    function _lct(fn, ms) { const t = setTimeout(fn, ms); _lcTimers.push(t); return t; }
+    function _lcClear() { _lcTimers.forEach(clearTimeout); _lcTimers = []; }
 
     function openLyceum() {
       _lcClear();
       document.getElementById('lyceumOverlay').classList.add('visible');
-      // Reset
       const intro = document.getElementById('lyceumIntro');
       const welcome = document.getElementById('lyceumWelcome');
       intro.classList.remove('fade-out');
       welcome.classList.remove('show', 'fade-out');
       document.getElementById('lyceumMain').classList.remove('show');
       ['ll1','ll2','lyceumLineAcross'].forEach(id => document.getElementById(id).classList.remove('show'));
-      // Staggered lines
       _lct(() => document.getElementById('ll1').classList.add('show'), 700);
       _lct(() => document.getElementById('ll2').classList.add('show'), 2400);
       _lct(() => document.getElementById('lyceumLineAcross').classList.add('show'), 4000);
-      // Auto-advance to welcome
       _lct(() => skipToWelcome(), 6000);
     }
 
@@ -2553,7 +2529,6 @@
       ['ll1','ll2','lyceumLineAcross'].forEach(id => document.getElementById(id).classList.add('show'));
       document.getElementById('lyceumIntro').classList.add('fade-out');
       _lct(() => document.getElementById('lyceumWelcome').classList.add('show'), 500);
-      // Auto-advance to library
       _lct(() => skipToLibrary(), 3200);
     }
 
@@ -2563,20 +2538,17 @@
       welcome.classList.add('fade-out');
       _lct(() => {
         welcome.classList.remove('show', 'fade-out');
-        const main = document.getElementById('lyceumMain');
-        main.classList.add('show');
-        document.getElementById('lyceumImg').src = LYCEUM_BG.hall;
-        document.getElementById('lyceumImg').dataset.bg = LYCEUM_BG.hall;
-        lcGoHall();
-        buildHallView();
+        document.getElementById('lyceumMain').classList.add('show');
+        showHall();
       }, 800);
     }
 
-    // kept for compat — now calls skipToLibrary
     function showLyceumMain() { skipToLibrary(); }
 
     function closeLyceum() {
       _lcClear();
+      zoomReset();
+      closeLyceumPanel();
       document.getElementById('lyceumOverlay').classList.remove('visible');
     }
 
