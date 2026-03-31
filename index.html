@@ -1836,6 +1836,25 @@
       if (ls) setTimeout(() => ls.style.opacity = '1', 600);
     });
 
+    // ── OVERLAY HELPERS ───────────────────────────────────
+    // Overlays start display:none so they're fully out of the paint pipeline.
+    // Show: restore display, force reflow, then add .visible to trigger transition.
+    // Hide: remove .visible, set display:none once transition completes.
+    function _overlayShow(id) {
+      const el = document.getElementById(id);
+      el.style.display = '';
+      void el.offsetWidth; // force reflow so transition fires
+      el.classList.add('visible');
+    }
+    function _overlayHide(id, cb) {
+      const el = document.getElementById(id);
+      el.classList.remove('visible');
+      el.addEventListener('transitionend', () => {
+        if (!el.classList.contains('visible')) el.style.display = 'none';
+        if (cb) cb();
+      }, { once: true });
+    }
+
     // ── ENTER SITE ────────────────────────────────────────
     let opened = false;
 
@@ -1914,7 +1933,7 @@
     }
 
     function openFm() {
-      document.getElementById('fmOverlay').classList.add('visible');
+      _overlayShow('fmOverlay');
       fmBuildDrum();
       // Enter key submits password
       const pw = document.getElementById('fmPassword');
@@ -1923,7 +1942,7 @@
     }
 
     function closeFm() {
-      document.getElementById('fmOverlay').classList.remove('visible');
+      _overlayHide('fmOverlay');
       document.getElementById('fmSuccess').classList.remove('visible');
       document.getElementById('fmPassword').value = '';
       document.getElementById('fmError').textContent = '';
@@ -2520,7 +2539,7 @@
 
     function openLyceum() {
       _lcClear();
-      document.getElementById('lyceumOverlay').classList.add('visible');
+      _overlayShow('lyceumOverlay');
       const intro = document.getElementById('lyceumIntro');
       const welcome = document.getElementById('lyceumWelcome');
       intro.classList.remove('fade-out');
@@ -2558,7 +2577,8 @@
       _lcClear();
       zoomReset();
       closeLyceumPanel();
-      document.getElementById('lyceumOverlay').classList.remove('visible');
+      document.getElementById('lyceumMain').classList.remove('show');
+      _overlayHide('lyceumOverlay');
     }
 
     // ── COOPER PORTAL ─────────────────────────────────────
@@ -2578,11 +2598,11 @@
     let cooperDragging = null;
 
     function openCooper() {
-      document.getElementById('cooperOverlay').classList.add('visible');
+      _overlayShow('cooperOverlay');
       buildCooperGrid();
     }
     function closeCooper() {
-      document.getElementById('cooperOverlay').classList.remove('visible');
+      _overlayHide('cooperOverlay');
       resetCooperPuzzle();
     }
     function lockCooper() {
@@ -2715,12 +2735,11 @@
     const JT_PIN = '1295';
 
     function openJtlab() {
-      document.getElementById('jtlabOverlay').classList.add('visible');
+      _overlayShow('jtlabOverlay');
       jtReset();
     }
     function closeJtlab() {
-      document.getElementById('jtlabOverlay').classList.remove('visible');
-      setTimeout(jtReset, 600);
+      _overlayHide('jtlabOverlay', jtReset);
     }
     function jtReset() {
       jtCode = '';
@@ -2760,6 +2779,10 @@
     // Init on load
     document.addEventListener('DOMContentLoaded', () => {
       initCooperSlots();
+      // Pull all overlays out of the paint pipeline until opened
+      ['fmOverlay','cooperOverlay','jtlabOverlay','lyceumOverlay'].forEach(id => {
+        document.getElementById(id).style.display = 'none';
+      });
     });
   </script>
 
