@@ -800,12 +800,12 @@
       text-align: center;
     }
 
-    /* 3×3 photo gallery grid */
+    /* photo gallery grid */
     #cooperGrid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
-      width: min(320px, 82vw);
+      width: min(340px, 88vw);
       margin-bottom: clamp(1rem, 2.5vh, 1.8rem);
     }
     .cooper-thumb {
@@ -2583,19 +2583,18 @@
 
     // ── COOPER PORTAL ─────────────────────────────────────
     const COOPER_IMAGES = [
-      { id: 'jake',  src: 'images/jake.png',      label: null },
-      { id: 'cena',  src: 'images/cena.jpg',      label: null },
-      { id: 'angel', src: 'images/angel-new.jpg', label: null },
+      { id: 'jake',  src: 'images/jake.png',        label: null },
+      { id: 'cena',  src: 'images/cena.jpg',         label: null },
+      { id: 'angel', src: 'images/angel-new.jpg',    label: null },
       { id: 'ph1',   src: 'images/ph-lion.jpg',      label: null },
-      { id: 'ph2',   src: 'images/ph-silhouette.jpg', label: null },
-      { id: 'ph3',   src: 'images/ph-cheramipic.jpg', label: null },
-      { id: 'ph4',   src: 'images/ph-edith.jpg',      label: null },
-      { id: 'ph5',   src: 'images/ph-ancientlib.jpg', label: null },
-      { id: 'ph6',   src: 'images/ph-princip.jpg',    label: null },
+      { id: 'ph2',   src: 'images/ph-michigan.jpg',  label: null },
+      { id: 'ph3',   src: 'images/ph-noba.png',      label: null },
+      { id: 'ph4',   src: 'images/ph-wizard.jpg',    label: null },
     ];
     const COOPER_KEY = ['jake', 'cena', 'angel']; // correct order
     let cooperSlots  = [null, null, null];
     let cooperDragging = null;
+    let touchGhost = null, touchDragId = null, touchDragThumb = null;
 
     function openCooper() {
       _overlayShow('cooperOverlay');
@@ -2614,7 +2613,6 @@
     function buildCooperGrid() {
       const grid = document.getElementById('cooperGrid');
       grid.innerHTML = '';
-      // Shuffle images
       const shuffled = [...COOPER_IMAGES].sort(() => Math.random() - 0.5);
       shuffled.forEach(img => {
         const thumb = document.createElement('div');
@@ -2625,19 +2623,63 @@
           const el = document.createElement('img');
           el.src = img.src; el.alt = img.id;
           thumb.appendChild(el);
-        } else {
-          const ph = document.createElement('div');
-          ph.className = 'ph-label'; ph.textContent = img.label;
-          thumb.appendChild(ph);
         }
+        // Desktop drag
         thumb.addEventListener('dragstart', e => {
           cooperDragging = img.id;
           thumb.classList.add('dragging');
           e.dataTransfer.effectAllowed = 'move';
         });
         thumb.addEventListener('dragend', () => thumb.classList.remove('dragging'));
+        // Touch drag
+        addTouchDrag(thumb, img.id);
         grid.appendChild(thumb);
       });
+    }
+
+    function addTouchDrag(thumb, imgId) {
+      thumb.addEventListener('touchstart', e => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        touchDragId = imgId;
+        cooperDragging = imgId;
+        touchDragThumb = thumb;
+        const rect = thumb.getBoundingClientRect();
+        const gs = rect.width;
+        touchGhost = thumb.cloneNode(true);
+        Object.assign(touchGhost.style, {
+          position: 'fixed', width: gs + 'px', height: gs + 'px',
+          left: (touch.clientX - gs / 2) + 'px', top: (touch.clientY - gs / 2) + 'px',
+          pointerEvents: 'none', zIndex: '9999', opacity: '0.9',
+          border: '2px solid rgba(200,178,138,0.8)', transform: 'scale(1.08)',
+          transition: 'none', overflow: 'hidden',
+        });
+        document.body.appendChild(touchGhost);
+        thumb.classList.add('dragging');
+      }, { passive: false });
+
+      thumb.addEventListener('touchmove', e => {
+        e.preventDefault();
+        if (!touchGhost) return;
+        const touch = e.touches[0];
+        const gs = parseFloat(touchGhost.style.width);
+        touchGhost.style.left = (touch.clientX - gs / 2) + 'px';
+        touchGhost.style.top  = (touch.clientY - gs / 2) + 'px';
+        document.querySelectorAll('.cooper-slot').forEach(s => s.classList.remove('drag-over'));
+        const under = document.elementFromPoint(touch.clientX, touch.clientY);
+        under?.closest('.cooper-slot')?.classList.add('drag-over');
+      }, { passive: false });
+
+      thumb.addEventListener('touchend', e => {
+        const touch = e.changedTouches[0];
+        if (touchGhost) { touchGhost.remove(); touchGhost = null; }
+        if (touchDragThumb) { touchDragThumb.classList.remove('dragging'); touchDragThumb = null; }
+        document.querySelectorAll('.cooper-slot').forEach(s => s.classList.remove('drag-over'));
+        const under = document.elementFromPoint(touch.clientX, touch.clientY);
+        const slot = under?.closest('.cooper-slot');
+        if (slot && touchDragId) dropIntoSlot(slot, touchDragId);
+        touchDragId = null; cooperDragging = null;
+      }, { passive: false });
     }
 
     function resetCooperPuzzle() {
@@ -2650,50 +2692,37 @@
       document.getElementById('cooperError').classList.remove('show');
     }
 
+    function dropIntoSlot(slot, dragId) {
+      const idx = parseInt(slot.dataset.slot);
+      if (cooperSlots[idx]) returnToGrid(cooperSlots[idx]);
+      cooperSlots[idx] = dragId;
+      slot.innerHTML = '';
+      const imgData = COOPER_IMAGES.find(i => i.id === dragId);
+      if (imgData && imgData.src) {
+        const el = document.createElement('img');
+        el.src = imgData.src; el.alt = imgData.id;
+        slot.appendChild(el);
+      }
+      const numSpan = document.createElement('span');
+      numSpan.className = 'slot-num';
+      numSpan.textContent = ['I','II','III'][idx];
+      slot.appendChild(numSpan);
+      slot.classList.add('filled');
+      document.querySelectorAll('.cooper-thumb').forEach(t => {
+        if (t.dataset.id === dragId) t.classList.add('placed');
+      });
+      cooperDragging = null;
+      checkCooperKey();
+    }
+
     function initCooperSlots() {
       document.querySelectorAll('.cooper-slot').forEach(slot => {
-        slot.addEventListener('dragover', e => {
-          e.preventDefault();
-          slot.classList.add('drag-over');
-        });
+        slot.addEventListener('dragover', e => { e.preventDefault(); slot.classList.add('drag-over'); });
         slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
         slot.addEventListener('drop', e => {
           e.preventDefault();
           slot.classList.remove('drag-over');
-          if (!cooperDragging) return;
-          const idx = parseInt(slot.dataset.slot);
-
-          // If slot already had something, return it to grid
-          if (cooperSlots[idx]) {
-            returnToGrid(cooperSlots[idx]);
-          }
-
-          // Place into slot
-          cooperSlots[idx] = cooperDragging;
-          slot.innerHTML = '';
-          const img = COOPER_IMAGES.find(i => i.id === cooperDragging);
-          if (img && img.src) {
-            const el = document.createElement('img');
-            el.src = img.src; el.alt = img.id;
-            slot.appendChild(el);
-          } else if (img) {
-            const ph = document.createElement('div');
-            ph.className = 'ph-label'; ph.textContent = img.label;
-            slot.appendChild(ph);
-          }
-          const numSpan = document.createElement('span');
-          numSpan.className = 'slot-num';
-          numSpan.textContent = ['I','II','III'][idx];
-          slot.appendChild(numSpan);
-          slot.classList.add('filled');
-
-          // Mark thumb as placed
-          document.querySelectorAll('.cooper-thumb').forEach(t => {
-            if (t.dataset.id === cooperDragging) t.classList.add('placed');
-          });
-
-          cooperDragging = null;
-          checkCooperKey();
+          if (cooperDragging) dropIntoSlot(slot, cooperDragging);
         });
       });
     }
