@@ -1529,6 +1529,70 @@
 </head>
 <body>
 
+  <!-- ── SITE GATE ───────────────────────────────────────── -->
+  <div id="siteGate" style="
+    position:fixed;inset:0;z-index:9999;
+    background:#030303;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:1.8rem;
+  ">
+    <p style="font-family:'Cinzel Decorative',cursive;font-size:clamp(1.4rem,4vw,2.2rem);color:rgba(210,180,130,0.85);letter-spacing:0.25em;text-align:center;">MAGUS JANE</p>
+    <div style="width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(180,120,40,0.4),transparent);"></div>
+    <input id="gateInput" type="password" placeholder="···"
+      autocomplete="off" spellcheck="false"
+      style="
+        background:transparent;border:none;border-bottom:1px solid rgba(180,120,40,0.3);
+        outline:none;color:rgba(210,180,130,0.9);font-family:'IM Fell English',Georgia,serif;
+        font-size:1.3rem;letter-spacing:0.3em;text-align:center;
+        width:min(260px,70vw);padding:0.5rem 0;
+        transition:border-color 0.3s;
+      "
+    />
+    <p id="gateError" style="font-family:Georgia,serif;font-size:0.75rem;color:#7a3a3a;letter-spacing:0.15em;min-height:1rem;font-style:italic;"></p>
+  </div>
+
+  <script>
+    (function() {
+      const GATE_KEY = 'mj_access';
+      const gate     = document.getElementById('siteGate');
+      const input    = document.getElementById('gateInput');
+      const errEl    = document.getElementById('gateError');
+
+      if (sessionStorage.getItem(GATE_KEY) === '1') {
+        gate.style.display = 'none';
+        return;
+      }
+
+      // Hide body content behind gate until unlocked
+      document.body.style.overflow = 'hidden';
+
+      function shake() {
+        input.style.borderBottomColor = '#7a3a3a';
+        input.style.color = '#aa5555';
+        setTimeout(() => {
+          input.style.borderBottomColor = 'rgba(180,120,40,0.3)';
+          input.style.color = 'rgba(210,180,130,0.9)';
+          input.value = '';
+        }, 600);
+      }
+
+      function attempt() {
+        if (input.value.trim().toLowerCase() === 'theodora') {
+          sessionStorage.setItem(GATE_KEY, '1');
+          gate.style.transition = 'opacity 0.8s ease';
+          gate.style.opacity = '0';
+          setTimeout(() => { gate.style.display = 'none'; document.body.style.overflow = ''; }, 800);
+        } else {
+          errEl.textContent = 'Not the right word.';
+          shake();
+        }
+      }
+
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') attempt(); });
+      setTimeout(() => input.focus(), 100);
+    })();
+  </script>
+
   <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <filter id="inkBleed" x="-5%" y="-5%" width="110%" height="110%">
