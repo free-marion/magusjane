@@ -82,7 +82,8 @@
   /* ── CHAPTER GRID ── */
   .chapters {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 280px));
+    justify-content: center;
     gap: 20px;
   }
 
@@ -341,9 +342,8 @@
       <p class="card__sub">A Pigeon's War</p>
       <p class="card__type">Endless Runner · 12 Missions</p>
       <p class="card__desc">
-        Western Front, 1918. A single carrier pigeon.
-        One last message that might save 500 men —
-        if she can survive the gauntlet.
+        An American battalion is lost behind enemy lines, surrounded.
+        Their only hope, a desperate message tied to the leg of a wounded pigeon...
       </p>
       <div class="card__action">
         <button class="btn-play">Play →</button>
@@ -352,7 +352,7 @@
     </div>
 
     <!-- Chapter II: Powder & Spark -->
-    <div class="card card--active" onclick="openPwModal()">
+    <div class="card card--active" onclick="openPwModal('powder-spark', 'Powder &amp; Spark')" id="cardPowderSpark">
       <p class="card__num">Chapter II</p>
       <h2 class="card__title">Powder &amp; Spark</h2>
       <p class="card__sub">The Road to Sarajevo</p>
@@ -368,6 +368,20 @@
       </div>
     </div>
 
+    <!-- Chapter III: A Nurse's War -->
+    <div class="card">
+      <p class="card__num">Chapter III</p>
+      <h2 class="card__title">A Nurse's War</h2>
+      <p class="card__sub">&nbsp;</p>
+      <p class="card__type">Coming Soon</p>
+      <p class="card__desc" style="color:#2a3a2a;">
+        &nbsp;
+      </p>
+      <div class="card__action">
+        <span class="status-badge status-badge--locked" style="opacity:0.5;">Forthcoming</span>
+      </div>
+    </div>
+
   </div>
 
   <footer>
@@ -380,7 +394,7 @@
 <div id="pwModal">
   <div class="pw-box">
     <button class="pw-close" onclick="closePwModal()">✕</button>
-    <h2>Powder &amp; Spark</h2>
+    <h2 id="pwTitle">Powder &amp; Spark</h2>
     <p>This chapter is currently restricted.<br>Enter the access word to continue.</p>
     <input type="password" id="pwInput" placeholder="···" autocomplete="off"
            onkeydown="if(event.key==='Enter') checkPw()" />
@@ -390,7 +404,13 @@
 </div>
 
 <script>
-  function openPwModal() {
+  let _pwTarget = null;
+
+  function openPwModal(gameKey, gameTitle) {
+    _pwTarget = gameKey;
+    document.getElementById('pwTitle').textContent = gameTitle;
+    document.getElementById('pwError').textContent = '';
+    document.getElementById('pwInput').value = '';
     document.getElementById('pwModal').classList.add('open');
     setTimeout(() => document.getElementById('pwInput').focus(), 80);
   }
@@ -399,18 +419,24 @@
     document.getElementById('pwModal').classList.remove('open');
     document.getElementById('pwInput').value = '';
     document.getElementById('pwError').textContent = '';
+    _pwTarget = null;
   }
 
   document.getElementById('pwModal').addEventListener('click', function(e) {
     if (e.target === this) closePwModal();
   });
 
+  const PW_MAP = {
+    'powder-spark': { word: 'princip', key: 'ps_unlocked', url: '/the-lost/powder-spark/' },
+  };
+
   function checkPw() {
-    const val = document.getElementById('pwInput').value.trim();
+    const val   = document.getElementById('pwInput').value.trim();
     const input = document.getElementById('pwInput');
-    if (val.toLowerCase() === 'princip') {
-      sessionStorage.setItem('ps_unlocked', '1');
-      window.location.href = '/the-lost/powder-spark/';
+    const cfg   = PW_MAP[_pwTarget];
+    if (cfg && val.toLowerCase() === cfg.word) {
+      sessionStorage.setItem(cfg.key, '1');
+      window.location.href = cfg.url;
     } else {
       input.classList.remove('shake');
       void input.offsetWidth;
