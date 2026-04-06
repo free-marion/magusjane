@@ -1,24 +1,425 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>Cher Ami — A Pigeon's War</title>
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body {
-        background: #05080f;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        overflow: hidden;
-      }
-      #game canvas { display: block; touch-action: none; }
-    </style>
-    <script type="module" crossorigin src="/the-lost/assets/index-omYpsukD.js"></script>
-  </head>
-  <body>
-    <div id="game"></div>
-  </body>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Lost — Anthology</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=IM+Fell+English:ital@0;1&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #050810;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    font-family: 'IM Fell English', Georgia, serif;
+    color: #c4b896;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size: 180px;
+    opacity: 0.35;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    width: 100%;
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    margin-bottom: 52px;
+  }
+
+  .title-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 6px;
+    color: #3a5a3a;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    color: #d4b896;
+    text-shadow: 0 0 40px rgba(180,120,40,0.2);
+  }
+
+  .subtitle {
+    margin-top: 12px;
+    font-size: 13px;
+    font-style: italic;
+    color: #3a4a3a;
+    letter-spacing: 1px;
+  }
+
+  .divider {
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #2a3a2a, transparent);
+    margin: 20px auto 0;
+  }
+
+  /* ── CHAPTER GRID ── */
+  .chapters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  /* ── CHAPTER CARD ── */
+  .card {
+    border: 1px solid #1a2a1a;
+    border-radius: 3px;
+    background: #080d0a;
+    padding: 28px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+
+  .card--active {
+    cursor: pointer;
+  }
+  .card--active:hover {
+    border-color: #3a5a3a;
+    box-shadow: 0 0 24px rgba(50,90,50,0.18);
+  }
+
+  .card__num {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 5px;
+    color: #2a4a2a;
+    text-transform: uppercase;
+  }
+
+  .card__title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #c4a870;
+    letter-spacing: 0.06em;
+    line-height: 1.3;
+  }
+
+  .card__sub {
+    font-style: italic;
+    font-size: 13px;
+    color: #5a6a5a;
+    margin-top: -6px;
+  }
+
+  .card__type {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 4px;
+    color: #2a4a2a;
+    text-transform: uppercase;
+  }
+
+  .card__desc {
+    font-size: 12px;
+    color: #3a4a3a;
+    line-height: 1.7;
+    border-top: 1px solid #0e1a0e;
+    padding-top: 14px;
+  }
+
+  .card__action {
+    margin-top: auto;
+    padding-top: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .btn-play {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: #6a9a6a;
+    text-transform: uppercase;
+    background: none;
+    border: 1px solid #2a4a2a;
+    border-radius: 2px;
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .btn-play:hover {
+    background: #0e1e0e;
+    border-color: #4a7a4a;
+    color: #88cc88;
+  }
+
+  .status-badge {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 3px;
+    padding: 4px 10px;
+    border-radius: 10px;
+    text-transform: uppercase;
+  }
+  .status-badge--live {
+    background: #0a1a0a;
+    color: #4a7a4a;
+    border: 1px solid #1a3a1a;
+  }
+  .status-badge--locked {
+    background: #1a1008;
+    color: #6a4a20;
+    border: 1px solid #3a2a10;
+  }
+
+  .lock-icon {
+    font-size: 13px;
+    opacity: 0.5;
+    margin-right: 6px;
+  }
+
+  /* ── PASSWORD MODAL ── */
+  #pwModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(3,5,10,0.88);
+    align-items: center;
+    justify-content: center;
+  }
+  #pwModal.open { display: flex; }
+
+  .pw-box {
+    background: #070b08;
+    border: 1px solid #2a3a1a;
+    border-radius: 3px;
+    padding: 36px 32px 28px;
+    max-width: 360px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .pw-box h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    color: #c4a870;
+  }
+
+  .pw-box p {
+    font-size: 12px;
+    font-style: italic;
+    color: #3a4a3a;
+    line-height: 1.6;
+  }
+
+  .pw-box input {
+    width: 100%;
+    background: #0a0e08;
+    border: 1px solid #1a2a1a;
+    border-radius: 2px;
+    padding: 10px 14px;
+    color: #c4b896;
+    font-family: 'IM Fell English', Georgia, serif;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .pw-box input:focus { border-color: #3a5a3a; }
+  .pw-box input.shake {
+    animation: shake 0.35s ease;
+    border-color: #6a1a1a;
+    color: #aa5555;
+  }
+
+  .pw-box button {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    background: none;
+    border: 1px solid #2a4a2a;
+    border-radius: 2px;
+    padding: 9px 24px;
+    color: #6a9a6a;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .pw-box button:hover { background: #0e1e0e; border-color: #4a7a4a; }
+
+  .pw-close {
+    align-self: flex-end;
+    background: none;
+    border: none;
+    color: #2a3a2a;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .pw-close:hover { color: #5a6a5a; }
+
+  .pw-error {
+    font-size: 11px;
+    color: #7a3a3a;
+    font-style: italic;
+    min-height: 16px;
+  }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%      { transform: translateX(-6px); }
+    40%      { transform: translateX(6px); }
+    60%      { transform: translateX(-4px); }
+    80%      { transform: translateX(4px); }
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 52px;
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: #1a2a1a;
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+  }
+  footer a {
+    color: #1a2a1a;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  footer a:hover { color: #3a5a3a; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <p class="title-label">Magus Jane — Game Anthology</p>
+    <h1>The Lost</h1>
+    <p class="subtitle">Stories from the edge of history.</p>
+    <div class="divider"></div>
+  </header>
+
+  <div class="chapters">
+
+    <!-- Chapter I: Cher Ami -->
+    <div class="card card--active" onclick="window.location.href='/the-lost/cher-ami/'">
+      <p class="card__num">Chapter I</p>
+      <h2 class="card__title">Cher Ami</h2>
+      <p class="card__sub">A Pigeon's War</p>
+      <p class="card__type">Endless Runner · 12 Missions</p>
+      <p class="card__desc">
+        Western Front, 1918. A single carrier pigeon.
+        One last message that might save 500 men —
+        if she can survive the gauntlet.
+      </p>
+      <div class="card__action">
+        <button class="btn-play">Play →</button>
+        <span class="status-badge status-badge--live">Live</span>
+      </div>
+    </div>
+
+    <!-- Chapter II: Powder & Spark -->
+    <div class="card card--active" onclick="openPwModal()">
+      <p class="card__num">Chapter II</p>
+      <h2 class="card__title">Powder &amp; Spark</h2>
+      <p class="card__sub">The Road to Sarajevo</p>
+      <p class="card__type">Choose Your Adventure</p>
+      <p class="card__desc">
+        June 28, 1914. Six conspirators. One motorcade.
+        Every decision you make pulls the trigger —
+        or stops it.
+      </p>
+      <div class="card__action">
+        <button class="btn-play"><span class="lock-icon">⌁</span> Enter →</button>
+        <span class="status-badge status-badge--locked">Restricted</span>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <a href="https://magusjane.com">← magusjane.com</a>
+  </footer>
+
+</div>
+
+<!-- Password Modal -->
+<div id="pwModal">
+  <div class="pw-box">
+    <button class="pw-close" onclick="closePwModal()">✕</button>
+    <h2>Powder &amp; Spark</h2>
+    <p>This chapter is currently restricted.<br>Enter the access word to continue.</p>
+    <input type="password" id="pwInput" placeholder="···" autocomplete="off"
+           onkeydown="if(event.key==='Enter') checkPw()" />
+    <p class="pw-error" id="pwError"></p>
+    <button onclick="checkPw()">Enter</button>
+  </div>
+</div>
+
+<script>
+  function openPwModal() {
+    document.getElementById('pwModal').classList.add('open');
+    setTimeout(() => document.getElementById('pwInput').focus(), 80);
+  }
+
+  function closePwModal() {
+    document.getElementById('pwModal').classList.remove('open');
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwError').textContent = '';
+  }
+
+  document.getElementById('pwModal').addEventListener('click', function(e) {
+    if (e.target === this) closePwModal();
+  });
+
+  function checkPw() {
+    const val = document.getElementById('pwInput').value.trim();
+    const input = document.getElementById('pwInput');
+    if (val.toLowerCase() === 'princip') {
+      window.location.href = '/the-lost/powder-spark/';
+    } else {
+      input.classList.remove('shake');
+      void input.offsetWidth;
+      input.classList.add('shake');
+      document.getElementById('pwError').textContent = 'Not the right word.';
+      document.getElementById('pwInput').value = '';
+      setTimeout(() => input.classList.remove('shake'), 400);
+    }
+  }
+</script>
+
+</body>
 </html>
