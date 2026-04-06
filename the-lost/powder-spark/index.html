@@ -2,50 +2,908 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <title>Powder &amp; Spark — The Road to Sarajevo</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: #05080f;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: Georgia, serif;
-    color: #c4b896;
-  }
-  .msg {
-    text-align: center;
-    padding: 40px;
-  }
-  h1 {
-    font-size: 1.4rem;
-    letter-spacing: 0.12em;
-    color: #c4a870;
-    margin-bottom: 14px;
-  }
-  p {
-    font-style: italic;
-    font-size: 13px;
-    color: #3a4a3a;
-  }
-  a {
-    display: inline-block;
-    margin-top: 28px;
-    font-size: 11px;
-    letter-spacing: 3px;
-    color: #3a5a3a;
-    text-decoration: none;
-  }
-  a:hover { color: #6a9a6a; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #111318; }
+  #root { min-height: 100vh; }
 </style>
+<!-- React 18 + Babel (CDN — no build step required) -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
-<div class="msg">
-  <h1>Powder &amp; Spark</h1>
-  <p>Loading soon. The fuse is lit.</p>
-  <a href="/the-lost/">← Back to The Lost</a>
-</div>
+
+<!-- Gate: bounce anyone who hasn't come through the hub password -->
+<script>
+  if (!sessionStorage.getItem('ps_unlocked')) {
+    window.location.replace('/the-lost/');
+  }
+</script>
+
+<div id="root"></div>
+
+<script type="text/babel">
+// ===========================================================================
+// Powder & Spark — The Road to Sarajevo
+// CDN deployment: React pulled from global, JSX transformed by Babel standalone
+// ===========================================================================
+const { useState, useRef } = React;
+
+// ===========================================================================
+// IMAGE MAP — Wire hosted image URLs here when ready
+// ===========================================================================
+// const IMG = {
+//   prologue: "",
+//   sophie: "",
+//   ...
+// };
+
+// ===========================================================================
+// NARRATIVE NODES
+// ===========================================================================
+const NODES = [
+
+  // ===== ACT 1: WHO YOU ARE =====
+
+  {
+    id: "prologue",
+    title: "1914",
+    text: [
+      "You are Archduke Franz Ferdinand, heir presumptive to the throne of Austria-Hungary. You are fifty years old. You have spent half your life waiting for a crown that the Emperor seems determined to outlive you for.",
+      "The empire you will inherit — if you inherit it — stretches from the Alps to the Carpathians. Fifty million people. A dozen languages. And fractures that grow deeper by the year.",
+    ],
+    telegram: "Austria-Hungary is the second-largest state in Europe — a patchwork of Austrians, Hungarians, Czechs, Slovaks, Poles, Croats, Serbs, Romanians, and more, held together by the Habsburg dynasty and by increasingly little else.",
+    brief: "By 1914, the Dual Monarchy is a constitutional crisis in slow motion. The 1867 Compromise gave Hungary co-equal status with Austria, creating a template every other ethnic group now demands for itself. Czech nationalists want a third crown. South Slavic intellectuals dream of unification with Serbia. Italian irredentists claim the Tyrol. The Empire's survival depends on either granting these demands — diluting the power of Vienna and Budapest — or suppressing them by force. Franz Ferdinand privately favors reform: a federated, tripartite monarchy giving the Slavic peoples representation. Most of the imperial establishment favors the fist. This division defines everything that follows.",
+    choices: [{ label: "Continue", next: "sophie" }],
+  },
+
+  {
+    id: "sophie",
+    title: "Sophie",
+    text: [
+      "The Emperor has never forgiven you. Not for your politics. Not for your temper. For your wife.",
+      "You married Sophie Chotek. A countess. A lady-in-waiting. Warm, intelligent, fiercely devoted to you and your children. But not of royal blood.",
+      "Emperor Franz Josef forced you to sign a morganatic oath before the assembled Privy Council: your children will never sit on the throne. Your marriage would be tolerated. It would never be honored.",
+      "At every state function, Sophie enters last. She walks behind the lowest-ranking archduchess. She is forbidden from sitting beside you at dinner, from riding in the imperial carriage, from standing at your side during ceremonies. Every public appearance is an orchestrated humiliation, carried out by people who believe that blood matters more than love.",
+    ],
+    telegram: "A morganatic marriage meant Sophie held no royal rank. Their three children — Sophie, Maximilian, and Ernst — were permanently excluded from the line of succession.",
+    brief: "The morganatic oath was signed on June 28, 1900 — exactly fourteen years to the day before the assassination, a coincidence that struck contemporaries as eerie. Franz Josef blocked the marriage for two years before relenting. The oath was read aloud before the entire Privy Council and published in the imperial gazette. Sophie was eventually granted the title Duchess of Hohenberg, but it changed nothing at court. The depth of Franz Ferdinand's fury at her treatment was well documented by contemporaries and shaped his political sympathies — particularly his affinity for those excluded from power by rigid, inherited hierarchies. The personal was political: a man whose wife was humiliated by an inflexible system naturally gravitated toward reforming that system.",
+    choices: [{ label: "Continue", next: "your_children" }],
+  },
+
+  {
+    id: "your_children",
+    title: "Your Children",
+    text: [
+      "None of that matters at Konopischt.",
+      "Your estate in Bohemia is a different world. Your three children — Sophie, Max, and Ernst — fill the house with noise. The gardens are their kingdom. You are not the stiff imperial figure the newspapers describe. You are a father who gets on his hands and knees in the rose beds.",
+      "Ernst, the youngest, has just brought home excellent marks from school. You wrote him a letter so full of pride that the boy carries it folded in his pocket wherever he goes.",
+    ],
+    choices: [{ label: "Continue", next: "the_friend" }],
+  },
+
+  {
+    id: "the_friend",
+    title: "The Garden",
+    text: [
+      "Last week, you visited a close friend at his country estate. You walked the grounds for hours — through the rose garden, past the fountains, along gravel paths lined with sculpted hedgerows.",
+      "You talked about the Balkans. About the pressure building along every fault line in Europe. Your friend shares your belief that pushing Serbia too hard risks triggering something vast and uncontrollable.",
+      "As you parted, he clapped your shoulder and said:",
+      '"Next time, we hunt. Bring Sophie."',
+      "It felt like a promise that there would be more time.",
+    ],
+    telegram: "Franz Ferdinand maintained personal diplomatic relationships across European courts. He believed that direct bonds between leaders could restrain the alliance system's worst impulses — that friendships between powerful men could prevent wars between powerful nations.",
+    brief: "The friend was Kaiser Wilhelm II of Germany. The visit took place at Konopischt in mid-June 1914. The two men discussed Balkan instability at length. Franz Ferdinand argued that Austria must avoid provoking Serbia, and that the South Slavic question could only be resolved through internal imperial reform — not confrontation. Wilhelm was broadly sympathetic. Both men left the meeting believing that personal diplomacy could manage the tensions their alliance system had created. This belief would prove catastrophic. Within weeks of Franz Ferdinand's death, Wilhelm issued unconditional German support for whatever Austria chose to do to Serbia — the so-called 'blank check' that transformed a regional crisis into a world war. The garden conversation about preventing that exact outcome was among the last the two men ever had.",
+    choices: [{ label: "Continue", next: "invitation" }],
+  },
+
+  // ===== ACT 2: THE INVITATION =====
+
+  {
+    id: "invitation",
+    title: "The Invitation",
+    text: [
+      "A letter arrives from Governor Oskar Potiorek. He invites you to observe military maneuvers in Bosnia.",
+      "Bosnia is dangerous. You know this. Austria annexed the province in 1908 — a move that enraged Serbia, humiliated Russia, and turned the region into a powder keg. Serbian-backed nationalist cells now operate openly throughout the province. Your own military intelligence has flagged specific threats.",
+    ],
+    telegram: "The annexation of Bosnia-Herzegovina in 1908 turned a provisional Austrian occupation into permanent rule. Serbia — which saw the province and its large Serb population as rightfully within its sphere — never accepted the outcome.",
+    brief: "The 1908 annexation crisis nearly caused a European war on its own. Russia, Serbia's patron and protector, was forced into a humiliating climb-down when Germany backed Austria and Russia's military was not yet ready for confrontation. Serbia's government never accepted the loss. By 1914, the Black Hand — a secret ultranationalist network led by Colonel Dragutin Dimitrijević (codename 'Apis'), who also served as head of Serbian military intelligence — had built a network of cells throughout Bosnia dedicated to destabilizing Habsburg rule. Austrian intelligence knew of the general threat. Specific warnings about a possible assassination attempt during the visit reached Vienna through several channels, including a deliberately vague caution from Serbian Ambassador Jovanović to Austrian Finance Minister Bilinski. Whether this warning was clear enough to constitute actionable intelligence remains one of the enduring disputes among historians of the period.",
+    choices: [{ label: "Continue", next: "invitation_sophie" }],
+  },
+
+  {
+    id: "invitation_sophie",
+    title: "The Real Reason",
+    text: [
+      "But then Potiorek mentions something that changes your calculation.",
+      "In Bosnia, on official military inspection, Viennese court protocol does not apply. There are no archduchesses to outrank your wife. No chamberlains to enforce the old humiliations.",
+      "Sophie can walk beside you. Sit beside you. Be received as your equal.",
+      "For a few days, in a province at the edge of the empire, the woman you love will be treated as what she is.",
+    ],
+    choices: [
+      { label: "Accept. Sophie deserves this.", next: "the_date", historical: true },
+      { label: "Decline. Bosnia is too dangerous.", next: "survive_decline" },
+    ],
+  },
+
+  {
+    id: "survive_decline",
+    mood: "survive",
+    title: "You Survive",
+    text: [
+      "You write a polite refusal. The maneuvers proceed without you.",
+      "In Sarajevo, six young men with pistols and expired hand grenades take their positions along a boulevard, wait for a motorcade that never carries your face, and eventually drift home.",
+      "You spend the summer at Konopischt. Ernst shows you his school report for the third time. Sophie deadheads the roses. The days are long and warm and unremarkable.",
+    ],
+    aftermath: "Without the assassination, the July Crisis never ignites. The alliance system holds — taut, dangerous, but unbroken. You eventually ascend to the throne and pursue your vision of a reformed, federated empire. Whether that prevents the Great War or merely delays it, no historian can say with certainty. But the specific sequence of events that destroyed Europe in the summer of 1914 required your death. And you are alive.",
+    choices: [{ label: "Start over", next: "prologue" }],
+  },
+
+  // ===== ACT 3: THE DATE =====
+
+  {
+    id: "the_date",
+    title: "The Date",
+    text: [
+      "The visit is set for June 28th.",
+      "One of your staff raises a quiet concern. June 28th is Vidovdan — St. Vitus Day. The most sacred date on the Serbian national calendar.",
+    ],
+    telegram: "Vidovdan commemorates the 1389 Battle of Kosovo, where a Serbian knight assassinated the Ottoman Sultan Murad I on the battlefield. In Serbian culture, the date is sacred — synonymous with martyrdom, national sacrifice, and righteous violence against occupying powers.",
+    brief: "The Battle of Kosovo Polje (June 28, 1389) is the foundational myth of Serbian nationalism. Prince Lazar's army was destroyed by the Ottomans, but the assassination of Sultan Murad by the knight Miloš Obilić transformed the military catastrophe into a spiritual triumph. Vidovdan became a day of mourning, defiance, and — crucially — of sacred violence against foreign oppressors. For the heir to the empire that annexed Bosnia to parade through a Bosnian city on Vidovdan was, to Serbian nationalists, either a breathtaking provocation or a gift from God. The scheduling was almost certainly coincidental — it aligned with the military exercises — but symbolism does not require intent to be devastating. The Black Hand exploited the date ruthlessly in recruiting and motivating the young assassins they positioned along the route.",
+    choices: [{ label: "Continue", next: "the_date_choice" }],
+  },
+
+  {
+    id: "the_date_choice",
+    title: "The Date",
+    text: [
+      "On Vidovdan, a Serb killed a Sultan. It is a day of sacred violence against occupying empires.",
+      "You are the heir to an occupying empire. And you are planning to ride, slowly, through an occupied city, on the one day of the year when killing you would feel like destiny.",
+      "You could change the date. The military schedule would accommodate it easily.",
+    ],
+    choices: [
+      { label: "Keep the date. The Empire does not rearrange itself around Serbian mythology.", next: "journey", historical: true },
+      { label: "Shift the visit by two days. No need to provoke.", next: "survive_date" },
+    ],
+  },
+
+  {
+    id: "survive_date",
+    mood: "survive",
+    title: "You Survive",
+    text: [
+      "You move the visit to June 30th. A negligible change — two days.",
+      "But the six assassins organized their plot around the charged symbolism of Vidovdan. The date shift disrupts their coordination. Some are not yet in position. Others lose the nerve that only the sacred calendar provided.",
+      "The cell fragments. You and Sophie visit Sarajevo without incident. She holds your arm the entire day.",
+    ],
+    aftermath: "The conspiracy depended on precise logistics timed to a symbolically charged date. Shift the date and you collapse both the operational plan and the mythic justification that held the young assassins' courage together. You go home to your children.",
+    choices: [{ label: "Start over", next: "prologue" }],
+  },
+
+  // ===== ACT 4: ARRIVAL =====
+
+  {
+    id: "journey",
+    title: "June 28 — Morning",
+    text: [
+      "You and Sophie arrive in Sarajevo by train. The morning is bright. The city has dressed itself up — flags on the lampposts, bunting on the balconies, people already gathering along the main boulevard.",
+      "Sophie is radiant. Here, today, she walks beside you. No one will make her enter a room last. No one will seat her at a separate table.",
+      "You can see the difference in the way she carries herself. Her shoulders are back. She is smiling at strangers.",
+    ],
+    choices: [{ label: "Continue", next: "the_telegram" }],
+  },
+
+  {
+    id: "the_telegram",
+    title: "The Telegram",
+    text: [
+      "Before the motorcade forms, you stop at the telegraph office and send a message to your children at Konopischt.",
+      '"Mama and Papa will be with you soon."',
+      "You picture Ernst reading it aloud in the garden, the letter from you still folded in his pocket. You adjust your collar, take Sophie's arm, and step into the Sarajevo sun.",
+    ],
+    choices: [{ label: "Continue", next: "the_motorcade" }],
+  },
+
+  {
+    id: "the_motorcade",
+    title: "The Motorcade",
+    text: [
+      "Six open-topped cars. A slow procession along the Appel Quay — a wide boulevard running alongside the Miljacka River. The route was published in this morning's edition of the Sarajevski List. Anyone in the city who wants to know exactly where you will be, and exactly when, need only read the morning paper.",
+      "Security is local police. No soldiers. The officers are spaced fifty meters apart — close enough to be visible, far enough apart to be useless.",
+      "You notice the gaps.",
+    ],
+    telegram: "Publishing royal routes in advance was standard practice across Europe. The open car was conventional for state visits — it allowed the public to see the dignitary and signaled confidence in local conditions.",
+    brief: "Franz Ferdinand's personal security detail, led by his chamberlain, had formally requested that imperial troops be posted along the route. Governor Potiorek overruled them, insisting that a visible military presence would insult the loyalty of Sarajevo's citizens and undermine the political purpose of the visit. This was not incompetence — it reflected a genuine and irresolvable tension between security and political theater that plagued Habsburg governance throughout Bosnia. Potiorek was ambitious, eager to demonstrate that his administration had the province under control, and unwilling to admit otherwise by requesting military backup. The published route gave six Black Hand operatives — positioned at intervals along the Appel Quay with pistols and grenades supplied through Serbian military intelligence — a precise map of the assassination corridor.",
+    choices: [{ label: "Continue", next: "security_choice" }],
+  },
+
+  {
+    id: "security_choice",
+    title: "The Motorcade",
+    text: [
+      "Potiorek assures you the arrangements are sufficient. He seems offended that you would question them.",
+      "You could override him. You outrank every man in Bosnia. You could demand soldiers, insist the car's top be raised, refuse to move until the security meets your standards.",
+      "But it would humiliate your host. And Sophie is already seated beside you in the open car, visible to the crowd for the first time, smiling.",
+    ],
+    choices: [
+      { label: "Trust Potiorek. He knows this city.", next: "the_quay", historical: true },
+      { label: "Override him. Demand a military escort.", next: "survive_security" },
+    ],
+  },
+
+  {
+    id: "survive_security",
+    mood: "survive",
+    title: "You Survive",
+    text: [
+      "You override Potiorek. He is furious, but you outrank him and he knows it. Soldiers are summoned. The car's top is raised.",
+      "Six young men — most of them teenagers, several already dying of tuberculosis — see the military escort and know that their moment has passed. One drops a grenade into the river. Another pockets his pistol and walks away. They scatter into the crowd like smoke.",
+      "Sophie squeezes your hand inside the closed car. She says it was a lovely morning, even if she couldn't see much through the window.",
+    ],
+    aftermath: "The Black Hand's operational plan assumed an open car, a slow speed, and unguarded sidewalks. Remove any one of those conditions and the plot collapses. Most of the assassins froze even without a military presence. With one, they never had a chance.",
+    choices: [{ label: "Start over", next: "prologue" }],
+  },
+
+  // ===== ACT 5: THE BOMB =====
+
+  {
+    id: "the_quay",
+    title: "The Appel Quay",
+    text: [
+      "The motorcade moves slowly along the river. People wave. A few cheer. Sophie smiles and nods.",
+      "You pass the first assassin without knowing it. He is standing in the crowd with a bomb in his pocket. He does nothing. His nerve fails.",
+      "You pass the second. He will later say that a policeman stepped into his line of sight. He does nothing either.",
+      "The river glitters. The sun is warm on your face. For a few minutes, it feels exactly like the state visit your staff promised it would be.",
+    ],
+    telegram: "Six assassins were stationed at intervals along the Appel Quay. The first two — Muhamed Mehmedbašić and Vaso Čubrilović — failed to act when the motorcade passed their positions.",
+    brief: "The six operatives were Muhamed Mehmedbašić (27, the only Bosnian Muslim in the group), Vaso Čubrilović (17), Nedeljko Čabrinović (19), Cvjetko Popović (18), Trifko Grabež (19), and Gavrilo Princip (19). Most were Bosnian Serbs. Several had advanced tuberculosis and knew they were dying regardless. They carried four FN Model 1910 pistols and six hand grenades, supplied by Major Vojin Tankosić of the Black Hand through a smuggling network that ran from a Serbian army arsenal in Kragujevac, across the border via a chain of nationalist sympathizers. Their training amounted to a few afternoons of target practice in a Belgrade park. Their commitment, on the day, varied wildly. The first two men on the route simply froze.",
+    choices: [{ label: "Continue", next: "the_bomb" }],
+  },
+
+  {
+    id: "the_bomb",
+    title: "10:10 AM",
+    text: [
+      "A sharp crack behind you.",
+      "Something dark arcs through the air and strikes the folded canvas top of your car. It bounces off — clatters onto the road — rolls beneath the car behind yours.",
+      "A hand grenade.",
+      "The detonation rips through the crowd. Screaming. Smoke. You turn in your seat and see Lieutenant Colonel Merizzi slumped and bleeding in the next car. Twenty bystanders are down. Sophie has a small cut on her neck where a fragment grazed her.",
+    ],
+    choices: [{ label: "Continue", next: "bomb_aftermath" }],
+  },
+
+  {
+    id: "bomb_aftermath",
+    title: "After the Blast",
+    text: [
+      "The bomber — a nineteen-year-old named Čabrinović — bites down on a cyanide capsule and throws himself into the river.",
+      "But the cyanide is old. It only makes him vomit. And the Miljacka, in June, is thirteen centimeters deep. Police wade in and drag him out, retching, from water that barely covers his shoes.",
+      "Your driver accelerates. The remaining four assassins lose their nerve as the cars race past their positions. One of them — thin, dark-haired, barely twenty — watches your car flash by and slowly lowers the pistol hidden inside his coat.",
+      "You are alive. Sophie is alive. Your hands are shaking.",
+    ],
+    telegram: "Following the bombing, the remaining four operatives all failed to act. The motorcade's sudden acceleration removed the slow, close-range opportunity their plan required.",
+    brief: "Čabrinović's cyanide capsule had degraded — likely from age and poor storage — and produced only violent nausea. The Miljacka River, often depicted dramatically, was barely a trickle in the summer heat. He was beaten by the crowd before police pulled him out. Of the remaining assassins: Popović froze entirely, Grabež later claimed bystanders blocked his line of fire, and Princip — standing near the Cumurja Bridge — told interrogators that the accelerating car passed too quickly. By any professional assessment, the operation was a failure. One bomber captured, one target unharmed, four operatives who didn't fire. What happened next required a sequence of decisions so improbable that no intelligence service in the world would have planned for them.",
+    choices: [
+      { label: "Leave. Now. Get Sophie to the train.", next: "survive_leave" },
+      { label: "Continue to City Hall. You will not be dictated to by criminals.", next: "city_hall_approach", historical: true },
+    ],
+  },
+
+  {
+    id: "survive_leave",
+    mood: "survive",
+    title: "You Survive",
+    text: [
+      'You lean forward and tell the driver: "Station. Full speed."',
+      "Potiorek begins to protest — the reception, the dignitaries, the schedule —",
+      '"They threw a bomb at my wife." Your voice is quiet and steady and leaves no room for discussion. "We are leaving."',
+      "Within the hour you are on a train. Sophie holds your hand. The Bosnian countryside rolls past the window — green hills, small villages, the ordinary world continuing as though nothing has happened.",
+      "You do not let go of her hand until you are home.",
+    ],
+    aftermath: "Gavrilo Princip — the thin young man who lowered his pistol as your car raced past — drifts away from the boulevard and back to his rented room, convinced the conspiracy has failed. He never gets his second chance. You arrive at Konopischt by evening. Ernst hears the car and runs to the door.",
+    choices: [{ label: "Start over", next: "prologue" }],
+  },
+
+  // ===== ACT 6: CITY HALL =====
+
+  {
+    id: "city_hall_approach",
+    title: "City Hall",
+    text: [
+      "You arrive at the Vijećnica — Sarajevo's grand City Hall — vibrating with anger.",
+      "The mayor steps forward and begins reading his prepared remarks. Sarajevo's loyalty. Its deep devotion to the crown. Its gratitude for the honor of your visit.",
+      "You cut him off mid-sentence.",
+      '"Mr. Mayor, I came here on a visit and I am greeted with bombs. It is outrageous."',
+      "The room goes silent.",
+    ],
+    choices: [{ label: "Continue", next: "city_hall_debate" }],
+  },
+
+  {
+    id: "city_hall_debate",
+    title: "The Debate",
+    text: [
+      "Sophie places her hand on your arm. You take a breath. You allow the mayor to finish. You respond through clenched teeth.",
+      "During the reception that follows, your aides argue in the corridor about what to do next. The original schedule has you continuing through the city center to the National Museum via Franz Josef Street. Some of your staff urge you to cancel everything and leave immediately.",
+      'Potiorek dismisses the danger. "Do you think Sarajevo is full of assassins?"',
+      "But you are not thinking about the schedule. You are thinking about Lieutenant Colonel Merizzi, bleeding in a car behind you. About the twenty people in the crowd who came to wave at you and caught shrapnel instead.",
+    ],
+    telegram: "The debate among Franz Ferdinand's entourage at City Hall was chaotic and unresolved. Several aides urged immediate departure. Potiorek argued that canceling would hand the nationalists a propaganda victory. The decision to visit the hospital was Franz Ferdinand's own.",
+    brief: "The argument at City Hall exposed the complete collapse of the visit's chain of command. Count Harrach proposed that Sophie remain behind in safety while Franz Ferdinand completed a truncated schedule — a suggestion Franz Ferdinand rejected instantly. Potiorek argued, with genuine conviction, that the threat had been neutralized by Čabrinović's capture and that further attacks were unlikely. General Rumerskirch proposed deploying military troops for the return journey. Potiorek dismissed this as logistically impractical on short notice. The eventual compromise — visiting the bombing victims at the hospital via an altered route along the Appel Quay — was Franz Ferdinand's own initiative, born of genuine concern for the people hurt on his behalf. It was the most decent decision available to him. It was also the one that killed him and his wife.",
+    choices: [{ label: "Continue", next: "city_hall_choice" }],
+  },
+
+  {
+    id: "city_hall_choice",
+    title: "The Decision",
+    text: [
+      "You want to go to the hospital. You want to see the people who were wounded. They were hurt because of you — because they came out to see you — and you owe them more than a telegram.",
+      "The route is simple: straight along the Appel Quay to the hospital. No turns. No side streets.",
+      "Sophie insists on staying with you. You do not argue. You have never been able to refuse her. And today, of all days, you cannot bear to be separated from her.",
+    ],
+    choices: [
+      { label: "Cancel. Get Sophie to the train. You owe Sarajevo nothing more.", next: "survive_cancel" },
+      { label: "Visit the wounded. You owe them that much.", next: "rumerskirch", historical: true },
+    ],
+  },
+
+  {
+    id: "survive_cancel",
+    mood: "survive",
+    title: "You Survive",
+    text: [
+      "You have had enough. The bombs, the blood, the mayor's grotesque pleasantries. You order the motorcade to the station.",
+      "Potiorek is mortified. You do not care.",
+      "On the train, you write a letter to Ernst about the strange day you have had. You describe the bunting, the crowds, the pretty buildings. You make it sound like an adventure. You do not mention the bomb, or the blood on Sophie's neck, or how afraid you were.",
+    ],
+    aftermath: "The route change that would have placed your stalled car directly in front of Gavrilo Princip never occurs. The teenager with the pistol goes home to his rented room and sits on the bed, convinced the cause is finished. The July Crisis never begins.",
+    choices: [{ label: "Start over", next: "prologue" }],
+  },
+
+  // ===== ACT 6B: RUMERSKIRCH =====
+
+  {
+    id: "rumerskirch",
+    title: "Rumerskirch's Offer",
+    text: [
+      "As the motorcade prepares to leave City Hall, General Rumerskirch pulls you aside. He proposes deploying soldiers along the route to the hospital — a proper military cordon between the cars and the crowd.",
+      "It would take thirty minutes to organize.",
+      "Potiorek shakes his head before you can answer. There isn't time, he says. The arrangements are already made. The hospital is expecting you.",
+    ],
+    telegram: "Rumerskirch's proposal represented the last realistic opportunity to impose professional military security on the remaining visit. Governor Potiorek overruled it on grounds of time and logistics.",
+    brief: "This moment is one of the most painful in the entire sequence. A military cordon — even a hastily improvised one — would have fundamentally changed the security environment. Armed soldiers with orders to keep the public at a distance would have cleared the sidewalks, creating a buffer zone that made a close-range pistol attack essentially impossible. Potiorek's dismissal had three components: genuine logistical difficulty (thirty minutes was optimistic), political pride (accepting the proposal meant admitting his security had been inadequate), and a sincere failure of imagination — having survived the bombing, he genuinely believed the danger had passed. The troops were garrisoned nearby. The time could have been found. The decision not to find it was Potiorek's, and he would carry it for the rest of his life.",
+    choices: [
+      { label: "Overrule Potiorek. Wait for the soldiers.", next: "survive_rumerskirch" },
+      { label: "He's right. The route is simple. Let's go.", next: "harrach_offer", historical: true },
+    ],
+  },
+
+  {
+    id: "survive_rumerskirch",
+    mood: "survive",
+    title: "You Survive",
+    text: [
+      "You hold up your hand. \"Thirty minutes. We wait.\"",
+      "Potiorek begins to object. You look at him and he stops.",
+      "The soldiers arrive. They line the boulevard — a wall of uniformed men between the motorcade and the sidewalks. The drive to the hospital is uneventful. You visit the wounded. Sophie holds the hand of a woman with shrapnel injuries and tells her she is brave.",
+      "By mid-afternoon, you are on a train out of Bosnia.",
+      "On a side street called Franz Josef Street, a young man with a pistol in his coat watches a line of soldiers he cannot get past. After a while, he turns and walks to his rented room.",
+    ],
+    aftermath: "Rumerskirch's cordon makes Princip's shot — which required him to be standing five feet from the car on an unguarded sidewalk — a physical impossibility. The assassination fails not through luck but through the most ordinary kind of competence: a general who saw a problem and was allowed to solve it.",
+    choices: [{ label: "Start over", next: "prologue" }],
+  },
+
+  // ===== ACT 6C: HARRACH =====
+
+  {
+    id: "harrach_offer",
+    title: "Harrach's Offer",
+    text: [
+      "As you approach the car, Count Franz von Harrach — tall, serious, loyal — steps forward with a quiet offer. He will ride on the running board. He will put his body between you and the crowd.",
+      "It is not much. One man standing on the side of a car. But it is the only protection anyone is willing to provide.",
+      "Harrach steps onto the left running board — the side that faces the river. The side the bomb came from.",
+      "The right side of the car — the side facing the shops and sidewalks — is open. Unguarded. Exposed.",
+    ],
+    telegram: "Count Harrach positioned himself on the river-facing running board, reasoning that the threat came from the direction of the earlier bombing. The street-facing side of the car remained completely unprotected.",
+    brief: "Harrach's instinct was logical: the grenade had come from the crowd on the river side of the boulevard, so he placed himself on the river side. But Gavrilo Princip would fire from the opposite direction — from the shop-lined street side. The geometry is agonizing in retrospect. Had Harrach chosen the other running board, or had a second man been assigned to cover both sides, Princip's point-blank shot would have been physically blocked by a human body. That no one thought to cover both sides of the car — or to question the assumption that the next attack would come from the same direction as the last — speaks to the exhausted, reactive thinking of men who had already survived one attempt and could not imagine they would face another.",
+    choices: [{ label: "Continue", next: "the_route" }],
+  },
+
+  // ===== ACT 7: THE ROUTE =====
+
+  {
+    id: "the_route",
+    title: "The Route Change",
+    text: [
+      "The plan is simple. Continue straight on the Appel Quay to the hospital. Do not turn right onto Franz Josef Street.",
+      "But in the haste of leaving City Hall — the confusion, the frayed nerves, the half-dozen men all assuming someone else is handling the details — no one communicates the route change to the drivers.",
+      "Potiorek assumed one of your aides briefed them. Your aides assumed Potiorek handled it.",
+      "No one handled it.",
+    ],
+    telegram: "The failure to inform the drivers of the altered route was not any single person's error. It fell through the cracks of a disorganized, rattled entourage in which every man assumed someone else had taken responsibility.",
+    brief: "There is no record — in testimony, memoir, or official documentation — of any direct instruction being given to the lead driver, Leopold Lojka, regarding the route change. The informal chain of communication that should have carried the order from the officials who decided on the new route to the driver who needed to execute it broke at some unknown point during the chaotic departure from City Hall. Some historians argue that Potiorek himself was unclear on the new route. Others suggest the order was given but not understood. Lojka testified after the assassination that he received no instruction to deviate from the published route. This single bureaucratic failure — utterly routine, the kind of miscommunication that happens daily in any large organization under stress — is arguably the most consequential administrative error in modern history.",
+    choices: [{ label: "Continue", next: "route_choice" }],
+  },
+
+  {
+    id: "route_choice",
+    title: "Getting In",
+    text: [
+      "You are climbing into the car. Sophie is already seated. The driver waits, hands on the wheel.",
+      "You could lean forward — it would take two seconds — and say five words to the driver:",
+      '"Straight on the quay. Don\'t turn."',
+      "But Sophie is adjusting her hat beside you. The sun is out. And surely, after everything that has happened today, someone has handled something this simple.",
+    ],
+    choices: [
+      { label: "Tell the driver yourself.", next: "survive_driver" },
+      { label: "Settle in beside Sophie. Surely it's been handled.", next: "lateiner_bridge", historical: true },
+    ],
+  },
+
+  {
+    id: "survive_driver",
+    mood: "survive",
+    title: "You Survive",
+    text: [
+      "You lean forward.",
+      '"Straight along the quay. Under no circumstances turn onto Franz Josef Street."',
+      "The driver nods. The motorcade pulls away. It follows the river, smooth and straight, to the hospital.",
+      "You visit the wounded. Sophie speaks with each of them. You leave Sarajevo by early afternoon, by a road that does not pass a delicatessen on the corner of Franz Josef Street.",
+      "A young man standing outside that delicatessen watches an empty road for a long time. Eventually, he walks away.",
+    ],
+    aftermath: "Five words. That is the width of the gap between what happened and what didn't. The car never stops on Franz Josef Street. Gavrilo Princip never draws his pistol. You go home to your children, and the twentieth century happens differently.",
+    choices: [{ label: "Start over", next: "prologue" }],
+  },
+
+  // ===== ACT 7B: THE BRIDGE =====
+
+  {
+    id: "lateiner_bridge",
+    title: "The Lateiner Bridge",
+    text: [
+      "The motorcade is moving. There are two routes to the hospital.",
+      "The planned route continues straight along the Appel Quay — the same boulevard where the assassins were positioned this morning. The alternative is to cross the Lateiner Bridge, cut through the residential streets on the far bank of the Miljacka, and approach the hospital from the south. It is shorter. It is quieter. It avoids the quay entirely.",
+      "No one in the car suggests it. The option is not discussed.",
+    ],
+    telegram: "The Lateiner Bridge route would have taken the motorcade across the river and away from the Appel Quay — and from Franz Josef Street, where Princip was standing.",
+    brief: "The bridge route was not merely an alternative — it was operationally superior by every measure. It was shorter, it avoided the boulevard where six assassins had been stationed hours earlier, and it placed the river between the motorcade and the north-bank commercial district where the entire Black Hand operation had been organized. Every assassin's position, every line of fire, every pre-planned escape route assumed the motorcade would stay on the north bank. Crossing the Lateiner Bridge would have rendered the entire plot geographically moot. That the option was never raised reflects the tunnel vision of an entourage in crisis: they were focused on modifying the existing route — which felt like decisive action — rather than stepping back and reconsidering their approach entirely.",
+    choices: [
+      { label: "Suggest the bridge. It's faster and avoids the quay.", next: "survive_bridge" },
+      { label: "Stay on the Appel Quay. The route has been agreed.", next: "wrong_turn_setup", historical: true },
+    ],
+  },
+
+  {
+    id: "survive_bridge",
+    mood: "survive",
+    title: "You Survive",
+    text: [
+      "You look out at the river and say: \"Cross the bridge. It's faster.\"",
+      "Potiorek hesitates — he is not familiar with the south-bank streets — but you insist. The driver turns onto the Lateiner Bridge. The car crosses the Miljacka. On the far side, the streets are residential, quiet, nearly empty.",
+      "The Appel Quay recedes behind you. Franz Josef Street — and a delicatessen, and a young man with a pistol — might as well be in another city.",
+      "You visit the wounded. You leave Sarajevo by a road you didn't come in on.",
+    ],
+    aftermath: "The assassination plot was a north-bank operation. Every element — positioning, timing, escape routes — assumed the motorcade would stay along the Appel Quay. Cross the river and you drive off the map the conspiracy was drawn on. Princip, standing at the corner of Franz Josef Street, waits for a car that approaches from a direction it will never come from.",
+    choices: [{ label: "Start over", next: "prologue" }],
+  },
+
+  // ===== ACT 8: THE WRONG TURN =====
+
+  {
+    id: "wrong_turn_setup",
+    title: "Franz Josef Street",
+    text: [
+      "The lead car turns right.",
+      "Your car follows.",
+      "This is Franz Josef Street. The original route. The published route. The route every assassin in the city has memorized.",
+      "The wrong route.",
+      "Potiorek, seated in the front of your car, sees the turn and his face changes.",
+    ],
+    choices: [{ label: "Continue", next: "wrong_turn" }],
+  },
+
+  {
+    id: "wrong_turn",
+    title: "The Wrong Turn",
+    mood: "danger",
+    text: [
+      '"This is the wrong way!" Potiorek shouts at the driver. "Stop! Go straight!"',
+      "The driver stamps on the brake. The car lurches. He reaches for the reverse gear. The engine shudders, coughs, and stalls.",
+      "Your car is stopped. Dead still. In the middle of a narrow commercial street.",
+      "And there — on the sidewalk to your right, on the unguarded side of the car, the side where Harrach is not standing — a thin, dark-haired young man is reaching into his coat. He is five feet from Sophie.",
+    ],
+    telegram: "Gavrilo Princip, nineteen years old and dying of tuberculosis, had drifted to Moritz Schiller's delicatessen after the failed bombing, apparently convinced the plot was over. He later told investigators he could not believe the car had stopped directly in front of him.",
+    brief: "Princip testified: 'I recognized the heir apparent. But as I saw that a lady was sitting next to him, I reflected a little. I aimed at the heir apparent. I do not remember what I thought at that moment.' He had tuberculosis and likely had months to live regardless of the day's outcome. He was standing at the precise geographic point where the original published route and the modified hospital route diverged — the one corner in all of Sarajevo where a driver following the wrong instructions would stop a car within arm's reach of a man following no instructions at all. Harrach, standing on the left running board, was physically unable to intervene — Princip approached from the right. The convergence of improbabilities is staggering: the bounced bomb, the refusal to leave, the failed communication, the uninstructed driver, the wrong turn, the stalled engine, the one assassin who happened to be standing at the one corner where all of these failures would deposit a motionless car at point-blank range — with the bodyguard facing the wrong direction. No novelist would dare write it. No intelligence agency would plan for it.",
+    choices: [
+      { label: "There is nothing you can do.", next: "the_shots", historical: true },
+    ],
+  },
+
+  // ===== ACT 9: DEATH =====
+
+  {
+    id: "the_shots",
+    title: "Two Shots",
+    mood: "death",
+    text: [
+      "Two shots.",
+      "The first strikes Sophie in the abdomen. She slumps against you without a sound.",
+      "The second enters your neck and severs the jugular vein.",
+      "You feel her weight against your side. You try to turn to her. Blood is filling your collar, your throat, the space behind your eyes. Someone is shouting. The car begins to move. Through the roaring in your ears you hear your own voice, distant and desperate:",
+      '"Sopherl! Sopherl! Don\'t die! Stay alive for our children!"',
+    ],
+    choices: [{ label: "Continue", next: "the_end" }],
+  },
+
+  {
+    id: "the_end",
+    title: "Es ist nichts",
+    mood: "death",
+    text: [
+      "She cannot hear you. She is already gone.",
+      "You are carried to the Governor's residence. Someone loosens your collar. A doctor bends over you and asks if you are in great pain.",
+      "You whisper:",
+      '"Es ist nichts."',
+      "It is nothing. It is nothing.",
+      "You die at 11:30 on the morning of June 28, 1914. Sophie died in the car beside you, in the city where she was finally allowed to stand at your side.",
+    ],
+    choices: [{ label: "Continue", next: "what_was_lost" }],
+  },
+
+  // ===== ACT 10: WHAT WAS LOST =====
+
+  {
+    id: "what_was_lost",
+    title: "What Was Lost",
+    mood: "grief",
+    text: [
+      "Your children learn they are orphans that afternoon. Sophie is thirteen. Max is twelve. Ernst is ten.",
+      "Because of the morganatic oath you signed for love of their mother, they inherit nothing. No titles. No estates. No imperial protection. The court that spent fourteen years humiliating Sophie now has no obligation to her children.",
+      "The telegram you sent that morning — the last communication they will ever receive from either parent — read:",
+      '"Mama and Papa will be with you soon."',
+    ],
+    choices: [{ label: "Continue", next: "the_children_fate" }],
+  },
+
+  {
+    id: "the_children_fate",
+    title: "The Children",
+    mood: "grief",
+    text: [
+      "In 1938, the next war begins. The one your death made possible.",
+      "Nazi Germany annexes Austria. The Hohenberg family's property is seized. Your sons — Max and Ernst, the boys who once ran through the gardens at Konopischt — are arrested and sent to Dachau.",
+      "They survive. Seven years in the camps. They walk out alive.",
+      "But the world you tried to build for them — the reformed empire, the federated monarchy, the Europe held together by reason and personal diplomacy — that world died on Franz Josef Street, twenty-four years before they entered the camp gates.",
+    ],
+    telegram: "Maximilian and Ernst von Hohenberg were imprisoned at Dachau from 1938 to 1945 for refusing to renounce their family's claims and for their association with the Austrian resistance to Nazi annexation.",
+    brief: "After the assassination, the children were raised by their maternal aunt, Henriette Chotek. The Habsburg court — bound by the morganatic oath — provided minimal support. Maximilian eventually received some family property, but the children's status remained legally ambiguous throughout the interwar period. When Germany annexed Austria in March 1938, the Hohenberg estates were among the first aristocratic properties seized. Maximilian and Ernst were arrested in April 1938 and transported to Dachau. Maximilian was later transferred to Flossenbürg and then Sachsenhausen. Both brothers survived the war — Ernst was liberated from Dachau in 1945, Maximilian from Sachsenhausen. Their sister Sophie was not imprisoned but lived under Gestapo surveillance for the duration. Ernst died in 1954 at age fifty. Maximilian lived until 1962. Neither man ever fully recovered — from the camps, or from the June morning in their childhood when a telegram arrived promising that their parents were coming home.",
+    choices: [{ label: "Continue", next: "the_friend_reveal" }],
+  },
+
+  {
+    id: "the_friend_reveal",
+    title: "The Friend",
+    mood: "grief",
+    text: [
+      "Remember the friend who walked the gardens with you?",
+      "Who shared your fear that one miscalculation in the Balkans could set the continent on fire? Who clapped your shoulder at the gate and said, \"Next time, we hunt. Bring Sophie\"?",
+      "That was Kaiser Wilhelm II of Germany.",
+      "Within days of your death, he issued what history now calls the \"blank check\" — a guarantee of unconditional German support for whatever action Austria-Hungary chose to take against Serbia. He later told associates he had not expected a general war.",
+      "The man who promised to take you hunting used your murder to unleash the exact catastrophe you had spent that afternoon in the garden trying to prevent.",
+    ],
+    telegram: "The 'blank check' — Germany's pledge of unconditional support — transformed a regional dispute between Austria and Serbia into a continental crisis, because it meant Russia could not restrain Austria without simultaneously confronting Germany.",
+    brief: "On July 5-6, 1914, Kaiser Wilhelm assured Austrian Ambassador Szögyény that Germany would support Austria-Hungary in whatever action it took against Serbia — even at the risk of war with Russia. This assurance was decisive. Without guaranteed German backing, Austria's hawks would likely have moderated their demands. With it, the war party in Vienna — the same faction Franz Ferdinand had spent years holding in check — had a free hand. Wilhelm's personal grief over Franz Ferdinand's death appears to have been genuine. But that grief also made him emotionally receptive to the aggressive counsel of his military advisors. The irony is savage and complete: the assassination removed the one man in the Austrian line of succession who consistently argued against war with Serbia, and the grief it produced in Berlin provided the emotional catalyst for Germany to guarantee the war he had argued against. Franz Ferdinand's death did not merely remove a brake from the machine. It became the fuel.",
+    choices: [{ label: "Continue", next: "the_war" }],
+  },
+
+  {
+    id: "the_war",
+    title: "The War",
+    mood: "grief",
+    text: [
+      "Austria-Hungary issued an ultimatum to Serbia, deliberately crafted to be unacceptable. Serbia's response — conciliatory on nearly every point — was rejected as insufficient.",
+      "Austria declared war on July 28, 1914. Exactly one month after the two shots on Franz Josef Street.",
+      "Russia mobilized to defend Serbia. Germany declared war on Russia, then on France. German troops invaded Belgium to outflank the French. Britain, bound by treaty to defend Belgian neutrality, declared war on Germany.",
+      "Within six weeks of a teenager's pistol firing twice on a side street in Sarajevo, every major power in Europe was at war.",
+      "By 1918: twenty million dead. Four empires — including yours — dissolved. The peace settlement imposed on Germany was so vindictive that it ensured a second war, twenty years later, that killed sixty million more.",
+    ],
+    choices: [{ label: "Continue", next: "final" }],
+  },
+
+  {
+    id: "final",
+    title: null,
+    mood: "grief",
+    text: [
+      "You were the moderate voice.",
+      "The man who argued, year after year, against war with Serbia. Who wanted to bring the Empire's excluded peoples into the architecture of power rather than crush them beneath it. Who was hated by the hawks in Vienna precisely because you would not give them the war they wanted.",
+      "Your assassination removed the one man in the Habsburg line of succession who might have pulled Europe back from the edge.",
+      "And every choice you made on the road to that stalled car on Franz Josef Street was reasonable. Decent. Human.",
+      "You accepted the invitation because Sophie deserved to be treated as your equal. You kept the date because an empire does not rearrange itself around foreign calendars. You continued to City Hall because you refused to be intimidated. You visited the hospital because people were hurt on your behalf and you owed them your presence.",
+      "Each choice was defensible. Each choice was what a good man would do. And each choice, stacked upon the last, carried you five feet closer to a nineteen-year-old with a pistol and a month to live.",
+      "You did not cause the war. But your death — your specific death, on that specific day, by that specific chain of choices and failures and improbabilities — made it inevitable.",
+    ],
+    choices: [
+      { label: "Play again — try to get home to your children", next: "prologue" },
+    ],
+  },
+];
+
+// =============================================================================
+// ENGINE
+// =============================================================================
+const NM = {};
+NODES.forEach(n => { NM[n.id] = n; });
+
+const MBG = {
+  default: "#111318",
+  danger:  "#1c1210",
+  death:   "#0e0808",
+  grief:   "#0c0c10",
+  survive: "#0e1a0e",
+};
+
+const MAC = {
+  default: "#8a7a5a",
+  danger:  "#b84a3a",
+  death:   "#6a2020",
+  grief:   "#5a5a7a",
+  survive: "#4a9a4a",
+};
+
+function App() {
+  const [cur, setCur]   = useState("prologue");
+  const [fade, setFade] = useState(true);
+  const [ctx, setCtx]   = useState(null);
+  const top = useRef(null);
+
+  const n  = NM[cur];
+  const m  = n.mood || "default";
+  const bg = MBG[m];
+  const ac = MAC[m];
+  const isS  = m === "survive";
+  const isD  = m === "death" || m === "grief";
+  const hasC = n.telegram || n.brief;
+
+  const go = (next) => {
+    setFade(false);
+    setTimeout(() => {
+      setCur(next);
+      setCtx(null);
+      setFade(true);
+      top.current?.scrollIntoView({ behavior: "smooth" });
+    }, 350);
+  };
+
+  return (
+    <div style={{
+      minHeight: "100vh",
+      background: bg,
+      transition: "background 0.6s ease",
+      padding: "20px 16px",
+      boxSizing: "border-box",
+    }}>
+
+      {/* DISPATCH BUTTON */}
+      {hasC && (
+        <div style={{
+          position: "fixed", top: 14, right: 14, zIndex: 10,
+          display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6,
+        }}>
+          <button
+            onClick={() => setCtx(ctx ? null : "telegram")}
+            style={{
+              background: ctx ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              borderRadius: 18, padding: "5px 13px",
+              color: ctx ? "#aaa" : "#555",
+              fontSize: 10, fontFamily: "Georgia, serif",
+              cursor: "pointer", letterSpacing: 1.5,
+              textTransform: "uppercase", transition: "all 0.2s ease",
+            }}
+          >
+            {ctx ? "Dismiss" : "Dispatch"}
+          </button>
+          {ctx && (
+            <div style={{ display: "flex", gap: 5 }}>
+              {n.telegram && (
+                <button
+                  onClick={() => setCtx("telegram")}
+                  style={{
+                    background: ctx === "telegram" ? "rgba(180,160,100,0.15)" : "rgba(255,255,255,0.04)",
+                    border: ctx === "telegram" ? "1px solid rgba(180,160,100,0.35)" : "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: 14, padding: "4px 11px",
+                    color: ctx === "telegram" ? "#b4a064" : "#555",
+                    fontSize: 9, fontFamily: "Georgia, serif",
+                    cursor: "pointer", letterSpacing: 1, textTransform: "uppercase",
+                  }}
+                >
+                  Field Telegram
+                </button>
+              )}
+              {n.brief && (
+                <button
+                  onClick={() => setCtx("brief")}
+                  style={{
+                    background: ctx === "brief" ? "rgba(100,120,180,0.15)" : "rgba(255,255,255,0.04)",
+                    border: ctx === "brief" ? "1px solid rgba(100,120,180,0.35)" : "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: 14, padding: "4px 11px",
+                    color: ctx === "brief" ? "#8090c0" : "#555",
+                    fontSize: 9, fontFamily: "Georgia, serif",
+                    cursor: "pointer", letterSpacing: 1, textTransform: "uppercase",
+                  }}
+                >
+                  Intel Brief
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div ref={top} />
+
+      <div style={{
+        maxWidth: 580, margin: "0 auto",
+        opacity: fade ? 1 : 0,
+        transition: "opacity 0.35s ease",
+        paddingTop: 32,
+      }}>
+
+        {/* CONTEXT PANEL */}
+        {ctx && (n.telegram || n.brief) && (
+          <div style={{
+            background: ctx === "brief" ? "rgba(100,120,180,0.06)" : "rgba(180,160,100,0.06)",
+            border: ctx === "brief" ? "1px solid rgba(100,120,180,0.15)" : "1px solid rgba(180,160,100,0.15)",
+            borderRadius: 4, padding: "14px 16px", marginBottom: 24,
+          }}>
+            <div style={{
+              fontSize: 9, letterSpacing: 2, textTransform: "uppercase",
+              color: ctx === "brief" ? "#6878a8" : "#a09060",
+              marginBottom: 8, fontFamily: "Georgia, serif",
+            }}>
+              {ctx === "brief" ? "Intelligence Brief — Classified" : "Field Telegram"}
+            </div>
+            <p style={{
+              fontSize: ctx === "brief" ? 12 : 13, lineHeight: 1.65,
+              color: ctx === "brief" ? "#7888b0" : "#a09878",
+              fontFamily: "Georgia, serif", margin: 0,
+            }}>
+              {ctx === "brief" ? (n.brief || n.telegram) : n.telegram}
+            </p>
+          </div>
+        )}
+
+        {/* TITLE */}
+        {n.title && (
+          <div style={{
+            marginBottom: 22,
+            borderBottom: `1px solid ${ac}25`,
+            paddingBottom: 12,
+          }}>
+            <h1 style={{
+              fontSize: 21, fontWeight: "normal", margin: 0,
+              color: isS ? "#6abf6a" : isD ? "#a09888" : "#d4cbb8",
+              fontFamily: "Georgia, serif", lineHeight: 1.3,
+            }}>
+              {n.title}
+            </h1>
+          </div>
+        )}
+
+        {/* SURVIVE BANNER */}
+        {isS && (
+          <div style={{
+            background: "rgba(74,154,74,0.08)",
+            border: "1px solid rgba(74,154,74,0.2)",
+            borderRadius: 3, padding: "10px 16px", marginBottom: 20,
+            textAlign: "center", fontSize: 12, color: "#6abf6a",
+            letterSpacing: 1.5, textTransform: "uppercase",
+            fontFamily: "Georgia, serif",
+          }}>
+            You survive. Sophie survives.
+          </div>
+        )}
+
+        {/* BODY TEXT */}
+        <div style={{ marginBottom: 16 }}>
+          {n.text.map((p, i) => (
+            <p key={i} style={{
+              fontSize: 15, lineHeight: 1.75,
+              color: isD ? "#b0a090" : "#c8c0b0",
+              fontFamily: "Georgia, serif",
+              margin: "0 0 13px 0",
+            }}>
+              {p}
+            </p>
+          ))}
+        </div>
+
+        {/* AFTERMATH */}
+        {n.aftermath && (
+          <div style={{
+            borderLeft: "2px solid rgba(74,154,74,0.3)",
+            paddingLeft: 14, marginBottom: 20,
+          }}>
+            <p style={{
+              fontSize: 13, lineHeight: 1.65, color: "#7a9a6a",
+              fontFamily: "Georgia, serif", fontStyle: "italic", margin: 0,
+            }}>
+              {n.aftermath}
+            </p>
+          </div>
+        )}
+
+        {/* CHOICES */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 4 }}>
+          {n.choices.map((c, i) => {
+            const nav = !c.historical && (
+              c.label === "Continue" ||
+              c.label === "Start over" ||
+              c.label === "There is nothing you can do." ||
+              c.label.startsWith("Play again")
+            );
+            const h = c.historical;
+            return (
+              <button
+                key={i}
+                onClick={() => go(c.next)}
+                style={{
+                  background: nav
+                    ? `${ac}12`
+                    : h ? "rgba(184,74,58,0.06)" : "rgba(74,154,74,0.05)",
+                  border: nav
+                    ? `1px solid ${ac}30`
+                    : h ? "1px solid rgba(184,74,58,0.18)" : "1px solid rgba(74,154,74,0.16)",
+                  borderRadius: 3,
+                  padding: nav ? "10px 16px" : "13px 16px",
+                  color: nav
+                    ? (isD ? "#7878a0" : ac)
+                    : h ? "#c8a090" : "#88b880",
+                  fontSize: 14, fontFamily: "Georgia, serif",
+                  cursor: "pointer", textAlign: "left",
+                  lineHeight: 1.5, transition: "all 0.2s ease",
+                }}
+              >
+                {c.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* PROLOGUE FOOTER */}
+        {cur === "prologue" && (
+          <div style={{
+            marginTop: 44, textAlign: "center",
+            fontSize: 11, color: "#333",
+            fontFamily: "Georgia, serif", fontStyle: "italic",
+          }}>
+            Every choice ahead is one he actually made.
+          </div>
+        )}
+
+        {/* BACK LINK */}
+        <div style={{ marginTop: 48, textAlign: "center" }}>
+          <a href="/the-lost/" style={{
+            fontSize: 10, letterSpacing: 3,
+            color: "#1a2a1a", fontFamily: "Georgia, serif",
+            textDecoration: "none", textTransform: "uppercase",
+          }}>
+            ← The Lost
+          </a>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+
 </body>
 </html>

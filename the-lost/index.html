@@ -409,6 +409,7 @@
     const val = document.getElementById('pwInput').value.trim();
     const input = document.getElementById('pwInput');
     if (val.toLowerCase() === 'princip') {
+      sessionStorage.setItem('ps_unlocked', '1');
       window.location.href = '/the-lost/powder-spark/';
     } else {
       input.classList.remove('shake');
