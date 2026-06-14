@@ -110,10 +110,9 @@
     }
 
     #landingSolutions {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(0.62rem, 1.3vw, 0.88rem);
-      letter-spacing: 0.6em;
-      text-transform: uppercase;
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: clamp(0.75rem, 1.6vw, 1.05rem);
+      letter-spacing: 0.18em;
       color: rgba(200,178,138,0.5);
       opacity: 0;
       transition: opacity 1.4s ease;
@@ -1533,8 +1532,9 @@
   <div id="siteGate" style="
     position:fixed;inset:0;z-index:9999;
     background:#030303;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    display:none;flex-direction:column;align-items:center;justify-content:center;
     gap:1.8rem;
+    opacity:0;transition:opacity 0.6s ease;
   ">
     <p style="font-family:'Cinzel Decorative',cursive;font-size:clamp(1.4rem,4vw,2.2rem);color:rgba(210,180,130,0.85);letter-spacing:0.25em;text-align:center;">MAGUS JANE</p>
     <div style="width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(180,120,40,0.4),transparent);"></div>
@@ -1549,6 +1549,7 @@
       "
     />
     <p id="gateError" style="font-family:Georgia,serif;font-size:0.75rem;color:#7a3a3a;letter-spacing:0.15em;min-height:1rem;font-style:italic;"></p>
+    <button onclick="gateBack()" style="font-family:'Cinzel',serif;font-size:0.55rem;color:rgba(200,178,138,0.2);background:none;border:none;cursor:pointer;letter-spacing:0.45em;text-transform:uppercase;margin-top:0.5rem;transition:color 0.3s;" onmouseover="this.style.color='rgba(200,178,138,0.55)'" onmouseout="this.style.color='rgba(200,178,138,0.2)'">← back</button>
   </div>
 
   <script>
@@ -1558,13 +1559,7 @@
       const input    = document.getElementById('gateInput');
       const errEl    = document.getElementById('gateError');
 
-      if (sessionStorage.getItem(GATE_KEY) === '1') {
-        gate.style.display = 'none';
-        return;
-      }
-
-      // Hide body content behind gate until unlocked
-      document.body.style.overflow = 'hidden';
+      window._mjAccess = sessionStorage.getItem(GATE_KEY) === '1';
 
       function shake() {
         input.style.borderBottomColor = '#7a3a3a';
@@ -1579,9 +1574,9 @@
       function attempt() {
         if (input.value.trim().toLowerCase() === 'theodora') {
           sessionStorage.setItem(GATE_KEY, '1');
-          gate.style.transition = 'opacity 0.8s ease';
+          window._mjAccess = true;
           gate.style.opacity = '0';
-          setTimeout(() => { gate.style.display = 'none'; document.body.style.overflow = ''; }, 800);
+          setTimeout(() => { gate.style.display = 'none'; openSite(); }, 600);
         } else {
           errEl.textContent = 'Not the right word.';
           shake();
@@ -1589,7 +1584,28 @@
       }
 
       input.addEventListener('keydown', e => { if (e.key === 'Enter') attempt(); });
-      setTimeout(() => input.focus(), 100);
+
+      window.showGate = function() {
+        errEl.textContent = '';
+        input.value = '';
+        gate.style.display = 'flex';
+        void gate.offsetWidth;
+        gate.style.opacity = '1';
+        setTimeout(() => input.focus(), 100);
+      };
+
+      window.gateBack = function() {
+        gate.style.opacity = '0';
+        setTimeout(() => { gate.style.display = 'none'; }, 600);
+      };
+
+      window.checkGate = function() {
+        if (window._mjAccess) {
+          openSite();
+        } else {
+          window.showGate();
+        }
+      };
     })();
   </script>
 
@@ -1610,14 +1626,14 @@
   <!-- ── LANDING SCREEN ───────────────────────────────── -->
   <div id="landingScreen">
     <div id="landingTitle">Magus Jane</div>
-    <div id="landingCenter" onclick="openSite()">
+    <div id="landingCenter" onclick="checkGate()">
       <svg id="landingHex" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
         <polygon points="100,10 178,55 178,145 100,190 22,145 22,55"
                  fill="none" stroke="#8B1229" stroke-width="1.5"/>
       </svg>
       <div id="landingJ">j</div>
     </div>
-    <div id="landingSolutions">Solutions</div>
+    <div id="landingSolutions">release the magician</div>
   </div>
 
   <!-- ── MAIN SITE ──────────────────────────────────────── -->
@@ -2847,8 +2863,7 @@
     const JT_PIN = '1295';
 
     function openJtlab() {
-      _overlayShow('jtlabOverlay');
-      jtReset();
+      window.open('/jtlab/', '_blank');
     }
     function closeJtlab() {
       _overlayHide('jtlabOverlay', jtReset);
